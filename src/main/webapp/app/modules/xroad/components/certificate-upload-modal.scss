@@ -1,0 +1,23 @@
+// Certificate Upload Modal Styles
+// Refactored from inline styles for better maintainability
+
+.certificate-upload-modal {
+  // Drag and drop upload zone
+  .certificate-dropzone {
+    cursor: pointer;
+    min-height: 100px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  // Hidden file input
+  .certificate-file-input {
+    display: none;
+  }
+
+  // Certificate textarea with monospace font
+  .certificate-textarea {
+    font-size: 0.875rem;
+  }
+}

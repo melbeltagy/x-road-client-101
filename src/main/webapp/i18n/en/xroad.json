@@ -1,0 +1,178 @@
+{
+  "xroad": {
+    "title": "X-Road Generic REST Client",
+    "subtitle": "Send REST requests to X-Road Security Server. All fields are required except service version and mTLS certificates.",
+    "toast": {
+      "requestFailed": "Request failed",
+      "requestSuccessful": "Request successful",
+      "xroadError": "X-Road error",
+      "response": "Response",
+      "error": "Error",
+      "clientError": "Client Error",
+      "unknownError": "Unknown error"
+    },
+    "client": {
+      "title": "Client Identifier",
+      "instanceId": "Instance ID",
+      "memberClass": "Member Class",
+      "memberCode": "Member Code",
+      "subsystemCode": "Subsystem Code",
+      "securityServerUrl": "Security Server URL",
+      "pemCertificates": "Client Certificates (Optional mTLS)",
+      "pemCertificatesHelp": "Optional: Paste entire PEM file contents including certificate and private key",
+      "clear": "Clear"
+    },
+    "certificates": {
+      "title": "mTLS Certificates (Optional)",
+      "description": "Optional: Configure mTLS certificates for secure connection to X-Road Security Server",
+      "securityServerCert": "Security Server Certificate",
+      "securityServerCertDescription": "Security Server's public certificate to verify its identity",
+      "clientCert": "Client Certificate",
+      "clientCertDescription": "Your client's public certificate for authentication",
+      "clientPrivateKey": "Client Private Key",
+      "clientPrivateKeyDescription": "Your client's private key (keep secure)",
+      "add": "Add",
+      "set": "Set",
+      "configured": "Configured",
+      "uploaded": "Uploaded",
+      "view": "View",
+      "modal": {
+        "title": {
+          "securityServerCert": "Security Server Certificate",
+          "clientCert": "Client Certificate",
+          "clientPrivateKey": "Client Private Key"
+        },
+        "description": {
+          "securityServerCert": "Upload or paste the Security Server's public certificate in PEM format. This certificate is used to verify the Security Server's identity during the TLS handshake.",
+          "clientCert": "Upload or paste your client's public certificate in PEM format. This certificate identifies your client to the Security Server.",
+          "clientPrivateKey": "Upload or paste your client's private key in PEM format. Keep this secure - it should never be shared publicly."
+        },
+        "upload": "Upload Certificate",
+        "dragDrop": "Drag and drop file here",
+        "dropHere": "Drop file here...",
+        "browse": "Browse Files",
+        "manualEntry": "Certificate Content (PEM Format)",
+        "pemFormat": "Paste PEM-formatted certificate content or use upload above",
+        "clear": "Clear"
+      }
+    },
+    "service": {
+      "title": "Service Identifier",
+      "instanceId": "Instance ID",
+      "memberClass": "Member Class",
+      "memberCode": "Member Code",
+      "subsystemCode": "Subsystem Code",
+      "serviceCode": "Service Code",
+      "serviceVersion": "Service Version",
+      "clear": "Clear"
+    },
+    "request": {
+      "title": "Request Details",
+      "method": "HTTP Method",
+      "path": "Path",
+      "body": "Request Body",
+      "bodyPlaceholder": "Optional JSON, XML, or text payload",
+      "contentType": "Content-Type",
+      "contentTypePlaceholder": "e.g., application/json, application/xml, text/plain",
+      "contentTypeHelp": "Optional: Specify the Content-Type header for the request body (e.g., application/json, application/xml)",
+      "clear": "Clear",
+      "submit": "Send Request",
+      "sending": "Sending..."
+    },
+    "advanced": {
+      "title": "Advanced Configuration",
+      "queryParams": "Query Parameters",
+      "customHeaders": "Custom HTTP Headers",
+      "xroadHeaders": "Optional X-Road Headers",
+      "xroadHeadersHelp": "Optional X-Road protocol headers for advanced use cases. Leave empty if not required.",
+      "add": "Add",
+      "key": "Key",
+      "value": "Value",
+      "headerName": "Header Name",
+      "headerValue": "Header Value",
+      "noQueryParams": "No query parameters. Click Add to include query parameters.",
+      "noCustomHeaders": "No custom headers. Click Add to include additional HTTP headers."
+    },
+    "response": {
+      "title": "Response",
+      "status": "Status",
+      "headers": "Headers",
+      "body": "Body",
+      "noResponse": "No response yet. Send a request to see the response here.",
+      "responseStatus": "Response Status",
+      "error": "Error",
+      "timestamp": "Timestamp",
+      "contentType": "Content-Type",
+      "contentLength": "Content-Length",
+      "xroadHeaders": "X-Road Headers",
+      "xroadError": "X-Road Error",
+      "xroadErrorType": "Type",
+      "xroadErrorMessage": "Message",
+      "xroadErrorDetail": "Detail",
+      "xroadErrorFaultCode": "Fault Code",
+      "xroadErrorFaultString": "Fault String",
+      "allHeaders": "All Headers",
+      "noHeaders": "No headers",
+      "responseBody": "Response Body",
+      "size": "Size",
+      "tooLarge": "Too Large",
+      "noBody": "No body",
+      "bodyTooLargeMessage": "Response body is larger than 1MB and cannot be displayed inline.",
+      "downloadResponse": "Download Response",
+      "raw": "Raw",
+      "jsonFormat": "JSON Format",
+      "invalidJson": "Response body is not valid JSON. Displaying as raw text instead."
+    },
+    "placeholders": {
+      "instanceId": "e.g., DEV, PROD, FI-TEST",
+      "memberClass": "e.g., GOV, COM, ORG",
+      "memberCode": "e.g., 1234567-8",
+      "subsystemCode": "e.g., TestClient",
+      "securityServerUrl": "e.g., https://localhost:8443 or http://ss.example.com:8080",
+      "pemCertificates": "Paste PEM certificate(s) here (BEGIN CERTIFICATE...END CERTIFICATE + BEGIN PRIVATE KEY...END PRIVATE KEY)",
+      "serviceMemberCode": "e.g., 9876543-2",
+      "serviceSubsystemCode": "e.g., DataService",
+      "serviceCode": "e.g., getInfo, list_users, get-data",
+      "serviceVersion": "e.g., v1, 1.0.0 (optional)",
+      "path": "e.g., /users/123, /api/data"
+    },
+    "validation": {
+      "required": "This field is required",
+      "instanceId": "Must be alphanumeric or hyphen (min 2 chars)",
+      "memberClass": "Must be alphanumeric or hyphen",
+      "memberCode": "Must be alphanumeric or hyphen",
+      "subsystemCode": "Must be alphanumeric or hyphen",
+      "securityServerUrl": "Must be valid HTTP/HTTPS URL",
+      "securityServerUrlProtocol": "Must use HTTP or HTTPS protocol",
+      "securityServerUrlHostname": "Hostname is required",
+      "securityServerUrlUnderscore": "Invalid hostname: underscores not allowed",
+      "serviceCode": "Must be alphanumeric, underscore, or hyphen",
+      "serviceVersion": "Invalid version format (e.g., v1, 1.2.3)",
+      "path": "Must be valid URI path starting with / (alphanumeric, /, _, -)",
+      "method": "Method is required"
+    },
+    "history": {
+      "title": "Request History",
+      "button": "History",
+      "empty": "No request history yet",
+      "emptyDescription": "Make a request to see it here",
+      "clearAll": "Clear All History",
+      "confirmClear": "Are you sure you want to clear all history? This cannot be undone.",
+      "cleared": "History cleared successfully",
+      "delete": "Delete",
+      "deleted": "History entry deleted",
+      "indicator": "This request is from history",
+      "entry": {
+        "status": "Status",
+        "timestamp": "Time"
+      }
+    },
+    "status": {
+      "client": "Client",
+      "serviceUrl": "Service URL",
+      "notSent": "Not sent",
+      "success": "Request successful",
+      "error": "Request failed"
+    }
+  }
+}
