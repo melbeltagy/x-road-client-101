@@ -82,20 +82,21 @@
 **Note**: Spring Security has been completely removed (authentication completely removed). UI cleanup extended beyond security removal to eliminate all authentication, admin, and entity management components. The application is now a clean, publicly accessible X-Road REST client.
 
 - [x] T008 Update application.yml with X-Road default timeouts (connect: 60000ms, read: 120000ms) in src/main/resources/config/application.yml - **COMPLETED**
-- [x] T009 [P] Create SubsystemIdDto as Java Record with validation annotations in src/main/java/com/nortal/xroad/restapi/client/service/dto/SubsystemIdDto.java - **COMPLETED**
-- [x] T010 [P] Create ClientDto as Java Record with securityServerUrl and pemCertificates fields in src/main/java/com/nortal/xroad/restapi/client/service/dto/ClientDto.java - **COMPLETED**
-- [x] T011 [P] Create ServiceIdDto as Java Record with validation annotations in src/main/java/com/nortal/xroad/restapi/client/service/dto/ServiceIdDto.java - **COMPLETED**
-- [x] T012 [P] Create RequestDetailsDto as Java Record with mandatory path field in src/main/java/com/nortal/xroad/restapi/client/service/dto/RequestDetailsDto.java - **COMPLETED**
+- [x] T009 [P] Create SubsystemIdDto as Java Record with validation annotations (4 fields: instance, memberClass, memberCode, subsystemCode) in src/main/java/com/nortal/xroad/restapi/client/service/dto/SubsystemIdDto.java - **COMPLETED**
+- [x] T010 [P] Create ClientDto as Java Record with subsystem (SubsystemIdDto), securityServerUrl, and mtlsCertificates (MTlsCertificatesDto - 3 separate cert fields) in src/main/java/com/nortal/xroad/restapi/client/service/dto/ClientDto.java - **COMPLETED**
+- [x] T011 [P] Create ServiceIdDto as Java Record with validation annotations (instance, memberClass, memberCode, subsystemCode, serviceCode, path) in src/main/java/com/nortal/xroad/restapi/client/service/dto/ServiceIdDto.java - **COMPLETED**
+- [x] T012 [P] Create RequestDetailsDto as Java Record with 10 fields: method (HttpMethod), path (mandatory), queryParams, headers, body, contentType, xroadId, xroadUserId, xroadIssue, xroadRepresentedParty in src/main/java/com/nortal/xroad/restapi/client/service/dto/RequestDetailsDto.java - **COMPLETED**
 - [x] T013 [P] Create XRoadRequestDTO as Java Record in src/main/java/com/nortal/xroad/restapi/client/service/dto/XRoadRequestDTO.java - **COMPLETED**
 - [x] T014 [P] Create XRoadResponseDTO as Java Record in src/main/java/com/nortal/xroad/restapi/client/service/dto/XRoadResponseDTO.java - **COMPLETED**
 - [x] T015 [P] Create XRoadErrorDTO as Java Record in src/main/java/com/nortal/xroad/restapi/client/service/dto/XRoadErrorDTO.java - **COMPLETED**
 - [x] T016 Create XRoadResponseMapper MapStruct interface with @Mapper(componentModel = "spring") in src/main/java/com/nortal/xroad/restapi/client/service/mapper/XRoadResponseMapper.java - **COMPLETED**
 - [x] T017 Replace Superhero theme with Cosmo theme in src/main/webapp/app/app.scss - **COMPLETED**
-- [x] T018 [P] Create TypeScript interface SubsystemId mirroring Java SubsystemIdDto in src/main/webapp/app/shared/model/subsystem-id.model.ts - **COMPLETED**
-- [x] T019 [P] Create TypeScript interface Client mirroring Java ClientDto in src/main/webapp/app/shared/model/client.model.ts - **COMPLETED**
+- [x] T018 [P] Create TypeScript interface SubsystemId mirroring Java SubsystemIdDto (4 fields) in src/main/webapp/app/shared/model/subsystem-id.model.ts - **COMPLETED**
+- [x] T019 [P] Create TypeScript interface Client mirroring Java ClientDto (subsystem + securityServerUrl + mtlsCertificates) in src/main/webapp/app/shared/model/client.model.ts - **COMPLETED**
+- [x] T019b [P] Create TypeScript interface MTlsCertificates mirroring Java MTlsCertificatesDto (3 separate cert fields: securityServerCert, clientCert, clientPrivateKey) in src/main/webapp/app/shared/model/mtls-certificates.model.ts - **COMPLETED**
 - [x] T020 [P] Create TypeScript interface ServiceId mirroring Java ServiceIdDto in src/main/webapp/app/shared/model/service-id.model.ts - **COMPLETED**
-- [x] T021 [P] Create TypeScript interface RequestDetails mirroring Java RequestDetailsDto in src/main/webapp/app/shared/model/request-details.model.ts - **COMPLETED**
-- [x] T022 [P] Create TypeScript interface XRoadRequest mirroring Java XRoadRequestDTO in src/main/webapp/app/shared/model/xroad-request.model.ts - **COMPLETED**
+- [x] T021 [P] Create TypeScript interface RequestDetails mirroring Java RequestDetailsDto (10 fields: method 'GET'|'POST'|'PUT'|'DELETE'|'PATCH', path, queryParams, headers, body, contentType, + 4 xroad headers) in src/main/webapp/app/shared/model/request-details.model.ts - **COMPLETED**
+- [x] T022 [P] Create TypeScript interface XRoadRequest mirroring Java XRoadRequestDTO (client, service, request) in src/main/webapp/app/shared/model/xroad-request.model.ts - **COMPLETED**
 - [x] T023 [P] Create TypeScript interface XRoadResponse mirroring Java XRoadResponseDTO in src/main/webapp/app/shared/model/xroad-response.model.ts - **COMPLETED**
 - [x] T024 [P] Create TypeScript interface XRoadError mirroring Java XRoadErrorDTO in src/main/webapp/app/shared/model/xroad-error.model.ts - **COMPLETED**
 - [x] T025 Verify NO database dependencies added to build.gradle (constitution: no persistence) - **COMPLETED**
@@ -112,7 +113,7 @@
 
 ### Implementation for User Story 1 + 5
 
-- [x] T026 [P] [US1] Create MTLSContextBuilder for parsing PEM certificates and creating SSL context with separate fields (security server cert, client cert, private key) in src/main/java/com/nortal/xroad/restapi/client/service/util/MTLSContextBuilder.java - **COMPLETED** (Refactored from PEMCertificateUtil to use separate certificate fields; includes permissive trust manager for self-signed certificates and disabled hostname verification for development/testing)
+- [x] T026 [P] [US1] Create MTLSContextBuilder for parsing PEM certificates and creating SSL context from MTlsCertificatesDto (3 separate fields: securityServerCert, clientCert, clientPrivateKey) in src/main/java/com/nortal/xroad/restapi/client/service/util/MTLSContextBuilder.java - **COMPLETED** (Refactored from PEMCertificateUtil to use separate certificate fields; includes permissive trust manager for self-signed certificates and disabled hostname verification for development/testing)
 - [x] T027 [P] [US1] Create XRoadHeaderBuilder for constructing X-Road protocol headers in src/main/java/com/nortal/xroad/restapi/client/service/util/XRoadHeaderBuilder.java - **COMPLETED**
 - [x] T028 [US1] Create XRoadProxyService with executeRequest method using WebClient in src/main/java/com/nortal/xroad/restapi/client/service/XRoadProxyService.java - **COMPLETED**
 - [x] T029 [US1] Implement dynamic SSL context creation from PEM certificates in XRoadProxyService with hostname verification disabled for self-signed certificates - **COMPLETED** (Configured SSL handler to disable endpoint identification for development/testing with Docker containers)
@@ -124,22 +125,22 @@
 - [x] T035 [US1] Add @Valid annotation to XRoadRequestDTO parameter for request validation in XRoadProxyResource - **COMPLETED**
 - [x] T036 [US1] Implement error handling for timeout, connection refused, and SSL errors in XRoadProxyResource - **COMPLETED**
 - [x] T037 [P] [US1] Create XRoadRequestForm React component with three sections (Client, Service, Request Details) in src/main/webapp/app/modules/xroad/xroad-request-form.tsx - **COMPLETED**
-- [x] T038 [P] [US1] Implement Client section with instance, memberClass, memberCode, subsystemCode fields in XRoadRequestForm - **COMPLETED**
+- [x] T038 [P] [US1] Implement Client section with subsystem identifier fields (instance, memberClass, memberCode, subsystemCode) in XRoadRequestForm - **COMPLETED**
 - [x] T039 [P] [US1] Implement securityServerUrl input field with pattern validation (^https?://.\*$) in XRoadRequestForm - **COMPLETED**
-- [x] T040 [P] [US1] Implement optional collapsible PEM certificate textarea with drag-and-drop support in XRoadRequestForm - **COMPLETED**
+- [x] T040 [P] [US1] Implement optional collapsible mTLS certificate section with three separate textarea fields (Security Server cert, Client cert, Client private key) with drag-and-drop support in XRoadRequestForm - **COMPLETED**
 - [x] T041 [P] [US1] Implement Service section with service identifier fields in XRoadRequestForm - **COMPLETED**
-- [x] T042 [P] [US1] Implement Request Details section with method dropdown and mandatory path field in XRoadRequestForm - **COMPLETED**
+- [x] T042 [P] [US1] Implement Request Details section with method dropdown (GET/POST/PUT/DELETE/PATCH) and mandatory path field in XRoadRequestForm - **COMPLETED**
 - [x] T043 [US1] Integrate React Hook Form with simple validation timing (all validation on submit, errors clear on change) in XRoadRequestForm - **COMPLETED**
 - [x] T044 [US1] Add placeholder text with examples to all input fields in XRoadRequestForm - **COMPLETED**
 - [x] T045 [US1] Add "Clear" button for each section (Client, Service, Request Details) in XRoadRequestForm - **COMPLETED**
 - [x] T046 [US1] Implement "Send Request" button with inline spinner and "Sending..." state in XRoadRequestForm - **COMPLETED**
-- [x] T047 [US1] Create Axios service for POST /api/xroad/execute in src/main/webapp/app/shared/services/xroad-proxy.service.ts - **COMPLETED**
+- [x] T047 [US1] Create Axios service for POST /api/xroad/execute in src/main/webapp/app/shared/services/xroad-proxy.service.ts - **COMPLETED** (Actual location: src/main/webapp/app/shared/services/xroad-proxy.service.ts)
 - [x] T048 [P] [US1] Create XRoadResponseViewer React component for displaying responses in src/main/webapp/app/modules/xroad/xroad-response-viewer.tsx - **COMPLETED**
 - [x] T049 [US1] Implement status code and headers display in XRoadResponseViewer - **COMPLETED**
 - [x] T050 [US1] Implement raw response body display in XRoadResponseViewer - **COMPLETED**
 - [x] T051 [US1] Implement X-Road-Error header parsing and display in XRoadResponseViewer - **COMPLETED**
 - [x] T052 [US1] Implement 1MB response size limit check with download option in XRoadResponseViewer - **COMPLETED**
-- [x] T053 [US1] Update home.tsx to integrate XRoadRequestForm and XRoadResponseViewer as the landing page - **COMPLETED**: Created xroad.tsx as main component, integrated as index route in routes.tsx
+- [x] T053 [US1] Update home.tsx to integrate XRoadRequestForm and XRoadResponseViewer as the landing page - **COMPLETED**: Created xroad.tsx as main component (src/main/webapp/app/modules/xroad/xroad.tsx) that integrates form + response viewer, registered as index route in routes.tsx
 
 **Checkpoint**: At this point, MVP should be fully functional - users can send basic X-Road GET requests without authentication and see responses
 
@@ -215,7 +216,7 @@
 ### Implementation for User Story 6
 
 - [x] T084 [P] [US6] Create xroad-history.reducer.ts with RequestHistoryEntry interface and actions in src/main/webapp/app/shared/reducers/xroad-history.ts
-- [x] T085 [US6] Implement addRequestToHistory action that excludes PEM certificates from persisted history in xroad-history.reducer.ts
+- [x] T085 [US6] Implement addRequestToHistory action that excludes mTLS certificates (all 3 cert fields) from persisted history in xroad-history.reducer.ts
 - [x] T086 [US6] Implement selectHistoryEntry and deleteHistoryEntry actions with persistence to localStorage in xroad-history.reducer.ts
 - [x] T087 [US6] Implement localStorage persistence with 10-entry limit in xroad-history.reducer.ts
 - [x] T088 [P] [US6] Create history-list.tsx component with side drawer layout in src/main/webapp/app/modules/xroad/components/history-list.tsx
@@ -265,11 +266,11 @@
   - Removed all hardcoded English/French text from components
   - **Satisfies**: FR-048 to FR-052 (Complete i18n support)
 
-- [x] T111 **[Polish]** Fix PEM certificate null handling in form submission - **COMPLETED 2025-11-18**
+- [x] T111 **[Polish]** Fix mTLS certificate null handling in form submission - **COMPLETED 2025-11-18**
 
-  - Created `handleFormSubmit` wrapper in `xroad-request-form.tsx` that filters out null/empty PEM certificates
-  - Implementation: `data.client.pemCertificates.filter(cert => cert != null && cert.trim() !== '')`
-  - Prevents backend error when empty certificate field submitted
+  - Created `handleFormSubmit` wrapper in `xroad-request-form.tsx` that filters out null/empty mTLS certificate fields
+  - Implementation: Validates each of the three certificate fields (securityServerCert, clientCert, clientPrivateKey) before submission
+  - Prevents backend error when empty certificate fields submitted
   - **Location**: `src/main/webapp/app/modules/xroad/xroad-request-form.tsx`
 
 - [x] T112 **[Polish]** Remove footer message and clean up translation files - **COMPLETED 2025-11-18**

@@ -242,8 +242,8 @@ application:
 public WebClient.Builder xroadWebClientBuilder() {
   // WebClient builder is configured per-request with:
   // - Security Server URL from ClientDto.securityServerUrl
-  // - PEM certificates from ClientDto.pemCertificates (if provided)
-  // - Dynamic SSL context creation from PEM certificates
+  // - mTLS certificates from ClientDto.mtlsCertificates (3 separate fields: securityServerCert, clientCert, clientPrivateKey)
+  // - Dynamic SSL context creation from PEM certificates per request
 
   return WebClient.builder().defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
 }

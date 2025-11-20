@@ -42,7 +42,7 @@
 ### Session 2025-11-18
 
 - Q: For large responses (>10MB), how should the system handle display? → A: Hard limit at 1MB - reject display entirely, only show metadata (size, headers) and offer download
-- Q: How should client certificates for mTLS be configured? → A: Optional collapsible textarea fields where users paste PEM contents (not file upload); support multiple PEM entries for certificate chain; certificates are part of Client object; backend combines into bundle for mTLS
+- Q: How should client certificates for mTLS be configured? → A: Optional collapsible textarea fields where users paste PEM contents (not file upload); support three separate fields for Security Server cert, Client cert, and Client private key; certificates are part of Client object; backend combines into bundle for mTLS
 - Q: What timeout values should be used for HTTP requests to Security Server? → A: Long timeouts - 60s connect, 120s read (accommodate slow services, but longer wait on failures)
 - Q: How should failed requests be handled? → A: No retry mechanism - user must manually reconfigure and resend after failures
 - Q: Should the application maintain a history of sent requests and responses in localStorage? → A: Yes - keep history in localStorage with clear history button
@@ -102,7 +102,7 @@ As a power user testing complex X-Road services, I need to specify optional X-Ro
 
 **Acceptance Scenarios**:
 
-1. **Given** I am configuring a request, **When** I select POST or PUT as the HTTP method and enter JSON content in the request body field, **Then** the request includes the body content with the Content-Type header set appropriately
+1. **Given** I am configuring a request, **When** I select POST, PUT, PATCH, or DELETE as the HTTP method and enter JSON content in the request body field, **Then** the request includes the body content with the Content-Type header set appropriately
 2. **Given** I need to include optional X-Road headers, **When** I fill in X-Road-UserId, X-Road-Issue, or X-Road-Represented-Party fields, **Then** these headers are included in the outgoing request
 3. **Given** I need to add query parameters, **When** I enter key-value pairs for query parameters, **Then** the system properly URL-encodes them and appends them to the request URL
 4. **Given** I need to pass custom HTTP headers to the target service, **When** I add custom header entries (e.g., "Authorization", "X-Custom-Header"), **Then** these headers are included in the request along with X-Road protocol headers
@@ -163,7 +163,7 @@ As a frequent user of the X-Road REST Client, I need to view and manage my past 
 5. **Given** I have loaded a request from history, **When** I modify any field in the request form, **Then** the "This request is a history item" indicator is removed and the response is cleared
 6. **Given** I have request history stored, **When** I reload the page or return to the application, **Then** the most recent request from history is automatically loaded into the form
 7. **Given** I have accumulated many history entries, **When** I click "Clear History" in the history drawer, **Then** all history entries are deleted from localStorage
-8. **Given** PEM certificates or private keys were entered in a request, **When** that request is saved to history, **Then** the certificate data is NOT persisted to localStorage for security reasons
+8. **Given** mTLS certificates were entered in a request, **When** that request is saved to history, **Then** the certificate data is NOT persisted to localStorage for security reasons
 9. **Given** the history drawer is open and a history entry is selected, **When** I close and reopen the drawer, **Then** the same entry remains visually marked as selected
 
 ---
@@ -196,7 +196,7 @@ As a frequent user of the X-Road REST Client, I need to view and manage my past 
 
 - What happens when users need to test services requiring client certificates (mTLS)?
 
-  - System MUST provide optional collapsible textarea fields in the Client section where users can paste PEM certificate contents (certificate and private key); support multiple PEM entries to form a certificate chain; backend combines all entries into a single bundle for mTLS connection; PEM contents NOT persisted to browser storage for security
+  - System MUST provide optional collapsible textarea fields in the Client section with three separate fields: Security Server certificate, Client certificate, and Client private key; users can paste PEM certificate contents for each; backend combines all entries into a single bundle for mTLS connection; PEM contents NOT persisted to browser storage for security
 
 - What happens when testing with self-signed certificates in development/testing environments?
 
@@ -216,16 +216,16 @@ As a frequent user of the X-Road REST Client, I need to view and manage my past 
 #### Request Configuration
 
 - **FR-001**: System MUST provide input fields for X-Road client identifier components: instance, memberClass, memberCode, and subsystemCode
-- **FR-002**: System MUST provide optional collapsible textarea fields within the Client section for PEM certificate contents, supporting both drag-and-drop of .pem files and manual paste, allowing users to add multiple certificate entries for certificate chain configuration
+- **FR-002**: System MUST provide optional collapsible textarea fields within the Client section with three separate fields for mTLS certificates: Security Server certificate, Client certificate, and Client private key; each field supports both drag-and-drop of .pem files and manual paste
 - **FR-003**: System MUST provide input fields for X-Road service identifier components: instance, memberClass, memberCode, subsystemCode (optional), serviceCode, and optional path segments
-- **FR-004**: System MUST provide a dropdown or selection mechanism for HTTP method (GET, POST, PUT, DELETE)
+- **FR-004**: System MUST provide a dropdown or selection mechanism for HTTP method (GET, POST, PUT, DELETE, PATCH)
 - **FR-005**: System MUST provide an input field for the Security Server base URL (e.g., "https://securityserver.example.com")
 - **FR-006**: System MUST construct the X-Road-Client header in the format "{instance}/{memberClass}/{memberCode}[/{subsystemCode}]" from user input
 - **FR-007**: System MUST construct the request URL in the format "{baseURL}/r1/{instance}/{memberClass}/{memberCode}[/{subsystemCode}]/{serviceCode}[/{path}]\[?query]"
 - **FR-008**: System MUST provide optional input fields for X-Road-Id, X-Road-UserId, X-Road-Issue, X-Road-Security-Server, and X-Road-Represented-Party headers
 - **FR-009**: System MUST provide dynamic input fields with Add/Remove buttons for custom HTTP headers as key-value pairs
 - **FR-010**: System MUST provide dynamic input fields with Add/Remove buttons for query parameters as key-value pairs with automatic URL encoding
-- **FR-011**: System MUST provide a text area for request body content (for POST/PUT/DELETE methods)
+- **FR-011**: System MUST provide a text area for request body content (for POST/PUT/PATCH/DELETE methods)
 - **FR-012**: System MUST provide an input field for Content-Type header when request body is present
 - **FR-013**: System MUST validate that required fields (client identifier components, service identifier components, HTTP method) are populated when user attempts to submit the request, displaying validation errors for any missing required fields
 - **FR-014**: System MUST validate input characters against X-Road allowed character patterns for identifier fields using hybrid validation timing per Project Constitution v1.1.0 Section III:
@@ -243,7 +243,7 @@ As a frequent user of the X-Road REST Client, I need to view and manage my past 
 - **FR-019**: System MUST handle network errors (timeout, connection refused, DNS failure) and display clear error messages with specific error details without automatic retry - users manually resend requests after reviewing errors
 - **FR-020**: System MUST enforce a 60-second connection timeout and 120-second read timeout for requests to Security Server
 - **FR-021**: System MUST support HTTPS connections to Security Servers
-- **FR-022**: System MUST support multiple PEM certificate entries (for certificate chain/hierarchy) that the backend combines into a single bundle when establishing mTLS connections
+- **FR-022**: System MUST support three separate PEM certificate fields (Security Server cert, Client cert, Client private key) that the backend combines into a single bundle when establishing mTLS connections
 - **FR-023**: System MUST handle all HTTP status codes (2xx, 3xx, 4xx, 5xx) and display them to the user
 - **FR-024**: System MUST display an inline spinner next to the Send Request button during request execution, change button text to "Sending...", and disable the button while the request is in progress
 
@@ -264,7 +264,7 @@ As a frequent user of the X-Road REST Client, I need to view and manage my past 
 
 #### User Interface and Theme
 
-- **FR-038**: System MUST organize input form into three distinct sections: Client (client identifier fields), Service (service identifier fields), and Request Details (method, path, headers, body, etc.)
+- **FR-038**: System MUST organize input form into three distinct sections: Client (client identifier fields + optional mTLS certificates), Service (service identifier fields), and Request Details (method, path, headers, body, etc.)
 - **FR-039**: System MUST provide a "Clear" button for each input section (Client, Service, Request Details) that clears only the fields within that specific section
 - **FR-040**: System MUST use the Cosmo theme for styling instead of Superhero theme
 - **FR-041**: System MUST provide a theme selector with three options: Light Mode, Dark Mode, and System (follow OS preference)
@@ -296,7 +296,7 @@ As a frequent user of the X-Road REST Client, I need to view and manage my past 
 
 - **FR-058**: System MUST persist request and response history in browser localStorage (excluding sensitive data like credentials and certificates)
 - **FR-059**: System MUST automatically load the most recent request from history into the form fields when the request page loads, marking it as selected in the history
-- **FR-060**: System MUST NOT persist PEM certificate contents or private keys in browser storage for security reasons
+- **FR-060**: System MUST NOT persist mTLS certificate contents (Security Server cert, Client cert, Client private key) in browser storage for security reasons
 - **FR-061**: System MUST provide a "Clear History" button to delete all stored request/response history from localStorage
 - **FR-062**: System MAY limit the number of stored history entries to prevent excessive localStorage usage
 - **FR-063**: System MUST display request history in a side drawer/panel that slides in from the right when user clicks History button
@@ -309,7 +309,13 @@ As a frequent user of the X-Road REST Client, I need to view and manage my past 
 
 ### Key Entities _(include if feature involves data)_
 
-- **Request Configuration**: Represents a complete X-Road service request specification including client identifier (instance, memberClass, memberCode, subsystemCode, and optional PEM certificate contents for mTLS), service identifier (instance, memberClass, memberCode, subsystemCode, serviceCode, path), HTTP method, Security Server URL, optional X-Road headers (X-Road-Id, X-Road-UserId, X-Road-Issue, X-Road-Security-Server, X-Road-Represented-Party), custom headers, query parameters, request body content, and Content-Type. The client may include multiple PEM certificate entries that form a certificate chain for mTLS authentication.
+- **Request Configuration**: Represents a complete X-Road service request specification including:
+
+  - **Client**: subsystem identifier (instance, memberClass, memberCode, subsystemCode), Security Server URL, and optional mTLS certificates with three separate fields (Security Server cert, Client cert, Client private key)
+  - **Service**: service identifier (instance, memberClass, memberCode, subsystemCode, serviceCode, path)
+  - **Request Details**: HTTP method (GET/POST/PUT/DELETE/PATCH), path (mandatory), query parameters, custom headers, request body content, Content-Type, and optional X-Road headers (X-Road-Id, X-Road-UserId, X-Road-Issue, X-Road-Represented-Party)
+
+  The client may include three separate certificate fields that form the mTLS configuration for Security Server authentication.
 
 - **Response Data**: Represents the complete HTTP response from an X-Road service including HTTP status code, response headers (including X-Road-specific headers: X-Road-Id, X-Road-Request-Hash, X-Road-Request-Id, X-Road-Error), response body content, and metadata about content type and size
 
@@ -337,7 +343,7 @@ As a frequent user of the X-Road REST Client, I need to view and manage my past 
 - **DEP-002**: Valid X-Road member credentials (instance/memberClass/memberCode) for the client identifier
 - **DEP-003**: Knowledge of target X-Road service identifiers to test against
 - **DEP-004**: Network connectivity to the X-Road Security Server
-- **DEP-005**: For mTLS scenarios: Valid client certificate and private key in PEM format issued by appropriate certificate authority, available to paste into textarea fields (may include intermediate certificates for chain)
+- **DEP-005**: For mTLS scenarios: Valid Security Server certificate, client certificate, and client private key in PEM format issued by appropriate certificate authority, available to paste into textarea fields
 
 ### Assumptions
 

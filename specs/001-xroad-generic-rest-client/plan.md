@@ -132,23 +132,29 @@ specs/001-xroad-generic-rest-client/
 src/main/java/com/nortal/xroad/restapi/client/
 ├── XRoadExampleRestapiClientApp.java
 ├── config/
-│   ├── XRoadSecurityServerProperties.java  # NEW: X-Road config properties
-│   ├── XRoadWebClientConfiguration.java    # NEW: WebClient with mTLS
 │   ├── ApplicationProperties.java
 │   └── WebConfigurer.java
 ├── web/
 │   └── rest/
-│       ├── XRoadProxyResource.java         # NEW: Proxy controller
-│       ├── dto/
-│       │   ├── XRoadRequestDTO.java        # NEW: Request DTO
-│       │   ├── XRoadResponseDTO.java       # NEW: Response DTO
-│       │   └── XRoadErrorDTO.java          # NEW: Error DTO
+│       ├── XRoadProxyResource.java         # Proxy controller
 │       └── errors/
-│           └── XRoadErrorHandler.java      # NEW: X-Road error handling
+│           └── XRoadErrorHandler.java      # X-Road error handling
 ├── service/
-│   └── xroad/
-│       ├── XRoadClientService.java         # NEW: X-Road HTTP client service
-│       └── XRoadHeaderBuilder.java         # NEW: Header construction utility
+│   ├── dto/                                # DTOs (Java Records)
+│   │   ├── ClientDto.java                  # Client with subsystem + URL + mtlsCertificates
+│   │   ├── MTlsCertificatesDto.java        # Three separate fields: securityServerCert, clientCert, clientPrivateKey
+│   │   ├── RequestDetailsDto.java          # 10 fields: method, path, queryParams, headers, body, contentType, + 4 xroad headers
+│   │   ├── ServiceIdDto.java               # Service identifier
+│   │   ├── SubsystemIdDto.java             # Subsystem identifier (instance, memberClass, memberCode, subsystemCode)
+│   │   ├── XRoadErrorDTO.java              # Error DTO
+│   │   ├── XRoadRequestDTO.java            # Request DTO (client, service, request)
+│   │   └── XRoadResponseDTO.java           # Response DTO
+│   ├── mapper/
+│   │   └── XRoadResponseMapper.java        # MapStruct mapper
+│   ├── util/
+│   │   ├── MTLSContextBuilder.java         # SSL context from PEM certificates
+│   │   └── XRoadHeaderBuilder.java         # X-Road header construction
+│   └── XRoadProxyService.java              # Main service with WebClient
 
 **IMPORTANT**: Spring Security has been completely removed from the application. There is no `SecurityConfiguration.java`, no `security/` package, no `AccountResource.java`, and no authentication/authorization logic. All endpoints are public.
 
@@ -172,33 +178,27 @@ src/main/webapp/app/
 ├── routes.tsx                              # UPDATED: Remove login/account routes
 ├── config/
 │   ├── store.ts                            # UPDATED: Add theme & history reducers
-│   ├── theme-config.ts                     # NEW: Theme utilities
+│   ├── theme-context.tsx                   # Theme context provider with light/dark/system modes
 │   └── axios-interceptor.ts                # UPDATED: Remove auth interceptor
 ├── modules/
 │   ├── home/
-│   │   └── home.tsx                        # UPDATED: Landing page - renders X-Road client interface (no separate /xroad route)
-│   └── xroad/                              # NEW: X-Road module (components used by home.tsx)
-│       ├── xroad-request-form.tsx          # NEW: Request configuration form
-│       ├── xroad-response-viewer.tsx       # NEW: Response display component
-│       ├── components/
-│       │   ├── request-builder/            # NEW: Form components
-│       │   │   ├── service-identifier-inputs.tsx
-│       │   │   ├── request-config-inputs.tsx
-│       │   │   └── optional-headers-inputs.tsx
-│       │   ├── response-viewer/            # NEW: Response components
-│       │   │   ├── response-header-view.tsx
-│       │   │   ├── response-raw-view.tsx
-│       │   │   ├── response-json-view.tsx
-│       │   │   └── response-tree-view.tsx
-│       │   └── request-history/            # NEW: History sidebar
-│       │       ├── history-list.tsx
-│       │       └── history-entry.tsx
-│       ├── models/
-│       │   ├── xroad-form-data.model.ts    # NEW: Form data interface
-│       │   ├── xroad-response.model.ts     # NEW: Response interface
-│       │   └── response-view.model.ts      # NEW: View mode enum
-│       └── services/
-│           └── xroad-api.service.ts        # NEW: API service (axios calls)
+│   │   └── home.tsx                        # UPDATED: Landing page - renders X-Road client interface
+│   └── xroad/                              # X-Road module
+│       ├── xroad.tsx                       # Main container component (integrates form + response viewer)
+│       ├── xroad-request-form.tsx          # Request configuration form
+│       └── xroad-response-viewer.tsx       # Response display component
+├── shared/
+│   ├── model/                              # TypeScript interfaces (mirror Java DTOs)
+│   │   ├── client.model.ts                 # Client interface (subsystem + URL + mtlsCertificates)
+│   │   ├── mtls-certificates.model.ts      # MTlsCertificates interface (3 separate cert fields)
+│   │   ├── request-details.model.ts        # RequestDetails interface (10 fields including method, path, 4 xroad headers)
+│   │   ├── service-id.model.ts             # ServiceId interface
+│   │   ├── subsystem-id.model.ts           # SubsystemId interface
+│   │   ├── xroad-error.model.ts            # XRoadError interface
+│   │   ├── xroad-request.model.ts          # XRoadRequest interface (client, service, request)
+│   │   └── xroad-response.model.ts         # XRoadResponse interface
+│   ├── services/
+│   │   └── xroad-proxy.service.ts          # Axios service for API calls
 ├── shared/
 │   ├── layout/
 │   │   └── header/
@@ -291,18 +291,44 @@ src/main/resources/config/
 
 - `POST /api/xroad/execute` - Execute X-Road request
 
-**Request**:
+**Request** (XRoadRequestDTO structure):
 
 ```json
 {
-  "instanceId": "DEV",
-  "memberClass": "COM",
-  "memberCode": "1234567-8",
-  "subsystemCode": "TestClient",
-  "serviceCode": "getInfo",
-  "method": "GET",
-  "queryParams": { "format": "json" },
-  "headers": { "Accept": "application/json" }
+  "client": {
+    "subsystem": {
+      "instance": "DEV",
+      "memberClass": "COM",
+      "memberCode": "1234567-8",
+      "subsystemCode": "TestClient"
+    },
+    "securityServerUrl": "https://securityserver.example.com",
+    "mtlsCertificates": {
+      "securityServerCert": "-----BEGIN CERTIFICATE-----\n...",
+      "clientCert": "-----BEGIN CERTIFICATE-----\n...",
+      "clientPrivateKey": "-----BEGIN PRIVATE KEY-----\n..."
+    }
+  },
+  "service": {
+    "instance": "DEV",
+    "memberClass": "COM",
+    "memberCode": "1234567-8",
+    "subsystemCode": "TestService",
+    "serviceCode": "getInfo",
+    "path": "/users/123"
+  },
+  "request": {
+    "method": "GET",
+    "path": "/users/123",
+    "queryParams": { "format": "json" },
+    "headers": { "Accept": "application/json" },
+    "body": null,
+    "contentType": null,
+    "xroadId": null,
+    "xroadUserId": null,
+    "xroadIssue": null,
+    "xroadRepresentedParty": null
+  }
 }
 ```
 

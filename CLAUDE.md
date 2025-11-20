@@ -190,11 +190,14 @@ src/main/java/com/nortal/xroad/restapi/client/
 └── aop/logging/                        # Aspect-oriented logging
 ```
 
-**X-Road specific code should go in:**
+**X-Road specific code locations:**
 
-- `com.nortal.xroad.restapi.client.service.xroad/` - X-Road client services (HTTP client, request builder)
+- `com.nortal.xroad.restapi.client.service/` - X-Road proxy service (HTTP client, mTLS, request handling)
+- `com.nortal.xroad.restapi.client.service.dto/` - Data transfer objects for X-Road requests/responses
+- `com.nortal.xroad.restapi.client.service.util/` - SSL/TLS utilities (MTLSContextBuilder)
+- `com.nortal.xroad.restapi.client.service.mapper/` - MapStruct mappers for DTO conversions
 - `com.nortal.xroad.restapi.client.web.rest/` - X-Road proxy REST endpoint for frontend
-- `com.nortal.xroad.restapi.client.config/` - mTLS/SSL configuration for Security Server connections
+- `com.nortal.xroad.restapi.client.config/` - Application configuration
 
 ### Frontend Structure
 
@@ -215,6 +218,7 @@ src/main/webapp/app/
 │       └── theme-switcher/       # Light/dark/system theme selector
 ├── shared/                       # Shared components & utilities
 │   ├── layout/                   # Header, menus (minimal - no auth menus)
+│   ├── model/                    # TypeScript interfaces (XRoadRequest, Client, ServiceId, etc.)
 │   ├── reducers/                 # Redux slices (theme, locale, request state)
 │   ├── error/                    # Error boundary & 404 page
 │   └── util/                     # Utility functions (URL encoding, header builders)
@@ -275,30 +279,43 @@ This application provides a **single-page interface** for testing any X-Road ser
 
 1. **HTTP Proxy Endpoint** (`web/rest/XRoadProxyResource.java`):
 
-   - Accept generic request configuration from frontend (headers, body, method, URL)
+   - Accept generic request configuration from frontend (XRoadRequestDTO with client, service, and request details)
+   - Validate request data using Jakarta Bean Validation
+   - Delegate to XRoadProxyService for processing
+   - Return full HTTP response (status, headers, body) to frontend as XRoadResponseDTO
+
+2. **X-Road Proxy Service** (`service/XRoadProxyService.java`):
+
    - Build X-Road compliant HTTP requests with proper headers (X-Road-Client, X-Road-Service, etc.)
-   - Forward requests to configured X-Road Security Server
-   - Return full HTTP response (status, headers, body) to frontend
-
-2. **mTLS Configuration** (`config/XRoadClientConfiguration.java`):
-
-   - Configure SSL context with client certificates for Security Server connections
-   - Support keystore/truststore configuration via `application.yml`
-   - Handle certificate-based authentication transparently
-
-3. **Request Builder Service** (`service/xroad/XRoadRequestBuilder.java`):
    - Construct X-Road-compliant URLs: `/r1/{serviceId}/{path}?{query}`
-   - Build required headers from user input (X-Road-Client from instance/class/code/subsystem)
-   - Validate identifier character sets per X-Road protocol
-   - URL-encode paths and query parameters per RFC 3986
+   - Create per-request mTLS SSL context if certificates are provided (MTlsCertificatesDto)
+   - Forward requests to Security Server using Netty HttpClient
+   - Return full HTTP response with status, headers, and body
+
+3. **mTLS Support** (`service/util/MTLSContextBuilder.java`):
+
+   - Build per-request SSL context from three separate PEM certificates (security server cert, client cert, client private key)
+   - Parse PEM-encoded certificates and keys from strings
+   - Support self-signed certificates and development environments
+   - Disable hostname verification for testing/development scenarios
+
+4. **Data Transfer Objects** (`service/dto/`):
+   - **XRoadRequestDTO**: Top-level request (client, service, request details)
+   - **ClientDto**: Client identifier with subsystem and security server URL, optional MTlsCertificatesDto
+   - **MTlsCertificatesDto**: Three separate certificate fields (securityServerCert, clientCert, clientPrivateKey)
+   - **ServiceIdDto**: Service identifier (instance, class, code, subsystem, service code)
+   - **RequestDetailsDto**: HTTP method (GET/POST/PUT/DELETE/PATCH), path, query params, headers, body, X-Road optional headers
 
 ### Frontend Responsibilities
 
 1. **Request Configuration Form** (`modules/xroad/request-builder/`):
 
-   - Input fields for all X-Road identifier components
-   - HTTP method selector (GET/POST/PUT/DELETE)
+   - Input fields for all X-Road identifier components (client subsystem, service ID)
+   - HTTP method selector (GET/POST/PUT/DELETE/PATCH)
+   - Security Server URL input
+   - Optional mTLS certificates (three separate textarea fields)
    - Optional headers, query params, request body
+   - Optional X-Road protocol headers (X-Road-Id, X-Road-UserId, X-Road-Issue, X-Road-RepresentedParty)
    - Validation of required fields and character sets
 
 2. **Response Viewer** (`modules/xroad/response-viewer/`):
@@ -317,18 +334,25 @@ This application provides a **single-page interface** for testing any X-Road ser
 
 ### Configuration
 
-Certificate and Security Server URLs should be externalized via `ApplicationProperties`:
+Request timeout can be configured via `ApplicationProperties`:
 
 ```yaml
 # application.yml
 application:
   xroad:
-    security-server-url: https://securityserver.example.com
-    client-certificate:
-      keystore-path: /path/to/keystore.p12
-      keystore-password: ${KEYSTORE_PASSWORD}
-      key-alias: client-cert
+    timeout:
+      read-ms: 120000 # 2 minutes default for X-Road requests
 ```
+
+**Note**: Unlike traditional X-Road clients, this application does NOT use pre-configured keystore/truststore. Instead:
+
+- Security Server URL is provided per-request through the UI
+- mTLS certificates (if needed) are provided per-request as PEM strings through three separate fields:
+  - `securityServerCert`: Security Server's public certificate (for trust verification)
+  - `clientCert`: Client's public certificate (for mTLS authentication)
+  - `clientPrivateKey`: Client's private key (for mTLS authentication)
+- SSL context is built dynamically per-request using `MTLSContextBuilder`
+- Self-signed certificates are supported for development/testing scenarios
 
 ## Docker Support
 
@@ -385,8 +409,10 @@ jhipster upgrade
 
 ## Recent Changes
 
-- 001-xroad-generic-rest-client: Added Java 17+ (Spring Boot 3.x), TypeScript 5.8.3 (React 18.3.1)
-- 001-xroad-generic-rest-client: Added [if applicable, e.g., PostgreSQL, CoreData, files or N/A]
+- 001-xroad-generic-rest-client: Initial implementation with Java 17+ (Spring Boot 3.x), TypeScript 5.8.3 (React 18.3.1)
+- 001-xroad-generic-rest-client: No database - stateless API client with per-request mTLS certificate support
+- 001-xroad-generic-rest-client: Added PATCH HTTP method support
+- 001-xroad-generic-rest-client: Three separate mTLS certificate fields (security server cert, client cert, client private key)
 
 ## Active Technologies
 

@@ -45,15 +45,15 @@ java -jar build/libs/*.jar
 
 1. **Enter Client Details**: Instance, member class/code, subsystem
 2. **Enter Service Details**: Service identifier and path
-3. **Configure Request**: Method (GET/POST/PUT/DELETE), headers, body
-4. **Optional mTLS**: Paste PEM certificates for secure connections
+3. **Configure Request**: Method (GET/POST/PUT/DELETE/PATCH), headers, body
+4. **Optional mTLS**: Paste security server cert, client cert, and private key for secure connections
 5. **Send & View**: Click "Send Request" to see formatted response
 
 ## Key Features
 
 - **X-Road REST Protocol**: Constructs proper `/r1/{serviceId}/{path}` URLs
 - **Response Formats**: Toggle between raw text and formatted JSON
-- **mTLS Support**: Paste security server cert, client cert, and private key
+- **mTLS Support**: Three separate certificate fields (security server cert, client cert, client private key)
 - **Self-Signed Certs**: Works with development certificates and Docker containers
 - **Response Display**: Syntax highlighting, expandable JSON, header inspection
 - **Theme Support**: Cosmo theme with light/dark/system modes

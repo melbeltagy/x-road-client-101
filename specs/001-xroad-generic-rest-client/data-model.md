@@ -1,6 +1,6 @@
 # Data Model: X-Road Generic REST Client
 
-**Date**: 2025-11-18
+**Date**: 2025-11-20
 **Branch**: 001-xroad-generic-rest-client
 **Purpose**: Define entities, DTOs, and validation rules
 
@@ -16,6 +16,7 @@
   - [1. Backend DTOs (Java)](#1-backend-dtos-java)
     - [1.1 SubsystemIdDto](#11-subsystemiddto)
     - [1.2 ClientDto](#12-clientdto)
+    - [1.2.1 MTlsCertificatesDto](#121-mtlscertificatesdto)
     - [1.3 ServiceIdDto](#13-serviceiddto)
     - [1.4 RequestDetailsDto](#14-requestdetailsdto)
     - [1.5 XRoadRequestDTO](#15-xroadrequestdto)
@@ -24,13 +25,13 @@
   - [2. Frontend TypeScript Interfaces](#2-frontend-typescript-interfaces)
     - [2.1 SubsystemId](#21-subsystemid)
     - [2.2 Client](#22-client)
+    - [2.2.1 MTlsCertificates](#221-mtlscertificates)
     - [2.3 ServiceId](#23-serviceid)
     - [2.4 RequestDetails](#24-requestdetails)
     - [2.5 XRoadRequest](#25-xroadrequest)
     - [2.6 XRoadResponse](#26-xroadresponse)
     - [2.7 RequestHistoryEntry](#27-requesthistoryentry)
     - [2.8 ThemeState](#28-themestate)
-    - [2.9 ResponseViewMode](#29-responseviewmode)
   - [3. Validation Rules](#3-validation-rules)
     - [3.1 Backend Validation (Bean Validation)](#31-backend-validation-bean-validation)
     - [3.2 Frontend Validation (React Hook Form)](#32-frontend-validation-react-hook-form)
@@ -92,15 +93,12 @@ public record SubsystemIdDto(
   @NotBlank(message = "Instance ID is required")
   @Pattern(regexp = "^[A-Za-z0-9-]{2,}$", message = "Must be alphanumeric or hyphen (min 2 chars)")
   String instanceId,
-
   @NotBlank(message = "Member class is required")
   @Pattern(regexp = "^[A-Za-z0-9-]+$", message = "Must be alphanumeric or hyphen")
   String memberClass,
-
   @NotBlank(message = "Member code is required")
   @Pattern(regexp = "^[A-Za-z0-9-]+$", message = "Must be alphanumeric or hyphen")
   String memberCode,
-
   @NotBlank(message = "Subsystem code is required")
   @Pattern(regexp = "^[A-Za-z0-9-]+$", message = "Must be alphanumeric or hyphen")
   String subsystemCode
@@ -118,11 +116,11 @@ public record SubsystemIdDto(
 
 **Fields**:
 
-| Field               | Type           | Required | Validation                                                                                           | Description                                                                               |
-| ------------------- | -------------- | -------- | ---------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
-| `subsystem`         | SubsystemIdDto | Yes      | -                                                                                                    | Client subsystem identifier                                                               |
-| `securityServerUrl` | String         | Yes      | Custom validator using Java URI class (RFC 3986): validates HTTP/HTTPS protocol, rejects underscores | Security Server URL (http or https with domain, IP address, or localhost)                 |
-| `pemCertificates`   | List<String>   | No       | -                                                                                                    | Optional list of PEM-formatted certificate contents for mTLS (supports certificate chain) |
+| Field               | Type                | Required | Validation                                                                                           | Description                                                               |
+| ------------------- | ------------------- | -------- | ---------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| `subsystem`         | SubsystemIdDto      | Yes      | -                                                                                                    | Client subsystem identifier                                               |
+| `securityServerUrl` | String              | Yes      | Custom validator using Java URI class (RFC 3986): validates HTTP/HTTPS protocol, rejects underscores | Security Server URL (http or https with domain, IP address, or localhost) |
+| `mtlsCertificates`  | MTlsCertificatesDto | No       | -                                                                                                    | Optional mTLS certificates for Security Server connection                 |
 
 **Java Implementation**:
 
@@ -132,23 +130,46 @@ package com.nortal.xroad.restapi.client.service.dto;
 import com.nortal.xroad.restapi.client.service.dto.validation.ValidSecurityServerUrl;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
-import java.util.Collections;
-import java.util.List;
 
 public record ClientDto(
   @NotNull(message = "Client subsystem is required") @Valid SubsystemIdDto subsystem,
-
   @NotBlank(message = "Security Server URL is required") @ValidSecurityServerUrl String securityServerUrl,
+  @Valid MTlsCertificatesDto mtlsCertificates // Optional mTLS certificates for Security Server connection
+) {}
 
-  List<String> pemCertificates // Optional PEM certificates for mTLS (certificate chain support)
-) {
-  // Compact constructor for default values
-  public ClientDto {
-    if (pemCertificates == null) {
-      pemCertificates = Collections.emptyList();
-    }
-  }
-}
+```
+
+---
+
+### 1.2.1 MTlsCertificatesDto
+
+**Package**: `com.nortal.xroad.restapi.client.service.dto`
+
+**Purpose**: Container for mTLS certificates required for X-Road Security Server connection
+
+**Fields**:
+
+| Field                | Type   | Required | Description                                             |
+| -------------------- | ------ | -------- | ------------------------------------------------------- |
+| `securityServerCert` | String | No       | Security Server's public certificate (for verification) |
+| `clientCert`         | String | No       | Client's public certificate                             |
+| `clientPrivateKey`   | String | No       | Client's private key                                    |
+
+**Java Implementation**:
+
+```java
+package com.nortal.xroad.restapi.client.service.dto;
+
+/**
+ * DTO for mTLS certificates required for X-Road Security Server connection.
+ * Contains separate fields for each certificate type.
+ * All fields are optional - if provided, all three must be present for mTLS to work.
+ */
+public record MTlsCertificatesDto(
+  String securityServerCert, // Security Server's public certificate (for verification)
+  String clientCert, // Client's public certificate
+  String clientPrivateKey // Client's private key
+) {}
 
 ```
 
@@ -177,17 +198,13 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 
 public record ServiceIdDto(
-    @NotNull(message = "Service subsystem is required")
-    @Valid
-    SubsystemIdDto subsystem,
-
-    @NotBlank(message = "Service code is required")
-    @Pattern(regexp = "^[A-Za-z0-9_-]+$", message = "Must be alphanumeric, underscore, or hyphen")
-    String serviceCode,
-
-    @Pattern(regexp = "^v?[0-9]+(\.[0-9]+)*$", message = "Invalid version format (e.g., v1, 1.2.3)")
-    String serviceVersion
+  @NotNull(message = "Service subsystem is required") @Valid SubsystemIdDto subsystem,
+  @NotBlank(message = "Service code is required")
+  @Pattern(regexp = "^[A-Za-z0-9_-]+$", message = "Must be alphanumeric, underscore, or hyphen")
+  String serviceCode,
+  @Pattern(regexp = "^v?[0-9]+(\\.[0-9]+)*$", message = "Invalid version format (e.g., v1, 1.2.3)") String serviceVersion
 ) {}
+
 ```
 
 ---
@@ -196,17 +213,22 @@ public record ServiceIdDto(
 
 **Package**: `com.nortal.xroad.restapi.client.service.dto`
 
-**Purpose**: HTTP request configuration
+**Purpose**: HTTP request configuration including X-Road specific headers
 
 **Fields**:
 
-| Field         | Type                | Required | Validation                    | Description                          |
-| ------------- | ------------------- | -------- | ----------------------------- | ------------------------------------ |
-| `method`      | HttpMethod          | Yes      | -                             | HTTP method (GET, POST, PUT, DELETE) |
-| `path`        | String              | Yes      | Pattern: `^/[A-Za-z0-9/_-]*$` | URI path starting with /             |
-| `queryParams` | Map<String, String> | No       | -                             | URL query parameters                 |
-| `headers`     | Map<String, String> | No       | -                             | Custom HTTP headers                  |
-| `body`        | String              | No       | -                             | Request body (JSON, XML, etc.)       |
+| Field                   | Type                | Required | Validation                    | Description                                 |
+| ----------------------- | ------------------- | -------- | ----------------------------- | ------------------------------------------- |
+| `method`                | HttpMethod          | Yes      | -                             | HTTP method (GET, POST, PUT, DELETE, PATCH) |
+| `path`                  | String              | Yes      | Pattern: `^/[A-Za-z0-9/_-]*$` | URI path starting with /                    |
+| `queryParams`           | Map<String, String> | No       | -                             | URL query parameters                        |
+| `headers`               | Map<String, String> | No       | -                             | Custom HTTP headers                         |
+| `body`                  | String              | No       | -                             | Request body (JSON, XML, etc.)              |
+| `contentType`           | String              | No       | -                             | Content-Type header value                   |
+| `xroadId`               | String              | No       | -                             | X-Road-Id header value                      |
+| `xroadUserId`           | String              | No       | -                             | X-Road-UserId header value                  |
+| `xroadIssue`            | String              | No       | -                             | X-Road-Issue header value                   |
+| `xroadRepresentedParty` | String              | No       | -                             | X-Road-Represented-Party header value       |
 
 **Java Implementation**:
 
@@ -222,16 +244,17 @@ import org.springframework.http.HttpMethod;
 
 public record RequestDetailsDto(
   @NotNull(message = "HTTP method is required") HttpMethod method,
-
   @NotBlank(message = "Path is required")
   @Pattern(regexp = "^/[A-Za-z0-9/_-]*$", message = "Must be valid URI path starting with /")
   String path,
-
   Map<String, String> queryParams,
-
   Map<String, String> headers,
-
-  String body
+  String body,
+  String contentType,
+  String xroadId,
+  String xroadUserId,
+  String xroadIssue,
+  String xroadRepresentedParty
 ) {
   // Compact constructor for default values
   public RequestDetailsDto {
@@ -277,9 +300,7 @@ import jakarta.validation.constraints.NotNull;
 
 public record XRoadRequestDTO(
   @NotNull(message = "Client identifier is required") @Valid ClientDto client,
-
   @NotNull(message = "Service identifier is required") @Valid ServiceIdDto service,
-
   @NotNull(message = "Request details are required") @Valid RequestDetailsDto request
 ) {}
 
@@ -371,7 +392,7 @@ public record XRoadErrorDTO(String type, String message, String detail, String f
 
 ### 2.1 SubsystemId
 
-**File**: `src/main/webapp/app/modules/xroad/models/subsystem-id.model.ts`
+**File**: `src/main/webapp/app/shared/model/subsystem-id.model.ts`
 
 **Purpose**: Reusable X-Road subsystem identifier (mirrors Java SubsystemIdDto)
 
@@ -390,7 +411,7 @@ export interface SubsystemId {
 
 ### 2.2 Client
 
-**File**: `src/main/webapp/app/modules/xroad/models/client.model.ts`
+**File**: `src/main/webapp/app/shared/model/client.model.ts`
 
 **Purpose**: Client identifier including Security Server URL and optional mTLS certificates (mirrors Java ClientDto)
 
@@ -398,11 +419,53 @@ export interface SubsystemId {
 
 ```typescript
 import { SubsystemId } from './subsystem-id.model';
+import { MTlsCertificates } from './mtls-certificates.model';
 
 export interface Client {
   subsystem: SubsystemId;
-  securityServerUrl: string; // Security Server URL (http or https protocol only)
-  pemCertificates?: string[]; // Optional array of PEM certificate contents for mTLS chain
+  securityServerUrl: string; // http or https protocol only
+  mtlsCertificates?: MTlsCertificates; // Optional mTLS certificates for Security Server connection
+}
+```
+
+---
+
+### 2.2.1 MTlsCertificates
+
+**File**: `src/main/webapp/app/shared/model/mtls-certificates.model.ts`
+
+**Purpose**: Container for mTLS certificates (mirrors Java MTlsCertificatesDto)
+
+**Interface**:
+
+```typescript
+/**
+ * mTLS certificates for X-Road Security Server connection.
+ * Contains separate fields for each certificate type.
+ */
+export interface MTlsCertificates {
+  securityServerCert?: string; // Security Server's public certificate (for verification)
+  clientCert?: string; // Client's public certificate
+  clientPrivateKey?: string; // Client's private key
+}
+
+/**
+ * Certificate type enum for UI display
+ */
+export enum CertificateType {
+  SECURITY_SERVER = 'securityServerCert',
+  CLIENT_CERT = 'clientCert',
+  CLIENT_KEY = 'clientPrivateKey',
+}
+
+/**
+ * Certificate metadata for UI display
+ */
+export interface CertificateMetadata {
+  type: CertificateType;
+  label: string;
+  description: string;
+  required: boolean;
 }
 ```
 
@@ -410,7 +473,7 @@ export interface Client {
 
 ### 2.3 ServiceId
 
-**File**: `src/main/webapp/app/modules/xroad/models/service-id.model.ts`
+**File**: `src/main/webapp/app/shared/model/service-id.model.ts`
 
 **Purpose**: Service identifier (mirrors Java ServiceIdDto)
 
@@ -422,7 +485,7 @@ import { SubsystemId } from './subsystem-id.model';
 export interface ServiceId {
   subsystem: SubsystemId;
   serviceCode: string; // e.g., "getInfo"
-  serviceVersion?: string; // e.g., "v1" (optional)
+  serviceVersion?: string; // e.g., "v1", "1.2.3"
 }
 ```
 
@@ -430,19 +493,24 @@ export interface ServiceId {
 
 ### 2.4 RequestDetails
 
-**File**: `src/main/webapp/app/modules/xroad/models/request-details.model.ts`
+**File**: `src/main/webapp/app/shared/model/request-details.model.ts`
 
-**Purpose**: HTTP request configuration (mirrors Java RequestDetailsDto)
+**Purpose**: HTTP request configuration including X-Road specific headers (mirrors Java RequestDetailsDto)
 
 **Interface**:
 
 ```typescript
 export interface RequestDetails {
-  method: 'GET' | 'POST' | 'PUT' | 'DELETE';
-  path: string; // Required path (can be empty string)
-  queryParams: Record<string, string>;
-  headers: Record<string, string>;
+  method: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+  path: string;
+  queryParams?: Record<string, string>;
+  headers?: Record<string, string>;
   body?: string;
+  contentType?: string;
+  xroadId?: string;
+  xroadUserId?: string;
+  xroadIssue?: string;
+  xroadRepresentedParty?: string;
 }
 ```
 
@@ -450,7 +518,7 @@ export interface RequestDetails {
 
 ### 2.5 XRoadRequest
 
-**File**: `src/main/webapp/app/modules/xroad/models/xroad-request.model.ts`
+**File**: `src/main/webapp/app/shared/model/xroad-request.model.ts`
 
 **Purpose**: Top-level X-Road request (mirrors Java XRoadRequestDTO)
 
@@ -466,53 +534,27 @@ export interface XRoadRequest {
   service: ServiceId;
   request: RequestDetails;
 }
-
-export const DEFAULT_XROAD_REQUEST: XRoadRequest = {
-  client: {
-    subsystem: {
-      instanceId: 'DEV',
-      memberClass: 'COM',
-      memberCode: '',
-      subsystemCode: '',
-    },
-    securityServerUrl: 'https://localhost:8443', // Default Security Server URL
-    pemCertificates: [], // Empty array for optional mTLS certificates
-  },
-  service: {
-    subsystem: {
-      instanceId: 'DEV',
-      memberClass: 'GOV',
-      memberCode: '',
-      subsystemCode: '',
-    },
-    serviceCode: '',
-    serviceVersion: '',
-  },
-  request: {
-    method: 'GET',
-    path: '/', // Default root path
-    queryParams: {},
-    headers: {},
-    body: '',
-  },
-};
 ```
+
+**Note**: Default values for form initialization are defined in the React component code (`xroad-request-form.tsx`), not in the model file.
 
 ---
 
 ### 2.6 XRoadResponse
 
-**File**: `src/main/webapp/app/modules/xroad/models/xroad-response.model.ts`
+**File**: `src/main/webapp/app/shared/model/xroad-response.model.ts`
 
 **Purpose**: Response data from backend
 
 **Interface**:
 
 ```typescript
+import { XRoadError } from './xroad-error.model';
+
 export interface XRoadResponse {
   statusCode: number;
   statusText: string;
-  headers: Record<string, string[]>;
+  headers?: Record<string, string[]>;
   body?: string;
   contentType?: string;
   contentLength?: number;
@@ -520,11 +562,11 @@ export interface XRoadResponse {
   xroadRequestHash?: string;
   xroadRequestId?: string;
   xroadError?: XRoadError;
-  timestamp: string; // ISO 8601 datetime
+  timestamp: string; // ISO 8601 timestamp
 }
 
 export interface XRoadError {
-  type: string;
+  type: string; // e.g., "Client.InvalidRequest", "Server.ServerProxy.NetworkError"
   message: string;
   detail?: string;
   faultCode?: string;
@@ -543,8 +585,8 @@ export interface XRoadError {
 **Interface**:
 
 ```typescript
-import { XRoadRequest } from '../modules/xroad/models/xroad-request.model';
-import { XRoadResponse } from '../modules/xroad/models/xroad-response.model';
+import { XRoadRequest } from '../shared/model/xroad-request.model';
+import { XRoadResponse } from '../shared/model/xroad-response.model';
 
 export interface RequestHistoryEntry {
   id: string; // Unique ID (nanoid)
@@ -575,23 +617,6 @@ export type ThemeMode = 'light' | 'dark' | 'system';
 
 export interface ThemeState {
   mode: ThemeMode;
-}
-```
-
----
-
-### 2.9 ResponseViewMode
-
-**File**: `src/main/webapp/app/modules/xroad/models/response-view.model.ts`
-
-**Purpose**: Response display mode
-
-**Enum**:
-
-```typescript
-export enum ResponseViewMode {
-  RAW = 'raw', // Plain text display
-  JSON = 'json', // Formatted JSON with syntax highlighting
 }
 ```
 
@@ -714,7 +739,11 @@ pattern: {
       "subsystemCode": "TestClient"
     },
     "securityServerUrl": "https://localhost:8443",
-    "pemCertificates": []
+    "mtlsCertificates": {
+      "securityServerCert": "-----BEGIN CERTIFICATE-----\n...",
+      "clientCert": "-----BEGIN CERTIFICATE-----\n...",
+      "clientPrivateKey": "-----BEGIN PRIVATE KEY-----\n..."
+    }
   },
   "service": {
     "subsystem": {
@@ -730,7 +759,10 @@ pattern: {
     "method": "GET",
     "path": "/users/123",
     "queryParams": { "format": "json" },
-    "headers": { "Accept": "application/json" }
+    "headers": { "Accept": "application/json" },
+    "contentType": "application/json",
+    "xroadId": "unique-transaction-id",
+    "xroadUserId": "user123"
   }
 }
 ```
@@ -751,7 +783,7 @@ pattern: {
     "id": "abc123xyz",
     "timestamp": 1700000000000,
     "request": {
-      /* XRoadRequest with nested client/service/request */
+      /* XRoadRequest with nested client/service/request - mtlsCertificates excluded for security */
     },
     "response": {
       /* XRoadResponse */
@@ -762,6 +794,8 @@ pattern: {
 ```
 
 **Max Size**: 10 entries (FIFO, oldest removed first)
+
+**Security Note**: `mtlsCertificates` are NOT persisted in localStorage for security reasons.
 
 ---
 
@@ -827,7 +861,13 @@ XRoadRequest (1) ──combined with──> (1) XRoadResponse
                                             ↓
                               (stored as) RequestHistoryEntry
                                             ↓
-                      (persisted in) localStorage (excluding pemCertificates)
+                      (persisted in) localStorage (excluding mtlsCertificates)
+
+Client (1) ──contains──> (0..1) MTlsCertificates
+   ↓                              ↓
+   mtlsCertificates          securityServerCert
+   (optional)                clientCert
+                             clientPrivateKey
 ```
 
 ---
@@ -955,7 +995,7 @@ public class XRoadClientService {
     }
 
     public Mono<XRoadResponseDTO> executeRequest(XRoadRequestDTO request) {
-        // Build WebClient with mTLS configuration from request.client.pemCertificates
+        // Build WebClient with mTLS configuration from request.client.mtlsCertificates
         WebClient client = configureWebClient(request);
 
         // Construct X-Road URL and headers
@@ -990,6 +1030,7 @@ public class XRoadClientService {
         XRoadRequestDTO request
     ) {
         // Add X-Road-Client header from request.client.subsystem
+        // Add optional X-Road-Id, X-Road-UserId, etc. from request.request
         // Implementation details...
     }
 }
@@ -1011,18 +1052,18 @@ public class XRoadClientService {
 ### Request Flow
 
 ```
-React Form (nested structure: client.subsystem.*, client.securityServerUrl, service.subsystem.*, request.*)
+React Form (nested structure: client.subsystem.*, client.securityServerUrl, client.mtlsCertificates, service.subsystem.*, request.*)
   ↓ (React Hook Form onSubmit)
 Frontend Service (executeXRoadRequest)
   ↓ (Axios POST /api/xroad/execute with nested XRoadRequest)
 Spring Controller (XRoadProxyResource)
-  ↓ (validate XRoadRequestDTO with @Valid on nested ClientDto, ServiceIdDto, RequestDetailsDto)
+  ↓ (validate XRoadRequestDTO with @Valid on nested ClientDto, ServiceIdDto, RequestDetailsDto, MTlsCertificatesDto)
 Spring Service (XRoadClientService)
   ↓ (extract client.subsystem for X-Road-Client header)
   ↓ (extract client.securityServerUrl for Security Server connection)
-  ↓ (extract client.pemCertificates for mTLS configuration if present)
+  ↓ (extract client.mtlsCertificates for mTLS configuration if present)
   ↓ (extract service.subsystem + serviceCode for URL construction)
-  ↓ (extract request.method, path, queryParams, headers, body)
+  ↓ (extract request.method, path, queryParams, headers, body, X-Road headers)
 WebClient (mTLS with optional client certificates)
   ↓ (HTTPS request to client.securityServerUrl)
 X-Road Security Server
@@ -1035,7 +1076,7 @@ XRoadResponseDTO
 Frontend Service
   ↓ (update Redux state)
 Redux Store (addRequestToHistory)
-  ↓ (persist to localStorage as nested structure, excluding pemCertificates)
+  ↓ (persist to localStorage as nested structure, excluding mtlsCertificates for security)
 Response Viewer Component
 ```
 
@@ -1046,35 +1087,37 @@ Response Viewer Component
 ### Backend Entities (Java Records)
 
 1. **SubsystemIdDto** - Reusable X-Road subsystem identifier (record)
-2. **ClientDto** - Client identifier with Security Server URL and optional PEM certificates (List<String>) for mTLS certificate chain (record)
-3. **ServiceIdDto** - Service identifier (subsystem + serviceCode + serviceVersion) (record)
-4. **RequestDetailsDto** - HTTP request configuration with mandatory path field (record)
-5. **XRoadRequestDTO** - Top-level request DTO (composition of above) (record)
-6. **XRoadResponseDTO** - Outgoing response data (record)
-7. **XRoadErrorDTO** - Parsed X-Road error (record)
+2. **ClientDto** - Client identifier with Security Server URL and optional MTlsCertificatesDto for mTLS (record)
+3. **MTlsCertificatesDto** - Container for mTLS certificates (securityServerCert, clientCert, clientPrivateKey) (record)
+4. **ServiceIdDto** - Service identifier (subsystem + serviceCode + serviceVersion) (record)
+5. **RequestDetailsDto** - HTTP request configuration with mandatory path field and X-Road headers (contentType, xroadId, xroadUserId, xroadIssue, xroadRepresentedParty) (record)
+6. **XRoadRequestDTO** - Top-level request DTO (composition of above) (record)
+7. **XRoadResponseDTO** - Outgoing response data (record)
+8. **XRoadErrorDTO** - Parsed X-Road error (record)
 
 ### Frontend Models (TypeScript)
 
 1. **SubsystemId** - Reusable subsystem identifier (mirrors Java)
-2. **Client** - Client identifier with securityServerUrl and optional pemCertificates array for mTLS certificate chain (mirrors Java ClientDto)
-3. **ServiceId** - Service identifier
-4. **RequestDetails** - HTTP request configuration with mandatory path field
-5. **XRoadRequest** - Top-level request (mirrors Java XRoadRequestDTO)
-6. **XRoadResponse** - Response data
-7. **RequestHistoryEntry** - History entry
-8. **ThemeState** - Theme preference
-9. **ResponseViewMode** - Display mode enum
+2. **Client** - Client identifier with securityServerUrl and optional mtlsCertificates (mirrors Java ClientDto)
+3. **MTlsCertificates** - Container for mTLS certificates with securityServerCert, clientCert, clientPrivateKey fields (mirrors Java MTlsCertificatesDto)
+4. **ServiceId** - Service identifier
+5. **RequestDetails** - HTTP request configuration with mandatory path field, PATCH method support, and X-Road headers (contentType, xroadId, xroadUserId, xroadIssue, xroadRepresentedParty); queryParams and headers are optional
+6. **XRoadRequest** - Top-level request (mirrors Java XRoadRequestDTO)
+7. **XRoadResponse** - Response data
+8. **RequestHistoryEntry** - History entry
+9. **ThemeState** - Theme preference
+10. **ResponseViewMode** - Display mode enum
 
 ### Persistence
 
 - **No database** - All ephemeral or localStorage
 - **localStorage keys**: `xroad-form-draft`, `xroad-history`, `app-theme`
-- **PEM certificates NOT persisted** - Security requirement
+- **mTLS certificates NOT persisted** - Security requirement (excluded from history)
 
 ### Validation
 
-- **Backend**: Bean Validation on Java Records (@NotBlank, @Pattern, @Valid for nested records)
-- **Frontend**: React Hook Form validation rules (supports nested paths, validates securityServerUrl format)
+- **Backend**: Bean Validation on Java Records (@NotBlank, @Pattern, @Valid for nested records including MTlsCertificatesDto)
+- **Frontend**: React Hook Form validation rules (supports nested paths, validates securityServerUrl format, supports X-Road header fields)
 
 ### Conversion/Mapping
 
@@ -1085,5 +1128,5 @@ Response Viewer Component
 ---
 
 **Document Status**: Complete
-**Last Updated**: 2025-11-18
+**Last Updated**: 2025-11-20
 **Next Phase**: Implementation Planning
