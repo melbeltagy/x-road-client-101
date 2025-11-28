@@ -1,0 +1,151 @@
+{
+  "global": {
+    "title": "X-Road REST-klient",
+    "browsehappy": "Te kasutate <strong>vananenud</strong> veebilehitsejat. Palun <a href=\"http://browsehappy.com/?locale=et\">uuendage oma veebilehitsejat</a> parema kasutuskogemuse saamiseks.",
+    "menu": {
+      "home": "Avaleht",
+      "jhipster-needle-menu-add-element": "JHipster will add additional menu entries here (do not translate!)",
+      "entities": {
+        "main": "Olemid",
+        "jhipster-needle-menu-add-entry": "JHipster will add additional entities here (do not translate!)"
+      },
+      "account": {
+        "main": "Konto",
+        "settings": "Seaded",
+        "password": "Parool",
+        "sessions": "Seansid",
+        "login": "Logi sisse",
+        "logout": "Logi välja",
+        "register": "Registreeru"
+      },
+      "admin": {
+        "main": "Haldus",
+        "userManagement": "Kasutajahaldus",
+        "tracker": "Kasutaja jälgimine",
+        "metrics": "Mõõdikud",
+        "health": "Tervis",
+        "configuration": "Konfiguratsioon",
+        "logs": "Logid",
+        "apidocs": "API",
+        "database": "Andmebaas",
+        "jhipster-needle-menu-add-admin-element": "JHipster will add additional menu entries here (do not translate!)"
+      },
+      "language": "Keel",
+      "theme": {
+        "light": "Hele",
+        "dark": "Tume",
+        "system": "Süsteem"
+      }
+    },
+    "form": {
+      "username.label": "Kasutajanimi",
+      "username.placeholder": "Teie kasutajanimi",
+      "currentpassword.label": "Praegune parool",
+      "currentpassword.placeholder": "Praegune parool",
+      "newpassword.label": "Uus parool",
+      "newpassword.placeholder": "Uus parool",
+      "confirmpassword.label": "Uue parooli kinnitus",
+      "confirmpassword.placeholder": "Kinnitage uus parool",
+      "email.label": "E-post",
+      "email.placeholder": "Teie e-posti aadress"
+    },
+    "messages": {
+      "info": {
+        "authenticated": {
+          "prefix": "Kui soovite ",
+          "link": "sisse logida",
+          "suffix": ", saate kasutada vaikekontosid:<br/>- Administraator (kasutaja=\"admin\" ja parool=\"admin\") <br/>- Kasutaja (kasutaja=\"user\" ja parool=\"user\")."
+        },
+        "register": {
+          "noaccount": "Teil ei ole veel kontot?",
+          "link": "Registreerige uus konto"
+        }
+      },
+      "error": {
+        "dontmatch": "Parool ja selle kinnitus ei ühti!"
+      },
+      "validate": {
+        "newpassword": {
+          "required": "Parool on kohustuslik.",
+          "minlength": "Parool peab olema vähemalt 4 tähemärki pikk.",
+          "maxlength": "Parool ei tohi olla pikem kui 50 tähemärki.",
+          "strength": "Parooli tugevus:"
+        },
+        "confirmpassword": {
+          "required": "Parooli kinnitus on kohustuslik.",
+          "minlength": "Parooli kinnitus peab olema vähemalt 4 tähemärki pikk.",
+          "maxlength": "Parooli kinnitus ei tohi olla pikem kui 50 tähemärki."
+        },
+        "email": {
+          "required": "E-posti aadress on kohustuslik.",
+          "invalid": "E-posti aadress on vigane.",
+          "minlength": "E-posti aadress peab olema vähemalt 5 tähemärki pikk.",
+          "maxlength": "E-posti aadress ei tohi olla pikem kui 50 tähemärki."
+        }
+      }
+    },
+    "field": {
+      "id": "ID"
+    },
+    "ribbon": {
+      "dev": "Arendus"
+    },
+    "item-count": "Kuvatakse {{first}} - {{second}} / {{total}} kirjet."
+  },
+  "entity": {
+    "action": {
+      "addblob": "Lisa blob",
+      "addimage": "Lisa pilt",
+      "back": "Tagasi",
+      "cancel": "Tühista",
+      "delete": "Kustuta",
+      "edit": "Muuda",
+      "open": "Ava",
+      "save": "Salvesta",
+      "view": "Vaata",
+      "show": "Kuva {{otherEntity}}"
+    },
+    "detail": {
+      "field": "Väli",
+      "value": "Väärtus"
+    },
+    "delete": {
+      "title": "Kinnitage kustutamine"
+    },
+    "validation": {
+      "required": "See väli on kohustuslik.",
+      "minlength": "See väli peab olema vähemalt {{ min }} tähemärki pikk.",
+      "maxlength": "See väli ei tohi olla pikem kui {{ max }} tähemärki.",
+      "min": "See väli peab olema vähemalt {{ min }}.",
+      "max": "See väli ei tohi olla suurem kui {{ max }}.",
+      "minbytes": "See väli peab olema vähemalt {{ min }} baiti.",
+      "maxbytes": "See väli ei tohi olla suurem kui {{ max }} baiti.",
+      "pattern": "See väli peab vastama mustrile {{ pattern }}.",
+      "number": "See väli peab olema number.",
+      "datetimelocal": "See väli peab olema kuupäev ja kellaaeg.",
+      "patternLogin": "See väli võib sisaldada ainult tähti, numbreid ja e-posti aadresse."
+    },
+    "filters": {
+      "set": "Järgmised filtrid on seatud",
+      "clear": "Eemalda filter",
+      "clearAll": "Eemalda kõik filtrid"
+    }
+  },
+  "error": {
+    "internalServerError": "Sisemine serveri viga",
+    "server.not.reachable": "Server pole kättesaadav",
+    "url.not.found": "Ei leitud",
+    "NotNull": "Väli {{ fieldName }} ei saa olla tühi!",
+    "Size": "Väli {{ fieldName }} ei vasta min/max suuruse nõuetele!",
+    "userexists": "Kasutajanimi on juba kasutusel!",
+    "emailexists": "E-posti aadress on juba kasutusel!",
+    "idexists": "Uuel {{ entityName }} olemil ei saa olla ID-d",
+    "idnull": "Vigane ID",
+    "idinvalid": "Vigane ID",
+    "idnotfound": "ID-d ei leitud",
+    "file": {
+      "could.not.extract": "Faili ei saanud ekstraktida",
+      "not.image": "Fail pidi olema pilt, kuid oli \"{{ fileType }}\""
+    }
+  }
+}

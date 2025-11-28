@@ -1,0 +1,178 @@
+{
+  "xroad": {
+    "title": "X-Road üldine REST-klient",
+    "subtitle": "Saada REST-päringuid X-Road turvaserverile. Kõik väljad on kohustuslikud, välja arvatud teenuse versioon ja mTLS-sertifikaadid.",
+    "toast": {
+      "requestFailed": "Päring ebaõnnestus",
+      "requestSuccessful": "Päring õnnestus",
+      "xroadError": "X-Road viga",
+      "response": "Vastus",
+      "error": "Viga",
+      "clientError": "Kliendi viga",
+      "unknownError": "Tundmatu viga"
+    },
+    "client": {
+      "title": "Kliendi identifikaator",
+      "instanceId": "Instantsi ID",
+      "memberClass": "Liikme klass",
+      "memberCode": "Liikme kood",
+      "subsystemCode": "Alamsüsteemi kood",
+      "securityServerUrl": "Turvaserveri URL",
+      "pemCertificates": "Kliendi sertifikaadid (valikuline mTLS)",
+      "pemCertificatesHelp": "Valikuline: Kleepige kogu PEM-faili sisu, sealhulgas sertifikaat ja privaatvõti",
+      "clear": "Tühjenda"
+    },
+    "certificates": {
+      "title": "mTLS-sertifikaadid (valikuline)",
+      "description": "Valikuline: Seadistage mTLS-sertifikaadid turvaliseks ühenduseks X-Road turvaserveriga",
+      "securityServerCert": "Turvaserveri sertifikaat",
+      "securityServerCertDescription": "Turvaserveri avalik sertifikaat tema identiteedi kontrollimiseks",
+      "clientCert": "Kliendi sertifikaat",
+      "clientCertDescription": "Teie kliendi avalik sertifikaat autentimiseks",
+      "clientPrivateKey": "Kliendi privaatvõti",
+      "clientPrivateKeyDescription": "Teie kliendi privaatvõti (hoidke turvaliselt)",
+      "add": "Lisa",
+      "set": "Määra",
+      "configured": "Seadistatud",
+      "uploaded": "Üles laaditud",
+      "view": "Vaata",
+      "modal": {
+        "title": {
+          "securityServerCert": "Turvaserveri sertifikaat",
+          "clientCert": "Kliendi sertifikaat",
+          "clientPrivateKey": "Kliendi privaatvõti"
+        },
+        "description": {
+          "securityServerCert": "Laadige üles või kleepige turvaserveri avalik sertifikaat PEM-vormingus. Seda sertifikaati kasutatakse turvaserveri identiteedi kontrollimiseks TLS-käepigistuse ajal.",
+          "clientCert": "Laadige üles või kleepige oma kliendi avalik sertifikaat PEM-vormingus. See sertifikaat identifitseerib teie kliendi turvaserverile.",
+          "clientPrivateKey": "Laadige üles või kleepige oma kliendi privaatvõti PEM-vormingus. Hoidke seda turvaliselt - seda ei tohi kunagi avalikult jagada."
+        },
+        "upload": "Laadi sertifikaat üles",
+        "dragDrop": "Lohistage fail siia",
+        "dropHere": "Kukutage fail siia...",
+        "browse": "Sirvi faile",
+        "manualEntry": "Sertifikaadi sisu (PEM-vorming)",
+        "pemFormat": "Kleepige PEM-vormingus sertifikaadi sisu või kasutage ülalolevat üleslaadimist",
+        "clear": "Tühjenda"
+      }
+    },
+    "service": {
+      "title": "Teenuse identifikaator",
+      "instanceId": "Instantsi ID",
+      "memberClass": "Liikme klass",
+      "memberCode": "Liikme kood",
+      "subsystemCode": "Alamsüsteemi kood",
+      "serviceCode": "Teenuse kood",
+      "serviceVersion": "Teenuse versioon",
+      "clear": "Tühjenda"
+    },
+    "request": {
+      "title": "Päringu üksikasjad",
+      "method": "HTTP-meetod",
+      "path": "Tee",
+      "body": "Päringu keha",
+      "bodyPlaceholder": "Valikuline JSON, XML või tekstiandmed",
+      "contentType": "Sisutüüp",
+      "contentTypePlaceholder": "nt application/json, application/xml, text/plain",
+      "contentTypeHelp": "Valikuline: Määrake päringu keha Content-Type päis (nt application/json, application/xml)",
+      "clear": "Tühjenda",
+      "submit": "Saada päring",
+      "sending": "Saatmine..."
+    },
+    "advanced": {
+      "title": "Täpsem seadistus",
+      "queryParams": "Päringu parameetrid",
+      "customHeaders": "Kohandatud HTTP-päised",
+      "xroadHeaders": "Valikulised X-Road päised",
+      "xroadHeadersHelp": "Valikulised X-Road protokolli päised täpsemate kasutusjuhtumite jaoks. Jätke tühjaks, kui pole vajalikud.",
+      "add": "Lisa",
+      "key": "Võti",
+      "value": "Väärtus",
+      "headerName": "Päise nimi",
+      "headerValue": "Päise väärtus",
+      "noQueryParams": "Päringu parameetreid pole. Klõpsake Lisa, et lisada päringu parameetreid.",
+      "noCustomHeaders": "Kohandatud päiseid pole. Klõpsake Lisa, et lisada täiendavaid HTTP-päiseid."
+    },
+    "response": {
+      "title": "Vastus",
+      "status": "Olek",
+      "headers": "Päised",
+      "body": "Keha",
+      "noResponse": "Vastust veel pole. Saatke päring, et näha vastust siin.",
+      "responseStatus": "Vastuse olek",
+      "error": "Viga",
+      "timestamp": "Ajatempel",
+      "contentType": "Sisutüüp",
+      "contentLength": "Sisu pikkus",
+      "xroadHeaders": "X-Road päised",
+      "xroadError": "X-Road viga",
+      "xroadErrorType": "Tüüp",
+      "xroadErrorMessage": "Sõnum",
+      "xroadErrorDetail": "Üksikasjad",
+      "xroadErrorFaultCode": "Vea kood",
+      "xroadErrorFaultString": "Vea sõnum",
+      "allHeaders": "Kõik päised",
+      "noHeaders": "Päised puuduvad",
+      "responseBody": "Vastuse keha",
+      "size": "Suurus",
+      "tooLarge": "Liiga suur",
+      "noBody": "Keha puudub",
+      "bodyTooLargeMessage": "Vastuse keha on suurem kui 1 MB ja seda ei saa reas kuvada.",
+      "downloadResponse": "Laadi vastus alla",
+      "raw": "Töötlemata",
+      "jsonFormat": "JSON-vorming",
+      "invalidJson": "Vastuse keha ei ole kehtiv JSON. Kuvatakse töötlemata tekstina."
+    },
+    "placeholders": {
+      "instanceId": "nt DEV, PROD, FI-TEST",
+      "memberClass": "nt GOV, COM, ORG",
+      "memberCode": "nt 1234567-8",
+      "subsystemCode": "nt TestClient",
+      "securityServerUrl": "nt https://localhost:8443 või http://ss.example.com:8080",
+      "pemCertificates": "Kleepige PEM-sertifikaat(id) siia (BEGIN CERTIFICATE...END CERTIFICATE + BEGIN PRIVATE KEY...END PRIVATE KEY)",
+      "serviceMemberCode": "nt 9876543-2",
+      "serviceSubsystemCode": "nt DataService",
+      "serviceCode": "nt getInfo, list_users, get-data",
+      "serviceVersion": "nt v1, 1.0.0 (valikuline)",
+      "path": "nt /users/123, /api/data"
+    },
+    "validation": {
+      "required": "See väli on kohustuslik",
+      "instanceId": "Peab olema tähtnumbriline või sidekriips (min 2 tähemärki)",
+      "memberClass": "Peab olema tähtnumbriline või sidekriips",
+      "memberCode": "Peab olema tähtnumbriline või sidekriips",
+      "subsystemCode": "Peab olema tähtnumbriline või sidekriips",
+      "securityServerUrl": "Peab olema kehtiv HTTP/HTTPS URL",
+      "securityServerUrlProtocol": "Peab kasutama HTTP või HTTPS protokolli",
+      "securityServerUrlHostname": "Hostinimi on kohustuslik",
+      "securityServerUrlUnderscore": "Vigane hostinimi: alakriipsud pole lubatud",
+      "serviceCode": "Peab olema tähtnumbriline, alakriips või sidekriips",
+      "serviceVersion": "Vigane versioonivorming (nt v1, 1.2.3)",
+      "path": "Peab olema kehtiv URI-tee, mis algab /-ga (tähtnumbriline, /, _, -)",
+      "method": "Meetod on kohustuslik"
+    },
+    "history": {
+      "title": "Päringute ajalugu",
+      "button": "Ajalugu",
+      "empty": "Päringute ajalugu puudub",
+      "emptyDescription": "Tehke päring, et seda siin näha",
+      "clearAll": "Kustuta kogu ajalugu",
+      "confirmClear": "Kas olete kindel, et soovite kogu ajaloo kustutada? Seda ei saa tagasi võtta.",
+      "cleared": "Ajalugu kustutati edukalt",
+      "delete": "Kustuta",
+      "deleted": "Ajaloo kirje kustutatud",
+      "indicator": "See päring pärineb ajaloost",
+      "entry": {
+        "status": "Olek",
+        "timestamp": "Aeg"
+      }
+    },
+    "status": {
+      "client": "Klient",
+      "serviceUrl": "Teenuse URL",
+      "notSent": "Saatmata",
+      "success": "Päring õnnestus",
+      "error": "Päring ebaõnnestus"
+    }
+  }
+}

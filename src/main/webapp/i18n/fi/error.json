@@ -1,0 +1,14 @@
+{
+  "error": {
+    "title": "Virhe sivu!",
+    "http": {
+      "400": "Virheellinen pyyntö.",
+      "403": "Sinulla ei ole oikeutta käyttää tätä sivua.",
+      "404": "Sivua ei ole olemassa.",
+      "405": "Käytettyä HTTP-verbiä ei tueta tälle URL:lle.",
+      "500": "Sisäinen palvelinvirhe."
+    },
+    "concurrencyFailure": "Toinen käyttäjä muutti näitä tietoja samanaikaisesti. Muutoksesi hylättiin.",
+    "validation": "Validointivirhe palvelimella."
+  }
+}

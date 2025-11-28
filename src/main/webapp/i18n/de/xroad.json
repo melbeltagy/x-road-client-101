@@ -1,0 +1,178 @@
+{
+  "xroad": {
+    "title": "X-Road Generischer REST-Client",
+    "subtitle": "Senden Sie REST-Anfragen an den X-Road-Sicherheitsserver. Alle Felder sind erforderlich, außer Dienstversion und mTLS-Zertifikate.",
+    "toast": {
+      "requestFailed": "Anfrage fehlgeschlagen",
+      "requestSuccessful": "Anfrage erfolgreich",
+      "xroadError": "X-Road-Fehler",
+      "response": "Antwort",
+      "error": "Fehler",
+      "clientError": "Client-Fehler",
+      "unknownError": "Unbekannter Fehler"
+    },
+    "client": {
+      "title": "Client-Identifikator",
+      "instanceId": "Instanz-ID",
+      "memberClass": "Mitgliedsklasse",
+      "memberCode": "Mitgliedscode",
+      "subsystemCode": "Subsystemcode",
+      "securityServerUrl": "Sicherheitsserver-URL",
+      "pemCertificates": "Client-Zertifikate (optionales mTLS)",
+      "pemCertificatesHelp": "Optional: Fügen Sie den gesamten PEM-Dateiinhalt einschließlich Zertifikat und privatem Schlüssel ein",
+      "clear": "Löschen"
+    },
+    "certificates": {
+      "title": "mTLS-Zertifikate (Optional)",
+      "description": "Optional: Konfigurieren Sie mTLS-Zertifikate für eine sichere Verbindung zum X-Road-Sicherheitsserver",
+      "securityServerCert": "Sicherheitsserver-Zertifikat",
+      "securityServerCertDescription": "Öffentliches Zertifikat des Sicherheitsservers zur Identitätsverifizierung",
+      "clientCert": "Client-Zertifikat",
+      "clientCertDescription": "Öffentliches Zertifikat Ihres Clients zur Authentifizierung",
+      "clientPrivateKey": "Privater Client-Schlüssel",
+      "clientPrivateKeyDescription": "Privater Schlüssel Ihres Clients (sicher aufbewahren)",
+      "add": "Hinzufügen",
+      "set": "Festlegen",
+      "configured": "Konfiguriert",
+      "uploaded": "Hochgeladen",
+      "view": "Ansehen",
+      "modal": {
+        "title": {
+          "securityServerCert": "Sicherheitsserver-Zertifikat",
+          "clientCert": "Client-Zertifikat",
+          "clientPrivateKey": "Privater Client-Schlüssel"
+        },
+        "description": {
+          "securityServerCert": "Laden Sie das öffentliche Zertifikat des Sicherheitsservers im PEM-Format hoch oder fügen Sie es ein. Dieses Zertifikat wird verwendet, um die Identität des Sicherheitsservers während des TLS-Handshakes zu verifizieren.",
+          "clientCert": "Laden Sie das öffentliche Zertifikat Ihres Clients im PEM-Format hoch oder fügen Sie es ein. Dieses Zertifikat identifiziert Ihren Client gegenüber dem Sicherheitsserver.",
+          "clientPrivateKey": "Laden Sie den privaten Schlüssel Ihres Clients im PEM-Format hoch oder fügen Sie ihn ein. Bewahren Sie diesen sicher auf - er sollte niemals öffentlich geteilt werden."
+        },
+        "upload": "Zertifikat hochladen",
+        "dragDrop": "Datei hierher ziehen",
+        "dropHere": "Datei hier ablegen...",
+        "browse": "Dateien durchsuchen",
+        "manualEntry": "Zertifikatsinhalt (PEM-Format)",
+        "pemFormat": "Fügen Sie den PEM-formatierten Zertifikatsinhalt ein oder verwenden Sie den Upload oben",
+        "clear": "Löschen"
+      }
+    },
+    "service": {
+      "title": "Dienst-Identifikator",
+      "instanceId": "Instanz-ID",
+      "memberClass": "Mitgliedsklasse",
+      "memberCode": "Mitgliedscode",
+      "subsystemCode": "Subsystemcode",
+      "serviceCode": "Dienstcode",
+      "serviceVersion": "Dienstversion",
+      "clear": "Löschen"
+    },
+    "request": {
+      "title": "Anfragedetails",
+      "method": "HTTP-Methode",
+      "path": "Pfad",
+      "body": "Anfragekörper",
+      "bodyPlaceholder": "Optionale JSON-, XML- oder Text-Nutzlast",
+      "contentType": "Inhaltstyp",
+      "contentTypePlaceholder": "z.B. application/json, application/xml, text/plain",
+      "contentTypeHelp": "Optional: Geben Sie den Content-Type-Header für den Anfragekörper an (z.B. application/json, application/xml)",
+      "clear": "Löschen",
+      "submit": "Anfrage senden",
+      "sending": "Wird gesendet..."
+    },
+    "advanced": {
+      "title": "Erweiterte Konfiguration",
+      "queryParams": "Abfrageparameter",
+      "customHeaders": "Benutzerdefinierte HTTP-Header",
+      "xroadHeaders": "Optionale X-Road-Header",
+      "xroadHeadersHelp": "Optionale X-Road-Protokoll-Header für erweiterte Anwendungsfälle. Leer lassen, wenn nicht benötigt.",
+      "add": "Hinzufügen",
+      "key": "Schlüssel",
+      "value": "Wert",
+      "headerName": "Header-Name",
+      "headerValue": "Header-Wert",
+      "noQueryParams": "Keine Abfrageparameter. Klicken Sie auf Hinzufügen, um Abfrageparameter einzufügen.",
+      "noCustomHeaders": "Keine benutzerdefinierten Header. Klicken Sie auf Hinzufügen, um zusätzliche HTTP-Header einzufügen."
+    },
+    "response": {
+      "title": "Antwort",
+      "status": "Status",
+      "headers": "Header",
+      "body": "Körper",
+      "noResponse": "Noch keine Antwort. Senden Sie eine Anfrage, um die Antwort hier zu sehen.",
+      "responseStatus": "Antwortstatus",
+      "error": "Fehler",
+      "timestamp": "Zeitstempel",
+      "contentType": "Inhaltstyp",
+      "contentLength": "Inhaltslänge",
+      "xroadHeaders": "X-Road-Header",
+      "xroadError": "X-Road-Fehler",
+      "xroadErrorType": "Typ",
+      "xroadErrorMessage": "Nachricht",
+      "xroadErrorDetail": "Detail",
+      "xroadErrorFaultCode": "Fehlercode",
+      "xroadErrorFaultString": "Fehlermeldung",
+      "allHeaders": "Alle Header",
+      "noHeaders": "Keine Header",
+      "responseBody": "Antwortkörper",
+      "size": "Größe",
+      "tooLarge": "Zu groß",
+      "noBody": "Kein Körper",
+      "bodyTooLargeMessage": "Der Antwortkörper ist größer als 1 MB und kann nicht inline angezeigt werden.",
+      "downloadResponse": "Antwort herunterladen",
+      "raw": "Roh",
+      "jsonFormat": "JSON-Format",
+      "invalidJson": "Der Antwortkörper ist kein gültiges JSON. Wird stattdessen als Rohtext angezeigt."
+    },
+    "placeholders": {
+      "instanceId": "z.B. DEV, PROD, FI-TEST",
+      "memberClass": "z.B. GOV, COM, ORG",
+      "memberCode": "z.B. 1234567-8",
+      "subsystemCode": "z.B. TestClient",
+      "securityServerUrl": "z.B. https://localhost:8443 oder http://ss.example.com:8080",
+      "pemCertificates": "PEM-Zertifikat(e) hier einfügen (BEGIN CERTIFICATE...END CERTIFICATE + BEGIN PRIVATE KEY...END PRIVATE KEY)",
+      "serviceMemberCode": "z.B. 9876543-2",
+      "serviceSubsystemCode": "z.B. DataService",
+      "serviceCode": "z.B. getInfo, list_users, get-data",
+      "serviceVersion": "z.B. v1, 1.0.0 (optional)",
+      "path": "z.B. /users/123, /api/data"
+    },
+    "validation": {
+      "required": "Dieses Feld ist erforderlich",
+      "instanceId": "Muss alphanumerisch oder Bindestrich sein (min. 2 Zeichen)",
+      "memberClass": "Muss alphanumerisch oder Bindestrich sein",
+      "memberCode": "Muss alphanumerisch oder Bindestrich sein",
+      "subsystemCode": "Muss alphanumerisch oder Bindestrich sein",
+      "securityServerUrl": "Muss eine gültige HTTP/HTTPS-URL sein",
+      "securityServerUrlProtocol": "Muss HTTP- oder HTTPS-Protokoll verwenden",
+      "securityServerUrlHostname": "Hostname ist erforderlich",
+      "securityServerUrlUnderscore": "Ungültiger Hostname: Unterstriche nicht erlaubt",
+      "serviceCode": "Muss alphanumerisch, Unterstrich oder Bindestrich sein",
+      "serviceVersion": "Ungültiges Versionsformat (z.B. v1, 1.2.3)",
+      "path": "Muss ein gültiger URI-Pfad sein, der mit / beginnt (alphanumerisch, /, _, -)",
+      "method": "Methode ist erforderlich"
+    },
+    "history": {
+      "title": "Anfrageverlauf",
+      "button": "Verlauf",
+      "empty": "Noch kein Anfrageverlauf",
+      "emptyDescription": "Stellen Sie eine Anfrage, um sie hier zu sehen",
+      "clearAll": "Gesamten Verlauf löschen",
+      "confirmClear": "Sind Sie sicher, dass Sie den gesamten Verlauf löschen möchten? Dies kann nicht rückgängig gemacht werden.",
+      "cleared": "Verlauf erfolgreich gelöscht",
+      "delete": "Löschen",
+      "deleted": "Verlaufseintrag gelöscht",
+      "indicator": "Diese Anfrage stammt aus dem Verlauf",
+      "entry": {
+        "status": "Status",
+        "timestamp": "Zeit"
+      }
+    },
+    "status": {
+      "client": "Client",
+      "serviceUrl": "Dienst-URL",
+      "notSent": "Nicht gesendet",
+      "success": "Anfrage erfolgreich",
+      "error": "Anfrage fehlgeschlagen"
+    }
+  }
+}
