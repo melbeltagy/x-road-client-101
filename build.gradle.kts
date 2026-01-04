@@ -52,6 +52,10 @@ springBoot {
     mainClass.set("com.nortal.xroad.restapi.client.XRoadExampleRestapiClientApp")
 }
 
+tasks.bootRun {
+    jvmArgs("--enable-native-access=ALL-UNNAMED")  // Required for Netty with Java 21+
+}
+
 // =============================================================================
 // Testing
 // =============================================================================

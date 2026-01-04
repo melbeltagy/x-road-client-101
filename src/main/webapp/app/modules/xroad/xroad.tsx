@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Container, Row, Col, Alert } from 'reactstrap';
 import { Translate, translate } from 'app/shared/i18n';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -193,13 +193,16 @@ export const XRoad: React.FC = () => {
     }
   };
 
-  // Handle form changes for status panel
-  const handleFormChange = (data: Partial<XRoadRequest>, isValid: boolean, submitHandler: () => void, certs: MTlsCertificates) => {
-    setFormData(data);
-    setFormValid(isValid);
-    setFormSubmitHandler(() => submitHandler);
-    setCertificates(certs);
-  };
+  // Handle form changes for status panel - memoized to prevent infinite re-renders
+  const handleFormChange = useCallback(
+    (data: Partial<XRoadRequest>, isValid: boolean, submitHandler: () => void, certs: MTlsCertificates) => {
+      setFormData(data);
+      setFormValid(isValid);
+      setFormSubmitHandler(() => submitHandler);
+      setCertificates(certs);
+    },
+    [],
+  );
 
   return (
     <Container fluid className="mt-4">

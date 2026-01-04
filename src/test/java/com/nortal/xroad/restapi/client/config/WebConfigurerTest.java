@@ -79,7 +79,7 @@ class WebConfigurerTest {
 
     @Test
     void shouldCorsFilterOnOtherPath() throws Exception {
-        props.getCors().setAllowedOrigins(new String[] { "*" });
+        props.getCors().setAllowedOrigins(new String[] { "http://localhost:*" });
         props.getCors().setAllowedMethods(new String[] { "GET", "POST", "PUT", "DELETE" });
         props.getCors().setAllowedHeaders(new String[] { "*" });
         props.getCors().setMaxAge(1800L);

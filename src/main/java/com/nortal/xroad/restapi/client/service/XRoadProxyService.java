@@ -78,19 +78,33 @@ public class XRoadProxyService {
                     headers.set("X-Road-Represented-Party", request.request().xroadRepresentedParty());
                 }
 
-                // T073: Add Content-Type header if provided
-                if (request.request().contentType() != null && !request.request().contentType().isBlank()) {
-                    headers.setContentType(org.springframework.http.MediaType.parseMediaType(request.request().contentType()));
+                // T073: Add Content-Type header if provided (check both contentType field and custom headers)
+                String contentType = request.request().contentType();
+                if ((contentType == null || contentType.isBlank()) && request.request().headers() != null) {
+                    contentType = request.request().headers().get("Content-Type");
+                }
+                if (contentType != null && !contentType.isBlank()) {
+                    headers.setContentType(org.springframework.http.MediaType.parseMediaType(contentType));
                 }
 
-                // Add custom headers from request
+                // Add custom headers from request (excluding Content-Type which is handled above)
                 if (request.request().headers() != null) {
-                    request.request().headers().forEach(headers::set);
+                    request
+                        .request()
+                        .headers()
+                        .forEach((key, value) -> {
+                            if (!"Content-Type".equalsIgnoreCase(key)) {
+                                headers.set(key, value);
+                            }
+                        });
                 }
             })
             .bodyValue(request.request().body() != null ? request.request().body() : "")
             .exchangeToMono(response ->
-                response.bodyToMono(String.class).defaultIfEmpty("").map(body -> responseMapper.toDto(response, body))
+                response
+                    .bodyToMono(String.class)
+                    .defaultIfEmpty("")
+                    .map(body -> responseMapper.toDto(response, body))
             );
     }
 

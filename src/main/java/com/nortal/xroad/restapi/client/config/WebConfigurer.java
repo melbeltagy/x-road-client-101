@@ -86,7 +86,7 @@ public class WebConfigurer implements ServletContextInitializer, WebServerFactor
         if (cors.getAllowedOrigins() != null && cors.getAllowedOrigins().length > 0) {
             LOG.debug("Registering CORS filter");
             CorsConfiguration config = new CorsConfiguration();
-            config.setAllowedOrigins(Arrays.asList(cors.getAllowedOrigins()));
+            config.setAllowedOriginPatterns(Arrays.asList(cors.getAllowedOrigins()));
             config.setAllowedMethods(Arrays.asList(cors.getAllowedMethods()));
             config.setAllowedHeaders(Arrays.asList(cors.getAllowedHeaders()));
             config.setExposedHeaders(Arrays.asList(cors.getExposedHeaders()));

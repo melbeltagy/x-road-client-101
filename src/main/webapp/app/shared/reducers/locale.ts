@@ -7,7 +7,7 @@ import { TranslatorContext } from 'app/shared/i18n';
 const initialState = {
   currentLocale: '',
   sourcePrefixes: [],
-  lastChange: TranslatorContext.context.lastChange,
+  lastChange: TranslatorContext.context.lastChange.getTime(),
   loadedKeys: [],
   loadedLocales: [],
 };
@@ -78,7 +78,7 @@ export const LocaleSlice = createSlice({
       if (keys) {
         state.loadedKeys = state.loadedKeys.concat(keys);
       }
-      state.lastChange = TranslatorContext.context.lastChange;
+      state.lastChange = TranslatorContext.context.lastChange.getTime();
     },
   },
 });

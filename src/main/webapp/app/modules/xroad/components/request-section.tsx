@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, CardHeader, CardBody, FormGroup, Label, Button, Row, Col, Input, FormText, Collapse } from 'reactstrap';
+import { Card, CardHeader, CardBody, FormGroup, Label, Button, Row, Col, Collapse } from 'reactstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash, faChevronDown, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import { UseFormRegister, FieldErrors } from 'react-hook-form';
@@ -78,10 +78,10 @@ export const RequestSection: React.FC<RequestSectionProps> = ({ register, errors
             <Label for="body">
               <Translate contentKey="xroad.request.body">Request Body</Translate>
             </Label>
-            <Input
-              type="textarea"
+            <textarea
               id="body"
               rows={4}
+              className="form-control"
               {...register('request.body')}
               placeholder={translate('xroad.request.bodyPlaceholder')}
             />
@@ -92,17 +92,14 @@ export const RequestSection: React.FC<RequestSectionProps> = ({ register, errors
             <Label for="contentType">
               <Translate contentKey="xroad.request.contentType">Content-Type</Translate>
             </Label>
-            <Input
-              type="text"
-              id="contentType"
-              {...register('request.contentType')}
-              placeholder={translate('xroad.request.contentTypePlaceholder')}
-            />
-            <FormText color="muted">
-              <Translate contentKey="xroad.request.contentTypeHelp">
-                Optional: Specify the Content-Type header for the request body (e.g., application/json, application/xml)
-              </Translate>
-            </FormText>
+            <select id="contentType" className="form-select" {...register('request.contentType')}>
+              <option value="">-- Select --</option>
+              <option value="application/json">application/json</option>
+              <option value="application/xml">application/xml</option>
+              <option value="text/plain">text/plain</option>
+              <option value="text/xml">text/xml</option>
+              <option value="application/x-www-form-urlencoded">application/x-www-form-urlencoded</option>
+            </select>
           </FormGroup>
         </CardBody>
       </Collapse>
