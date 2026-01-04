@@ -2,7 +2,7 @@ import React from 'react';
 import { FormGroup, Label, Button, Input, Row, Col, FormText } from 'reactstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
-import { Translate, translate } from 'react-jhipster';
+import { Translate, translate } from 'app/shared/i18n';
 
 export interface KeyValuePair {
   id: string;

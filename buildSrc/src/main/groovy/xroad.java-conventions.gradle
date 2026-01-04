@@ -1,0 +1,39 @@
+/**
+ * X-Road style Java conventions plugin.
+ * Provides Checkstyle and JaCoCo configuration based on X-Road project standards.
+ */
+
+plugins.apply('checkstyle')
+plugins.apply('jacoco')
+
+def libs = project.extensions.getByType(VersionCatalogsExtension.class).named("libs")
+
+checkstyle {
+    toolVersion = libs.findVersion("checkstyle").get().toString()
+    configDirectory = file("${project.rootDir}/config/checkstyle")
+    ignoreFailures = false
+    showViolations = true
+}
+
+tasks.named('checkstyleMain', Checkstyle) {
+    source = fileTree("src/main/java")
+    configFile = file("${project.rootDir}/config/checkstyle/checkstyle.xml")
+    classpath = files()
+}
+
+tasks.named('checkstyleTest', Checkstyle) {
+    source = fileTree("src/test/java")
+    configFile = file("${project.rootDir}/config/checkstyle/checkstyle.xml")
+    classpath = files()
+}
+
+jacoco {
+    toolVersion = libs.findVersion("jacoco").get().toString()
+}
+
+tasks.withType(JacocoReport) {
+    reports {
+        xml.required = true
+        html.required = true
+    }
+}

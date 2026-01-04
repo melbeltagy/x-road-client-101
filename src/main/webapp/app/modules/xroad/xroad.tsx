@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Container, Row, Col, Alert } from 'reactstrap';
-import { Translate, translate } from 'react-jhipster';
+import { Translate, translate } from 'app/shared/i18n';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { XRoadRequestForm } from './xroad-request-form';
 import { XRoadResponseViewer } from './xroad-response-viewer';

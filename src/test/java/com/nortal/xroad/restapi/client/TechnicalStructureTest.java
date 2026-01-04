@@ -16,15 +16,13 @@ class TechnicalStructureTest {
     @ArchTest
     static final ArchRule respectsTechnicalArchitectureLayers = layeredArchitecture()
         .consideringAllDependencies()
-        .layer("Config").definedBy("..config..")
-        .layer("Web").definedBy("..web..")
+        .optionalLayer("Config").definedBy("..config..")
+        .optionalLayer("Web").definedBy("..web..")
         .optionalLayer("Service").definedBy("..service..")
-        .layer("Security").definedBy("..security..")
 
         .whereLayer("Config").mayNotBeAccessedByAnyLayer()
         .whereLayer("Web").mayOnlyBeAccessedByLayers("Config")
         .whereLayer("Service").mayOnlyBeAccessedByLayers("Web", "Config")
-        .whereLayer("Security").mayOnlyBeAccessedByLayers("Config", "Service", "Web")
 
         .ignoreDependency(belongToAnyOf(XRoadExampleRestapiClientApp.class), alwaysTrue())
         .ignoreDependency(alwaysTrue(), belongToAnyOf(

@@ -42,9 +42,9 @@ describe('Entity utils', () => {
 
   describe('mapIdList', () => {
     it("should map ids no matter the element's type", () => {
-      const ids = ['jhipster', '', 1, { key: 'value' }];
+      const ids = ['test-id', '', 1, { key: 'value' }];
 
-      expect(mapIdList(ids)).toEqual([{ id: 'jhipster' }, { id: 1 }, { id: { key: 'value' } }]);
+      expect(mapIdList(ids)).toEqual([{ id: 'test-id' }, { id: 1 }, { id: { key: 'value' } }]);
     });
 
     it('should return an empty array', () => {

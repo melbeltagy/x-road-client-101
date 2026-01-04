@@ -1,6 +1,6 @@
 import axios from 'axios';
 import sinon from 'sinon';
-import { TranslatorContext } from 'react-jhipster';
+import { TranslatorContext } from 'app/shared/i18n';
 
 import locale, { addTranslationSourcePrefix, loaded, setLocale, updateLocale } from 'app/shared/reducers/locale';
 

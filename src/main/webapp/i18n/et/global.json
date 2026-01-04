@@ -4,10 +4,8 @@
     "browsehappy": "Te kasutate <strong>vananenud</strong> veebilehitsejat. Palun <a href=\"http://browsehappy.com/?locale=et\">uuendage oma veebilehitsejat</a> parema kasutuskogemuse saamiseks.",
     "menu": {
       "home": "Avaleht",
-      "jhipster-needle-menu-add-element": "JHipster will add additional menu entries here (do not translate!)",
       "entities": {
-        "main": "Olemid",
-        "jhipster-needle-menu-add-entry": "JHipster will add additional entities here (do not translate!)"
+        "main": "Olemid"
       },
       "account": {
         "main": "Konto",
@@ -27,8 +25,7 @@
         "configuration": "Konfiguratsioon",
         "logs": "Logid",
         "apidocs": "API",
-        "database": "Andmebaas",
-        "jhipster-needle-menu-add-admin-element": "JHipster will add additional menu entries here (do not translate!)"
+        "database": "Andmebaas"
       },
       "language": "Keel",
       "theme": {

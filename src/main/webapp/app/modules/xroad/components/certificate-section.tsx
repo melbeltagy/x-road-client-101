@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { FormGroup, Button, Collapse, Card, CardBody, CardHeader, ListGroup, ListGroupItem, FormText } from 'reactstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronDown, faChevronRight, faPlus, faEye, faTrash, faCheckCircle, faCircle } from '@fortawesome/free-solid-svg-icons';
-import { Translate, translate } from 'react-jhipster';
+import { Translate, translate } from 'app/shared/i18n';
 import { CertificateType, MTlsCertificates } from 'app/shared/model/mtls-certificates.model';
 import { CertificateUploadModal } from './certificate-upload-modal';
 import { CircularIconButton } from './circular-icon-button';

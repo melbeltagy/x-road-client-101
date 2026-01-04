@@ -3,7 +3,7 @@ import { Card, CardHeader, CardBody, FormGroup, Label, Button, Collapse } from '
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash, faChevronDown, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import { UseFormRegister, FieldErrors } from 'react-hook-form';
-import { Translate, translate } from 'react-jhipster';
+import { Translate, translate } from 'app/shared/i18n';
 import { XRoadRequest } from 'app/shared/model/xroad-request.model';
 import { SubsystemIdFields } from './subsystem-id-fields';
 import { CircularIconButton } from './circular-icon-button';

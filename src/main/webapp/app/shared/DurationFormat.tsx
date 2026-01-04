@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { TranslatorContext } from 'react-jhipster';
+import { TranslatorContext } from 'app/shared/i18n';
 import dayjs from 'dayjs';
 
 export interface IDurationFormat {

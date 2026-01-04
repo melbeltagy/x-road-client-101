@@ -1,7 +1,7 @@
 import React from 'react';
 import { FormGroup, Label, Row, Col } from 'reactstrap';
 import { UseFormRegister, FieldErrors } from 'react-hook-form';
-import { Translate, translate } from 'react-jhipster';
+import { Translate, translate } from 'app/shared/i18n';
 import { XRoadRequest } from 'app/shared/model/xroad-request.model';
 
 interface SubsystemIdFieldsProps {

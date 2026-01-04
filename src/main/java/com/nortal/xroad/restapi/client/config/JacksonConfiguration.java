@@ -3,7 +3,6 @@ package com.nortal.xroad.restapi.client.config;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import java.io.IOException;
 import java.time.LocalTime;
@@ -30,10 +29,5 @@ public class JacksonConfiguration {
             }
         );
         return javaTime;
-    }
-
-    @Bean
-    public Jdk8Module jdk8TimeModule() {
-        return new Jdk8Module();
     }
 }

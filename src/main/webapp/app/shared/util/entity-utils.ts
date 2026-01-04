@@ -1,5 +1,18 @@
-import pick from 'lodash/pick';
-import { IPaginationBaseState, ISortBaseState } from 'react-jhipster';
+/**
+ * Sort state interface.
+ */
+export interface ISortBaseState {
+  sort: string;
+  order: string;
+}
+
+/**
+ * Pagination state interface.
+ */
+export interface IPaginationBaseState extends ISortBaseState {
+  activePage: number;
+  itemsPerPage: number;
+}
 
 /**
  * Removes fields with an 'id' field that equals ''.
@@ -11,7 +24,7 @@ import { IPaginationBaseState, ISortBaseState } from 'react-jhipster';
 export const cleanEntity = entity => {
   const keysToKeep = Object.keys(entity).filter(k => !(entity[k] instanceof Object) || (entity[k].id !== '' && entity[k].id !== -1));
 
-  return pick(entity, keysToKeep);
+  return Object.fromEntries(keysToKeep.map(key => [key, entity[key]]));
 };
 
 /**

@@ -2,7 +2,7 @@ import React from 'react';
 import { Card, CardBody, Button, Row, Col } from 'reactstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheckCircle, faBan, faCircle, faSpinner } from '@fortawesome/free-solid-svg-icons';
-import { Translate } from 'react-jhipster';
+import { Translate } from 'app/shared/i18n';
 import { MTlsCertificates } from 'app/shared/model/mtls-certificates.model';
 
 interface RequestStatusPanelProps {

@@ -1,13 +1,14 @@
 [versions]
-jacoco = "0.8.13"
-checkstyle = "10.23.1"
-# jhipster-needle-gradle-dependency-catalog-version - JHipster will add additional versions for convention plugins heref
+jacoco = "0.8.14"
+checkstyle = "10.26.1"
+mapstruct = "1.6.3"
+archunit = "1.4.1"
 
 [libraries]
-jhipster-framework = { module = "tech.jhipster:jhipster-framework", version = "8.11.0" }
-springdoc-openapi-starter-webmvc-api = { module = "org.springdoc:springdoc-openapi-starter-webmvc-api", version = "2.8.8" }
-# jhipster-needle-gradle-dependency-catalog-libraries - JHipster will add additional libraries versions
+mapstruct = { module = "org.mapstruct:mapstruct", version.ref = "mapstruct" }
+mapstruct-processor = { module = "org.mapstruct:mapstruct-processor", version.ref = "mapstruct" }
+archunit-junit5-api = { module = "com.tngtech.archunit:archunit-junit5-api", version.ref = "archunit" }
+archunit-junit5-engine = { module = "com.tngtech.archunit:archunit-junit5-engine", version.ref = "archunit" }
 
 [plugins]
-spring-boot = { id = "org.springframework.boot", version = "3.4.5" }
-# jhipster-needle-gradle-dependency-catalog-plugins - JHipster will add additional plugins versions
+spring-boot = { id = "org.springframework.boot", version = "4.0.1" }

@@ -8,55 +8,28 @@ import { ThemeProvider } from 'app/config/theme-context';
 import Header from './header';
 
 describe('Header', () => {
-  let mountedWrapper;
-  const devProps = {
+  const defaultProps = {
     currentLocale: 'en',
-    ribbonEnv: 'dev',
-    isInProduction: false,
-  };
-  const prodProps = {
-    ...devProps,
-    ribbonEnv: 'prod',
-    isInProduction: true,
   };
 
-  const wrapper = (props = devProps) => {
-    if (!mountedWrapper) {
-      const store = initStore();
-      const { container } = render(
-        <Provider store={store}>
-          <ThemeProvider>
-            <MemoryRouter>
-              <Header {...props} />
-            </MemoryRouter>
-          </ThemeProvider>
-        </Provider>,
-      );
-      mountedWrapper = container.innerHTML;
-    }
-    return mountedWrapper;
+  const renderHeader = (props = defaultProps) => {
+    const store = initStore();
+    const { container } = render(
+      <Provider store={store}>
+        <ThemeProvider>
+          <MemoryRouter>
+            <Header {...props} />
+          </MemoryRouter>
+        </ThemeProvider>
+      </Provider>,
+    );
+    return container.innerHTML;
   };
 
-  beforeEach(() => {
-    mountedWrapper = undefined;
-  });
+  it('Renders a Header component with Navbar.', () => {
+    const html = renderHeader();
 
-  // All tests will go here
-  it('Renders a Header component in dev profile with LoadingBar, Navbar, Nav and dev ribbon.', () => {
-    const html = wrapper();
-
-    // Find Navbar component
     expect(html).toContain('navbar');
-    // Ribbon
-    expect(html).toContain('ribbon');
-  });
-
-  it('Renders a Header component in prod profile with LoadingBar, Navbar, Nav.', () => {
-    const html = wrapper(prodProps);
-
-    // Find Navbar component
-    expect(html).toContain('navbar');
-    // No Ribbon
-    expect(html).not.toContain('ribbon');
+    expect(html).toContain('X-Road REST Client');
   });
 });

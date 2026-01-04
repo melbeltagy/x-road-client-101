@@ -1,6 +1,6 @@
 import React from 'react';
 import { Badge, Button, ListGroupItem } from 'reactstrap';
-import { Translate } from 'react-jhipster';
+import { Translate } from 'app/shared/i18n';
 import { RequestHistoryEntry } from 'app/shared/reducers/xroad-history';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faClock } from '@fortawesome/free-solid-svg-icons';

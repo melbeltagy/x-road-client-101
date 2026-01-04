@@ -1,6 +1,6 @@
 import React from 'react';
 import { Alert } from 'reactstrap';
-import { Translate } from 'react-jhipster';
+import { Translate } from 'app/shared/i18n';
 
 interface XRoadError {
   type: string;

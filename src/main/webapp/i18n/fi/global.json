@@ -4,10 +4,8 @@
     "browsehappy": "Käytät <strong>vanhentunutta</strong> selainta. Ole hyvä ja <a href=\"http://browsehappy.com/?locale=fi\">päivitä selaimesi</a> parantaaksesi käyttökokemusta.",
     "menu": {
       "home": "Etusivu",
-      "jhipster-needle-menu-add-element": "JHipster will add additional menu entries here (do not translate!)",
       "entities": {
-        "main": "Entiteetit",
-        "jhipster-needle-menu-add-entry": "JHipster will add additional entities here (do not translate!)"
+        "main": "Entiteetit"
       },
       "account": {
         "main": "Tili",
@@ -27,8 +25,7 @@
         "configuration": "Konfiguraatio",
         "logs": "Lokit",
         "apidocs": "API",
-        "database": "Tietokanta",
-        "jhipster-needle-menu-add-admin-element": "JHipster will add additional menu entries here (do not translate!)"
+        "database": "Tietokanta"
       },
       "language": "Kieli",
       "theme": {

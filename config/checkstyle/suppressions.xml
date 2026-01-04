@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<!DOCTYPE suppressions PUBLIC
+    "-//Checkstyle//DTD SuppressionFilter Configuration 1.2//EN"
+    "https://checkstyle.org/dtds/suppressions_1_2.dtd">
+<suppressions>
+    <!-- Suppress checks for generated sources -->
+    <suppress files="build[/\\]generated-sources[/\\]" checks=".*"/>
+
+    <!-- Suppress checks for test resources -->
+    <suppress files="src[/\\]test[/\\]resources[/\\]" checks=".*"/>
+</suppressions>

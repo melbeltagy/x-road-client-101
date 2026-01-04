@@ -1,7 +1,7 @@
 import { applyMiddleware, createStore } from 'redux';
 import * as toastify from 'react-toastify'; // synthetic default import doesn't work here due to mocking.
 import sinon from 'sinon';
-import { TranslatorContext } from 'react-jhipster';
+import { TranslatorContext } from 'app/shared/i18n';
 
 import notificationMiddleware from './notification-middleware';
 
@@ -35,7 +35,7 @@ describe('Notification Middleware', () => {
       isAxiosError: true,
       response: {
         data: {
-          type: 'https://www.jhipster.tech/problem/problem-with-message',
+          type: 'https://www.rfc-editor.org/rfc/rfc7807#section-3.1',
           title: 'Method argument not valid',
           status: 400,
           path: '/api/foos',
@@ -114,7 +114,7 @@ describe('Notification Middleware', () => {
         data: {
           title: 'Incorrect password',
           status: 400,
-          type: 'https://www.jhipster.tech/problem/invalid-password',
+          type: 'https://www.rfc-editor.org/rfc/rfc7807#section-3.1',
         },
         status: 400,
       },

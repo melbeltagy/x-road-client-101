@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { Offcanvas, OffcanvasBody, OffcanvasHeader, Button, Alert, ListGroup } from 'reactstrap';
-import { Translate, translate } from 'react-jhipster';
+import { Translate, translate } from 'app/shared/i18n';
 import { useAppSelector, useAppDispatch } from 'app/config/store';
 import { RequestHistoryEntry, clearHistory, closeHistorySidebar } from 'app/shared/reducers/xroad-history';
 import { HistoryEntry } from './history-entry';

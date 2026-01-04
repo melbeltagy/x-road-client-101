@@ -1,9 +1,9 @@
-import { translate } from 'react-jhipster';
+import { translate } from 'app/shared/i18n';
 import { toast } from 'react-toastify';
 import { isFulfilledAction, isRejectedAction } from 'app/shared/reducers/reducer.utils';
 import { isAxiosError } from 'axios';
-import { FieldErrorVM, isProblemWithMessage } from 'app/shared/jhipster/problem-details';
-import { getMessageFromHeaders } from 'app/shared/jhipster/headers';
+import { FieldErrorVM, isProblemWithMessage } from 'app/shared/error/problem-details';
+import { getMessageFromHeaders } from 'app/shared/error/headers';
 
 type ToastMessage = {
   message?: string;

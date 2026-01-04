@@ -5,7 +5,6 @@ import prettier from 'eslint-plugin-prettier/recommended';
 import tseslint from 'typescript-eslint';
 import eslint from '@eslint/js';
 import react from 'eslint-plugin-react/configs/recommended.js';
-// jhipster-needle-eslint-add-import - JHipster will add additional import here
 
 export default tseslint.config(
   {
@@ -93,6 +92,5 @@ export default tseslint.config(
       '@typescript-eslint/no-empty-function': 'off',
     },
   },
-  // jhipster-needle-eslint-add-config - JHipster will add additional config here
   prettier,
 );

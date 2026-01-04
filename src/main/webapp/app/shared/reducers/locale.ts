@@ -2,7 +2,7 @@ import axios from 'axios';
 import dayjs from 'dayjs';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
-import { TranslatorContext } from 'react-jhipster';
+import { TranslatorContext } from 'app/shared/i18n';
 
 const initialState = {
   currentLocale: '',

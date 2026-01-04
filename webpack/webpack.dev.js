@@ -2,7 +2,6 @@ const webpackMerge = require('webpack-merge').merge;
 const BrowserSyncPlugin = require('browser-sync-webpack-plugin');
 const SimpleProgressWebpackPlugin = require('simple-progress-webpack-plugin');
 const WebpackNotifierPlugin = require('webpack-notifier');
-const path = require('path');
 const sass = require('sass');
 
 const utils = require('./utils.js');
@@ -84,13 +83,6 @@ module.exports = async options =>
               heartbeatTimeout: 60000,
             },
           },
-          /*
-      ,ghostMode: { // uncomment this part to disable BrowserSync ghostMode; https://github.com/jhipster/generator-jhipster/issues/11116
-        clicks: false,
-        location: false,
-        forms: false,
-        scroll: false
-      } */
         },
         {
           reload: false,
@@ -98,7 +90,6 @@ module.exports = async options =>
       ),
       new WebpackNotifierPlugin({
         title: 'X Road Example Restapi Client',
-        contentImage: path.join(__dirname, 'logo-jhipster.png'),
       }),
     ].filter(Boolean),
   });
