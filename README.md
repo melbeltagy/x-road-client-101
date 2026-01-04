@@ -15,8 +15,10 @@ Open http://localhost:8080
 ### Development (with hot reload)
 
 ```bash
-./gradlew -x webapp    # Terminal 1 - Backend
-npm start              # Terminal 2 - Frontend
+# Backend only
+./gradlew -x webapp
+# Frontend - auto reload
+npm start
 ```
 
 ### Production
@@ -52,10 +54,14 @@ application:
 ## Development
 
 ```bash
-./gradlew test                    # Backend tests
-npm test                          # Frontend tests
-./gradlew checkstyleMain -x webapp  # Code style check
-npm run lint                      # ESLint check
+# Backend tests
+./gradlew test
+# Frontend tests
+npm test
+# Code style check
+./gradlew checkstyleMain -x webapp
+# ESLint check
+npm run lint
 ```
 
 ## Tech Stack

@@ -43,7 +43,13 @@ module.exports = async () =>
             },
             {
               loader: 'sass-loader',
-              options: { implementation: sass },
+              options: {
+                implementation: sass,
+                sassOptions: {
+                  quietDeps: true,
+                  silenceDeprecations: ['import', 'global-builtin', 'color-functions', 'legacy-js-api'],
+                },
+              },
             },
           ],
         },

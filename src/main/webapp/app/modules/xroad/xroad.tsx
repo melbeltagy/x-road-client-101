@@ -206,19 +206,6 @@ export const XRoad: React.FC = () => {
 
   return (
     <Container fluid className="mt-4">
-      <Row>
-        <Col>
-          <h2>
-            <Translate contentKey="xroad.title">X-Road Generic REST Client</Translate>
-          </h2>
-          <p className="text-muted">
-            <Translate contentKey="xroad.subtitle">
-              Send REST requests to X-Road Security Server. All fields are required except service version and mTLS certificates.
-            </Translate>
-          </p>
-        </Col>
-      </Row>
-
       {/* Alert notifications */}
       {alert.visible && (
         <Row className="mt-3">

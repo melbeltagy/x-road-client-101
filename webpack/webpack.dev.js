@@ -37,7 +37,13 @@ module.exports = async options =>
             },
             {
               loader: 'sass-loader',
-              options: { implementation: sass },
+              options: {
+                implementation: sass,
+                sassOptions: {
+                  quietDeps: true,
+                  silenceDeprecations: ['import', 'global-builtin', 'color-functions', 'legacy-js-api'],
+                },
+              },
             },
           ],
         },
@@ -49,6 +55,12 @@ module.exports = async options =>
         directory: './build/resources/main/static/',
       },
       port: 9060,
+      client: {
+        overlay: {
+          errors: true,
+          warnings: false,
+        },
+      },
       proxy: [
         {
           context: ['/api', '/services', '/management', '/v3/api-docs', '/h2-console'],
