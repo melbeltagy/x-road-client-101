@@ -1,7 +1,5 @@
 {
   "xroad": {
-    "title": "X-Road Generischer REST-Client",
-    "subtitle": "Senden Sie REST-Anfragen an den X-Road-Sicherheitsserver. Alle Felder sind erforderlich, außer Dienstversion und mTLS-Zertifikate.",
     "toast": {
       "requestFailed": "Anfrage fehlgeschlagen",
       "requestSuccessful": "Anfrage erfolgreich",

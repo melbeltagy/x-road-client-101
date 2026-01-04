@@ -29,6 +29,7 @@ a {
     overflow-y: auto;
     overflow-x: hidden;
     padding: 1rem;
+    padding-bottom: 280px; /* Space for fixed bottom status panel */
     .card {
       padding: 1rem;
     }

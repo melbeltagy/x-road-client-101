@@ -1,7 +1,5 @@
 {
   "xroad": {
-    "title": "X-Road Generic REST Client",
-    "subtitle": "Send REST requests to X-Road Security Server. All fields are required except service version and mTLS certificates.",
     "toast": {
       "requestFailed": "Request failed",
       "requestSuccessful": "Request successful",

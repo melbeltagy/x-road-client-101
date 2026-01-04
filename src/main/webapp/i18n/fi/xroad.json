@@ -1,7 +1,5 @@
 {
   "xroad": {
-    "title": "X-Road yleinen REST-asiakas",
-    "subtitle": "Lähetä REST-pyyntöjä X-Road-turvapalvelimelle. Kaikki kentät ovat pakollisia paitsi palvelun versio ja mTLS-sertifikaatit.",
     "toast": {
       "requestFailed": "Pyyntö epäonnistui",
       "requestSuccessful": "Pyyntö onnistui",

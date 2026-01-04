@@ -121,7 +121,7 @@ export const RequestStatusPanel: React.FC<RequestStatusPanelProps> = ({
   };
 
   return (
-    <Card className="mb-4 shadow-sm border-primary">
+    <Card className="shadow-sm border-primary" style={{ position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 1000 }}>
       <CardBody className="p-4">
         {/* Client Header */}
         <Row className="mb-3">

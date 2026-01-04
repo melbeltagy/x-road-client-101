@@ -1,7 +1,5 @@
 {
   "xroad": {
-    "title": "X-Road üldine REST-klient",
-    "subtitle": "Saada REST-päringuid X-Road turvaserverile. Kõik väljad on kohustuslikud, välja arvatud teenuse versioon ja mTLS-sertifikaadid.",
     "toast": {
       "requestFailed": "Päring ebaõnnestus",
       "requestSuccessful": "Päring õnnestus",

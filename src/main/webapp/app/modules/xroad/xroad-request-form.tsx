@@ -290,14 +290,6 @@ export const XRoadRequestForm: React.FC<XRoadRequestFormProps> = ({
         onToggle={() => setClientOpen(!clientOpen)}
       />
 
-      {/* Certificate Section */}
-      <CertificateSection
-        certificates={certificates}
-        onCertificateUpdate={handleCertificateUpdate}
-        isOpen={certificatesOpen}
-        onToggle={() => setCertificatesOpen(!certificatesOpen)}
-      />
-
       {/* Service Section */}
       <ServiceSection
         register={register}
@@ -305,6 +297,14 @@ export const XRoadRequestForm: React.FC<XRoadRequestFormProps> = ({
         onClear={handleClearService}
         isOpen={serviceOpen}
         onToggle={() => setServiceOpen(!serviceOpen)}
+      />
+
+      {/* Certificate Section */}
+      <CertificateSection
+        certificates={certificates}
+        onCertificateUpdate={handleCertificateUpdate}
+        isOpen={certificatesOpen}
+        onToggle={() => setCertificatesOpen(!certificatesOpen)}
       />
 
       {/* Request Details Section */}
