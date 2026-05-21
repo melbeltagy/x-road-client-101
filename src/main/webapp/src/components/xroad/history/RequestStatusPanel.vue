@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
-import type { MTlsCertificates } from '@/types';
+import type { MTlsCertificates, XRoadRequest } from '@/types';
+import { generateCurlCommand } from '@/utils/curl-generator';
 
 const props = defineProps<{
   client: {
@@ -28,10 +29,12 @@ const props = defineProps<{
   lastRequestSuccess: boolean | null;
   loading: boolean;
   isFormValid: boolean;
+  request: XRoadRequest | null;
 }>();
 
 const emit = defineEmits<{
   submit: [];
+  showAlert: [type: 'success' | 'error' | 'warning', message: string];
 }>();
 
 const { t } = useI18n();
@@ -111,6 +114,19 @@ const isServiceComplete = computed(() => {
   const { serviceCode } = props.service;
   return !!(securityServerUrl && instanceId && memberClass && memberCode && subsystemCode && serviceCode && props.requestPath);
 });
+
+// Copy request as cURL command
+async function copyAsCurl(): Promise<void> {
+  if (!props.request) return;
+
+  try {
+    const curlCommand = generateCurlCommand(props.request);
+    await navigator.clipboard.writeText(curlCommand);
+    emit('showAlert', 'success', t('xroad.toast.curlCopied'));
+  } catch (error) {
+    emit('showAlert', 'error', t('xroad.toast.curlCopyFailed'));
+  }
+}
 </script>
 
 <template>
@@ -163,7 +179,7 @@ const isServiceComplete = computed(() => {
       <!-- Indicators and Send Button -->
       <v-row align="center">
         <!-- mTLS Status -->
-        <v-col cols="12" md="3">
+        <v-col cols="12" md="2">
           <div class="d-flex align-center">
             <v-icon
               :color="hasMtls ? 'success' : 'error'"
@@ -177,7 +193,7 @@ const isServiceComplete = computed(() => {
         </v-col>
 
         <!-- HTTPS No Auth Status -->
-        <v-col cols="12" md="3">
+        <v-col cols="12" md="2">
           <div class="d-flex align-center">
             <v-icon
               :color="hasHttpsNoAuth ? 'success' : 'error'"
@@ -191,7 +207,7 @@ const isServiceComplete = computed(() => {
         </v-col>
 
         <!-- Request Status -->
-        <v-col cols="12" md="3">
+        <v-col cols="12" md="2">
           <div class="d-flex align-center">
             <v-icon
               :color="requestStatusColor"
@@ -204,8 +220,26 @@ const isServiceComplete = computed(() => {
           </div>
         </v-col>
 
+        <!-- Spacer -->
+        <v-col cols="12" md="2" />
+
+        <!-- Export cURL Button -->
+        <v-col cols="12" md="2" class="text-right">
+          <v-btn
+            variant="outlined"
+            color="primary"
+            size="x-large"
+            block
+            :disabled="!request || !isServiceComplete"
+            @click="copyAsCurl"
+          >
+            <v-icon start>content_copy</v-icon>
+            {{ t('xroad.action.exportCurl') }}
+          </v-btn>
+        </v-col>
+
         <!-- Send Button -->
-        <v-col cols="12" md="3" class="text-right">
+        <v-col cols="12" md="2" class="text-right">
           <v-btn
             color="primary"
             size="x-large"

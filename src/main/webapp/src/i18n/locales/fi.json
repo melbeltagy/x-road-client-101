@@ -46,6 +46,9 @@
     "validation": "Validation error on the server."
   },
   "xroad": {
+    "action": {
+      "exportCurl": "Vie cURL"
+    },
     "toast": {
       "requestFailed": "Request failed",
       "requestSuccessful": "Request successful",
@@ -53,7 +56,9 @@
       "response": "Response",
       "error": "Error",
       "clientError": "Client Error",
-      "unknownError": "Unknown error"
+      "unknownError": "Unknown error",
+      "curlCopied": "cURL-komento kopioitu leikepoydale",
+      "curlCopyFailed": "cURL-komennon kopiointi epaonnistui"
     },
     "client": {
       "title": "Client Identifier",

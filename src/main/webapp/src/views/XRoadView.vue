@@ -3,7 +3,7 @@ import { ref, computed, watch, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useXRoadHistoryStore, type RequestHistoryEntry } from '@/stores/xroad-history';
 import xroadProxyService from '@/services/xroad-proxy.service';
-import type { XRoadRequest, XRoadResponse, MTlsCertificates } from '@/types';
+import type { XRoadRequest, XRoadResponse, MTlsCertificates, SubsystemId, RequestDetails } from '@/types';
 import { XRoadRequestForm } from '@/components/xroad/form';
 import { XRoadResponseViewer } from '@/components/xroad/response';
 import { HistoryList, RequestStatusPanel } from '@/components/xroad/history';
@@ -163,6 +163,32 @@ function handleStatusPanelSubmit(): void {
   formRef.value?.submit();
 }
 
+// Build current request from form data for cURL export
+function buildCurrentRequest(): XRoadRequest | null {
+  if (!formData.value.client?.subsystem?.instanceId) return null;
+
+  return {
+    client: {
+      subsystem: formData.value.client.subsystem as SubsystemId,
+      securityServerUrl: formData.value.client.securityServerUrl || '',
+      mtlsCertificates: Object.keys(certificates.value).length > 0 ? certificates.value : undefined,
+    },
+    service: {
+      subsystem: formData.value.service?.subsystem as SubsystemId,
+      serviceCode: formData.value.service?.serviceCode || '',
+      serviceVersion: formData.value.service?.serviceVersion,
+    },
+    request: {
+      method: (formData.value.request?.method as RequestDetails['method']) || 'GET',
+      path: formData.value.request?.path || '/',
+      queryParams: formData.value.request?.queryParams,
+      headers: formData.value.request?.headers,
+      body: formData.value.request?.body,
+      contentType: formData.value.request?.contentType,
+    },
+  };
+}
+
 // Computed: last request success status
 const lastRequestSuccess = computed(() => {
   if (!response.value) return null;
@@ -252,7 +278,9 @@ const lastRequestSuccess = computed(() => {
       :last-request-success="lastRequestSuccess"
       :loading="loading"
       :is-form-valid="formValid"
+      :request="buildCurrentRequest()"
       @submit="handleStatusPanelSubmit"
+      @show-alert="handleHistoryAlert"
     />
   </v-container>
 </template>

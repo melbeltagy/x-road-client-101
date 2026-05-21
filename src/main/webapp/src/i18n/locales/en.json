@@ -46,6 +46,9 @@
     "validation": "Validation error on the server."
   },
   "xroad": {
+    "action": {
+      "exportCurl": "Export cURL"
+    },
     "toast": {
       "requestFailed": "Request failed",
       "requestSuccessful": "Request successful",
@@ -53,7 +56,9 @@
       "response": "Response",
       "error": "Error",
       "clientError": "Client Error",
-      "unknownError": "Unknown error"
+      "unknownError": "Unknown error",
+      "curlCopied": "cURL command copied to clipboard",
+      "curlCopyFailed": "Failed to copy cURL command"
     },
     "client": {
       "title": "Client Identifier",
