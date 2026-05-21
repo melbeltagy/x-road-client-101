@@ -15,11 +15,7 @@ public record RequestDetailsDto(
     Map<String, String> queryParams,
     Map<String, String> headers,
     String body,
-    String contentType,
-    String xroadId,
-    String xroadUserId,
-    String xroadIssue,
-    String xroadRepresentedParty
+    String contentType
 ) {
     // Compact constructor for default values
     public RequestDetailsDto {

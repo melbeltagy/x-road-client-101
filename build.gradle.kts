@@ -1,4 +1,4 @@
-import com.github.gradle.node.npm.task.NpmTask
+import com.github.gradle.node.pnpm.task.PnpmTask
 
 plugins {
     java
@@ -112,25 +112,31 @@ tasks.withType<JavaCompile>().configureEach {
     options.isIncremental = true
 }
 
-val webpackCommand = if (isProd) "webapp:prod" else "webapp:build"
+val webappDir = file("src/main/webapp")
 
-tasks.register<NpmTask>("webapp") {
+tasks.register<PnpmTask>("webapp") {
+    workingDir.set(webappDir)
     inputs.property("appVersion", project.version)
-    inputs.files("package-lock.json", "package.json", "tsconfig.json", ".postcssrc")
+    inputs.files(
+        "src/main/webapp/package.json",
+        "src/main/webapp/pnpm-lock.yaml",
+        "src/main/webapp/tsconfig.json",
+        "src/main/webapp/vite.config.ts"
+    )
         .withPropertyName("config-files")
         .withPathSensitivity(PathSensitivity.RELATIVE)
-    inputs.dir("src/main/webapp/")
+    inputs.dir("src/main/webapp/src/")
         .withPropertyName("webapp-source")
         .withPathSensitivity(PathSensitivity.RELATIVE)
-    inputs.dir("webpack/")
-        .withPropertyName("webpack-config")
+    inputs.dir("src/main/webapp/public/")
+        .withPropertyName("public-assets")
         .withPathSensitivity(PathSensitivity.RELATIVE)
     outputs.dir("build/resources/main/static/")
         .withPropertyName("webapp-output")
 
-    dependsOn("npmInstall")
-    args.set(listOf("run", webpackCommand))
-    environment.set(mapOf("APP_VERSION" to project.version.toString()))
+    dependsOn("pnpmInstall")
+    pnpmCommand.set(listOf("run", "build"))
+    environment.set(mapOf("VITE_APP_VERSION" to project.version.toString()))
 }
 
 tasks.processResources {

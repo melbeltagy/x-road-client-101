@@ -1,0 +1,26 @@
+/*
+ * Material Symbols Rounded icon styles
+ * Based on X-Road shared-ui
+ */
+
+.msr {
+  font-family: 'Material Symbols Rounded Variable';
+  font-weight: 400;
+  font-style: normal;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+
+  text-rendering: auto;
+  line-height: inherit;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  font-variation-settings: 'GRAD' 0, 'FILL' 0, 'opsz' 24, 'wght' 400;
+}
+
+.msr.filled {
+  font-variation-settings: 'GRAD' 0, 'FILL' 1, 'opsz' 24, 'wght' 400;
+}

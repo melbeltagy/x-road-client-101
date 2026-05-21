@@ -1,0 +1,238 @@
+<script setup lang="ts">
+import { computed } from 'vue';
+import { useI18n } from 'vue-i18n';
+import type { MTlsCertificates } from '@/types';
+
+const props = defineProps<{
+  client: {
+    subsystem: {
+      instanceId?: string;
+      memberClass?: string;
+      memberCode?: string;
+      subsystemCode?: string;
+    };
+    securityServerUrl?: string;
+  };
+  service: {
+    subsystem: {
+      instanceId?: string;
+      memberClass?: string;
+      memberCode?: string;
+      subsystemCode?: string;
+    };
+    serviceCode?: string;
+    serviceVersion?: string;
+  };
+  requestPath?: string;
+  certificates: MTlsCertificates;
+  lastRequestSuccess: boolean | null;
+  loading: boolean;
+  isFormValid: boolean;
+}>();
+
+const emit = defineEmits<{
+  submit: [];
+}>();
+
+const { t } = useI18n();
+
+const clientHeader = computed(() => {
+  const { instanceId, memberClass, memberCode, subsystemCode } = props.client.subsystem;
+  // Show partial client identifier as user types
+  const parts = [instanceId, memberClass, memberCode, subsystemCode];
+  const hasAnyValue = parts.some(p => p);
+  if (!hasAnyValue) {
+    return null;
+  }
+  return parts.map(p => p || '').join('/');
+});
+
+const serviceUrl = computed(() => {
+  const { securityServerUrl } = props.client;
+  const { instanceId, memberClass, memberCode, subsystemCode } = props.service.subsystem;
+  const { serviceCode, serviceVersion } = props.service;
+  const path = props.requestPath;
+
+  // Show partial URL as user types
+  const hasAnyServiceField = instanceId || memberClass || memberCode || subsystemCode || serviceCode;
+  if (!securityServerUrl && !hasAnyServiceField && !path) {
+    return null;
+  }
+
+  const serviceParts = [instanceId, memberClass, memberCode, subsystemCode, serviceCode];
+  if (serviceVersion) {
+    serviceParts.push(serviceVersion);
+  }
+  const serviceId = serviceParts.map(p => p || '').join('/');
+
+  const baseUrl = securityServerUrl || '';
+  const fullPath = path || '';
+
+  return `${baseUrl}/r1/${serviceId}${fullPath}`;
+});
+
+const hasMtls = computed(() => {
+  return !!(
+    props.certificates.securityServerCert?.trim() &&
+    props.certificates.clientCert?.trim() &&
+    props.certificates.clientPrivateKey?.trim()
+  );
+});
+
+const hasHttpsNoAuth = computed(() => {
+  return !!(props.certificates.securityServerCert?.trim());
+});
+
+const requestStatusColor = computed(() => {
+  if (props.lastRequestSuccess === null) return 'grey';
+  return props.lastRequestSuccess ? 'success' : 'error';
+});
+
+const requestStatusIcon = computed(() => {
+  if (props.lastRequestSuccess === null) return 'radio_button_unchecked';
+  return props.lastRequestSuccess ? 'check_circle' : 'cancel';
+});
+
+const requestStatusText = computed(() => {
+  if (props.lastRequestSuccess === null) return t('xroad.status.notSent');
+  return props.lastRequestSuccess ? t('xroad.status.success') : t('xroad.status.error');
+});
+
+// Check if client identifier is complete (all 4 fields filled)
+const isClientComplete = computed(() => {
+  const { instanceId, memberClass, memberCode, subsystemCode } = props.client.subsystem;
+  return !!(instanceId && memberClass && memberCode && subsystemCode);
+});
+
+// Check if service URL is complete (all required fields filled)
+const isServiceComplete = computed(() => {
+  const { securityServerUrl } = props.client;
+  const { instanceId, memberClass, memberCode, subsystemCode } = props.service.subsystem;
+  const { serviceCode } = props.service;
+  return !!(securityServerUrl && instanceId && memberClass && memberCode && subsystemCode && serviceCode && props.requestPath);
+});
+</script>
+
+<template>
+  <v-footer app class="status-panel elevation-4">
+    <v-container fluid class="pa-4">
+      <!-- Client Header -->
+      <v-row class="mb-2">
+        <v-col>
+          <div class="d-flex align-center">
+            <strong class="text-h6 mr-3" style="min-width: 150px;">{{ t('xroad.status.client') }}:</strong>
+            <template v-if="clientHeader">
+              <v-icon
+                v-if="!isClientComplete"
+                color="warning"
+                size="small"
+                class="mr-1"
+              >warning</v-icon>
+              <span
+                class="text-h5 font-monospace"
+                :class="{ 'text-warning': !isClientComplete }"
+              >{{ clientHeader }}</span>
+            </template>
+            <span v-else class="text-medium-emphasis">Not configured</span>
+          </div>
+        </v-col>
+      </v-row>
+
+      <!-- Service URL -->
+      <v-row class="mb-4">
+        <v-col>
+          <div class="d-flex align-center">
+            <strong class="text-h6 mr-3" style="min-width: 150px;">{{ t('xroad.status.serviceUrl') }}:</strong>
+            <template v-if="serviceUrl">
+              <v-icon
+                v-if="!isServiceComplete"
+                color="warning"
+                size="small"
+                class="mr-1"
+              >warning</v-icon>
+              <span
+                class="text-h5 font-monospace text-break"
+                :class="{ 'text-warning': !isServiceComplete }"
+              >{{ serviceUrl }}</span>
+            </template>
+            <span v-else class="text-medium-emphasis">Not configured</span>
+          </div>
+        </v-col>
+      </v-row>
+
+      <!-- Indicators and Send Button -->
+      <v-row align="center">
+        <!-- mTLS Status -->
+        <v-col cols="12" md="3">
+          <div class="d-flex align-center">
+            <v-icon
+              :color="hasMtls ? 'success' : 'error'"
+              size="x-large"
+              class="mr-2"
+            >
+              {{ hasMtls ? 'check_circle' : 'cancel' }}
+            </v-icon>
+            <span class="text-h6">{{ hasMtls ? 'mTLS Enabled' : 'mTLS Disabled' }}</span>
+          </div>
+        </v-col>
+
+        <!-- HTTPS No Auth Status -->
+        <v-col cols="12" md="3">
+          <div class="d-flex align-center">
+            <v-icon
+              :color="hasHttpsNoAuth ? 'success' : 'error'"
+              size="x-large"
+              class="mr-2"
+            >
+              {{ hasHttpsNoAuth ? 'check_circle' : 'cancel' }}
+            </v-icon>
+            <span class="text-h6">{{ hasHttpsNoAuth ? 'HTTPS (No Auth)' : 'No HTTPS Cert' }}</span>
+          </div>
+        </v-col>
+
+        <!-- Request Status -->
+        <v-col cols="12" md="3">
+          <div class="d-flex align-center">
+            <v-icon
+              :color="requestStatusColor"
+              size="x-large"
+              class="mr-2"
+            >
+              {{ requestStatusIcon }}
+            </v-icon>
+            <span class="text-h6">{{ requestStatusText }}</span>
+          </div>
+        </v-col>
+
+        <!-- Send Button -->
+        <v-col cols="12" md="3" class="text-right">
+          <v-btn
+            color="primary"
+            size="x-large"
+            block
+            :loading="loading"
+            :disabled="loading || !isClientComplete || !isServiceComplete"
+            @click="emit('submit')"
+          >
+            <v-icon v-if="!loading" start>send</v-icon>
+            {{ loading ? t('xroad.request.sending') : t('xroad.request.submit') }}
+          </v-btn>
+        </v-col>
+      </v-row>
+    </v-container>
+  </v-footer>
+</template>
+
+<style scoped>
+.status-panel {
+  border-top: 2px solid rgb(var(--v-theme-primary));
+}
+
+.font-monospace {
+  font-family: monospace;
+}
+
+.text-break {
+  word-break: break-all;
+}
+</style>

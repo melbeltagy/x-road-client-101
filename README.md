@@ -17,8 +17,8 @@ Open http://localhost:8080
 ```bash
 # Backend only
 ./gradlew -x webapp
-# Frontend - auto reload
-npm start
+# Frontend (in separate terminal) - hot reload
+cd src/main/webapp && pnpm dev
 ```
 
 ### Production
@@ -37,9 +37,11 @@ docker compose -f docker/docker-compose.yml up -d --build
 ## Requirements
 
 - Java 25
-- Node.js 22+ and npm 11+ (auto-installed)
+- Node.js 22+ and pnpm 10+
 
 ## Configuration
+
+### Backend
 
 Edit `src/main/resources/config/application.yml`:
 
@@ -51,21 +53,41 @@ application:
       read-ms: 120000 # 2 minutes
 ```
 
+### Frontend
+
+Frontend settings are configured via environment variables at build time:
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `VITE_MAX_HISTORY_ENTRIES` | 25 | Maximum number of requests to keep in history |
+
+**Development:**
+```bash
+VITE_MAX_HISTORY_ENTRIES=50 pnpm build
+```
+
+**Docker:**
+```bash
+docker compose -f docker/docker-compose.yml build --build-arg VITE_MAX_HISTORY_ENTRIES=50
+```
+
+Or edit `docker/docker-compose.yml` to change the default value.
+
 ## Development
 
 ```bash
 # Backend tests
 ./gradlew test
 # Frontend tests
-npm test
+cd src/main/webapp && pnpm test
 # Code style check
 ./gradlew checkstyleMain -x webapp
 # ESLint check
-npm run lint
+cd src/main/webapp && pnpm lint
 ```
 
 ## Tech Stack
 
 - **Backend**: Spring Boot 4.0, Java 25, WebFlux, MapStruct
-- **Frontend**: React 19, TypeScript 5.9, Redux Toolkit, Bootstrap 5
-- **Build**: Gradle 9.2, Webpack 5
+- **Frontend**: Vue 3, TypeScript 5, Vuetify 4, Pinia, Vite
+- **Build**: Gradle 9.2, Vite 6

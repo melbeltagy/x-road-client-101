@@ -4,6 +4,9 @@ services:
     build:
       context: ..
       dockerfile: docker/Dockerfile
+      args:
+        # Frontend configuration (build-time)
+        VITE_MAX_HISTORY_ENTRIES: 25
     ports:
       - '8080:8080'
     healthcheck:

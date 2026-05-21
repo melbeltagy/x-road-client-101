@@ -1,0 +1,50 @@
+// Global styles for X-Road REST API Client
+
+// Font imports are handled by Vuetify plugin
+
+// Custom global styles
+html,
+body {
+  font-family: 'Open Sans Variable', sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+// Ensure full height for the app
+#app {
+  min-height: 100vh;
+}
+
+// Custom scrollbar styling
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.5);
+}
+
+// Dark mode scrollbar
+.v-theme--dark {
+  ::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.5);
+  }
+}

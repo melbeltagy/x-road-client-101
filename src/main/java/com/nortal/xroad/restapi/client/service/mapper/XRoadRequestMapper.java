@@ -18,10 +18,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 public class XRoadRequestMapper {
 
     private static final String HEADER_X_ROAD_CLIENT = "X-Road-Client";
-    private static final String HEADER_X_ROAD_ID = "X-Road-Id";
-    private static final String HEADER_X_ROAD_USER_ID = "X-Road-UserId";
-    private static final String HEADER_X_ROAD_ISSUE = "X-Road-Issue";
-    private static final String HEADER_X_ROAD_REPRESENTED_PARTY = "X-Road-Represented-Party";
     private static final String HEADER_X_ROAD_REQUEST_ID = "X-Road-Request-Id";
     private static final String HEADER_CONTENT_TYPE = "Content-Type";
 
@@ -78,19 +74,6 @@ public class XRoadRequestMapper {
         builder.header(HEADER_X_ROAD_REQUEST_ID, UUID.randomUUID().toString());
 
         RequestDetailsDto details = request.request();
-        if (StringUtils.isNotBlank(details.xroadId())) {
-            builder.header(HEADER_X_ROAD_ID, details.xroadId());
-        }
-        if (StringUtils.isNotBlank(details.xroadUserId())) {
-            builder.header(HEADER_X_ROAD_USER_ID, details.xroadUserId());
-        }
-        if (StringUtils.isNotBlank(details.xroadIssue())) {
-            builder.header(HEADER_X_ROAD_ISSUE, details.xroadIssue());
-        }
-        if (StringUtils.isNotBlank(details.xroadRepresentedParty())) {
-            builder.header(HEADER_X_ROAD_REPRESENTED_PARTY, details.xroadRepresentedParty());
-        }
-
         addContentTypeHeader(builder, details);
         addCustomHeaders(builder, details);
     }
