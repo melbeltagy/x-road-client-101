@@ -1,12 +1,11 @@
 import type { XRoadRequest } from '@/types';
+import { buildServiceUrl, formatXRoadClient } from './xroad-url';
 
 export function generateCurlCommand(request: XRoadRequest): string {
   const { client, service, request: reqDetails } = request;
 
-  // Build URL
-  const baseUrl = client.securityServerUrl;
-  const servicePath = buildServicePath(service, reqDetails.path);
-  let url = `${baseUrl}${servicePath}`;
+  // Build URL using shared utility
+  let url = buildServiceUrl(client.securityServerUrl, service, reqDetails.path);
 
   // Add query params
   if (reqDetails.queryParams && Object.keys(reqDetails.queryParams).length > 0) {
@@ -14,7 +13,7 @@ export function generateCurlCommand(request: XRoadRequest): string {
     url += `?${params}`;
   }
 
-  const parts: string[] = ['curl'];
+  const parts: string[] = ['curl', '-v'];
 
   // Method
   if (reqDetails.method !== 'GET') {
@@ -24,9 +23,8 @@ export function generateCurlCommand(request: XRoadRequest): string {
   // URL (quoted)
   parts.push(`'${url}'`);
 
-  // X-Road-Client header
-  const clientHeader = `${client.subsystem.instanceId}/${client.subsystem.memberClass}/${client.subsystem.memberCode}/${client.subsystem.subsystemCode}`;
-  parts.push(`-H 'X-Road-Client: ${clientHeader}'`);
+  // X-Road-Client header using shared utility
+  parts.push(`-H 'X-Road-Client: ${formatXRoadClient(client.subsystem)}'`);
 
   // Content-Type header
   if (reqDetails.contentType) {
@@ -63,14 +61,4 @@ export function generateCurlCommand(request: XRoadRequest): string {
   }
 
   return parts.join(' \\\n  ');
-}
-
-function buildServicePath(service: XRoadRequest['service'], path: string): string {
-  const { subsystem, serviceCode, serviceVersion } = service;
-  let servicePath = `/r1/${subsystem.instanceId}/${subsystem.memberClass}/${subsystem.memberCode}/${subsystem.subsystemCode}/${serviceCode}`;
-  if (serviceVersion) {
-    servicePath += `/${serviceVersion}`;
-  }
-  servicePath += path;
-  return servicePath;
 }

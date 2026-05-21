@@ -2,6 +2,7 @@
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { RequestHistoryEntry } from '@/stores/xroad-history';
+import { formatXRoadClient, buildServiceUrl } from '@/utils/xroad-url';
 
 const props = defineProps<{
   entry: RequestHistoryEntry;
@@ -28,22 +29,12 @@ const formattedTimestamp = computed(() => {
 });
 
 const clientIdentifier = computed(() => {
-  const { client } = props.entry.request;
-  const { instanceId, memberClass, memberCode, subsystemCode } = client.subsystem;
-  return `${instanceId}/${memberClass}/${memberCode}/${subsystemCode}`;
+  return formatXRoadClient(props.entry.request.client.subsystem);
 });
 
 const serviceUrl = computed(() => {
   const { client, service, request } = props.entry.request;
-  const { securityServerUrl } = client;
-  const { instanceId, memberClass, memberCode, subsystemCode } = service.subsystem;
-  const { serviceCode, serviceVersion } = service;
-
-  const serviceId = serviceVersion
-    ? `${instanceId}/${memberClass}/${memberCode}/${subsystemCode}/${serviceCode}/${serviceVersion}`
-    : `${instanceId}/${memberClass}/${memberCode}/${subsystemCode}/${serviceCode}`;
-
-  return `${securityServerUrl}/r1/${serviceId}${request.path}`;
+  return buildServiceUrl(client.securityServerUrl, service, request.path);
 });
 
 function handleView(): void {
@@ -75,13 +66,13 @@ function handleDelete(event: Event): void {
     </template>
 
     <v-list-item-title class="font-weight-bold">
-      <span class="text-caption text-medium-emphasis">Client:</span>
+      <span class="text-caption text-medium-emphasis">{{ t('xroad.history.entry.client') }}:</span>
       {{ clientIdentifier }}
     </v-list-item-title>
 
     <v-list-item-subtitle>
       <div class="mb-1">
-        <span class="text-caption text-medium-emphasis">Method:</span>
+        <span class="text-caption text-medium-emphasis">{{ t('xroad.history.entry.method') }}:</span>
         <strong class="ml-1">{{ entry.request.request.method }}</strong>
       </div>
       <div class="text-caption d-flex align-center mb-1">

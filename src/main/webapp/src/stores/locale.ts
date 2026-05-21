@@ -5,6 +5,8 @@ import { loadLocaleMessages, setI18nLanguage } from '@/plugins/i18n';
 
 export type SupportedLocale = 'en' | 'et' | 'fi' | 'de' | 'fr';
 
+export const LOCALE_STORAGE_KEY = 'xroad-locale';
+
 export const SUPPORTED_LOCALES: { code: SupportedLocale; name: string }[] = [
   { code: 'en', name: 'English' },
   { code: 'et', name: 'Eesti' },
@@ -13,52 +15,85 @@ export const SUPPORTED_LOCALES: { code: SupportedLocale; name: string }[] = [
   { code: 'fr', name: 'Français' },
 ];
 
-export const useLocaleStore = defineStore(
-  'locale',
-  () => {
-    const currentLocale = ref<SupportedLocale>('en');
-    const loadedLocales = ref<SupportedLocale[]>(['en']);
+const SUPPORTED_LOCALE_CODES = SUPPORTED_LOCALES.map((l) => l.code);
 
-    async function setLocale(locale: SupportedLocale): Promise<void> {
-      if (!loadedLocales.value.includes(locale)) {
-        await loadLocaleMessages(locale);
-        loadedLocales.value.push(locale);
-      }
-
-      currentLocale.value = locale;
-      setI18nLanguage(locale);
-
-      // Update dayjs locale
-      try {
-        if (locale !== 'en') {
-          await import(`dayjs/locale/${locale}.js`);
-        }
-        dayjs.locale(locale);
-      } catch {
-        // Fallback to English if locale not available
-        dayjs.locale('en');
-      }
+/**
+ * Detects the best locale to use based on:
+ * 1. Stored preference in localStorage
+ * 2. Browser's language settings
+ * 3. Default to English
+ */
+export function detectInitialLocale(): SupportedLocale {
+  // 1. Check localStorage for stored preference
+  try {
+    const storedLocale = localStorage.getItem(LOCALE_STORAGE_KEY);
+    if (storedLocale && SUPPORTED_LOCALE_CODES.includes(storedLocale as SupportedLocale)) {
+      return storedLocale as SupportedLocale;
     }
-
-    async function initializeLocale(): Promise<void> {
-      // If we have a persisted locale different from English, load it
-      if (currentLocale.value !== 'en') {
-        await setLocale(currentLocale.value);
-      }
-    }
-
-    return {
-      currentLocale,
-      loadedLocales,
-      setLocale,
-      initializeLocale,
-    };
-  },
-  {
-    persist: {
-      key: 'xroad-locale',
-      storage: sessionStorage,
-      pick: ['currentLocale'],
-    },
+  } catch {
+    // localStorage might not be available (SSR, etc.)
   }
-);
+
+  // 2. Try to match browser's language
+  try {
+    const browserLanguages = navigator.languages || [navigator.language];
+    for (const lang of browserLanguages) {
+      // Try exact match first (e.g., 'en-US' -> 'en')
+      const langCode = lang.split('-')[0].toLowerCase();
+      if (SUPPORTED_LOCALE_CODES.includes(langCode as SupportedLocale)) {
+        return langCode as SupportedLocale;
+      }
+    }
+  } catch {
+    // navigator might not be available (SSR, etc.)
+  }
+
+  // 3. Default to English
+  return 'en';
+}
+
+export const useLocaleStore = defineStore('locale', () => {
+  // Detect initial locale when store is first created
+  const currentLocale = ref<SupportedLocale>(detectInitialLocale());
+  const loadedLocales = ref<SupportedLocale[]>(['en']);
+
+  async function setLocale(locale: SupportedLocale): Promise<void> {
+    if (!loadedLocales.value.includes(locale)) {
+      await loadLocaleMessages(locale);
+      loadedLocales.value.push(locale);
+    }
+
+    currentLocale.value = locale;
+    setI18nLanguage(locale);
+
+    // Persist to localStorage
+    try {
+      localStorage.setItem(LOCALE_STORAGE_KEY, locale);
+    } catch {
+      // localStorage might not be available
+    }
+
+    // Update dayjs locale
+    try {
+      if (locale !== 'en') {
+        await import(`dayjs/locale/${locale}.js`);
+      }
+      dayjs.locale(locale);
+    } catch {
+      // Fallback to English if locale not available
+      dayjs.locale('en');
+    }
+  }
+
+  async function initializeLocale(): Promise<void> {
+    // Load the detected/stored locale
+    await setLocale(currentLocale.value);
+  }
+
+  return {
+    currentLocale,
+    loadedLocales,
+    setLocale,
+    initializeLocale,
+  };
+});

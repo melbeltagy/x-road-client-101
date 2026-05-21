@@ -46,6 +46,11 @@
     "validation": "Validation error on the server."
   },
   "xroad": {
+    "tabs": {
+      "identifiers": "Identifiers",
+      "request": "Request",
+      "security": "Security"
+    },
     "action": {
       "exportCurl": "Export cURL"
     },
@@ -69,7 +74,9 @@
       "securityServerUrl": "Security Server URL",
       "pemCertificates": "Client Certificates (Optional mTLS)",
       "pemCertificatesHelp": "Optional: Paste entire PEM file contents including certificate and private key",
-      "clear": "Clear"
+      "clear": "Clear",
+      "suggestionsAvailable": "{count} clients available",
+      "fetchError": "Could not fetch clients"
     },
     "certificates": {
       "title": "mTLS Certificates (Optional)",
@@ -113,7 +120,9 @@
       "subsystemCode": "Subsystem Code",
       "serviceCode": "Service Code",
       "serviceVersion": "Service Version",
-      "clear": "Clear"
+      "clear": "Clear",
+      "servicesAvailable": "{count} services available",
+      "fetchError": "Could not fetch services"
     },
     "request": {
       "title": "Request Details",
@@ -126,7 +135,10 @@
       "contentTypeHelp": "Optional: Specify the Content-Type header for the request body",
       "clear": "Clear",
       "submit": "Send Request",
-      "sending": "Sending..."
+      "sending": "Sending...",
+      "endpointsAvailable": "{count} endpoints available",
+      "selectEndpoint": "Select Endpoint",
+      "selectEndpointPlaceholder": "Choose an endpoint from the service"
     },
     "advanced": {
       "title": "Advanced Configuration",
@@ -212,15 +224,25 @@
       "indicator": "This request is from history",
       "entry": {
         "status": "Status",
-        "timestamp": "Time"
+        "timestamp": "Time",
+        "client": "Client",
+        "method": "Method"
       }
     },
     "status": {
-      "client": "Client",
+      "client": "X-Road-Client",
       "serviceUrl": "Service URL",
       "notSent": "Not sent",
       "success": "Request successful",
-      "error": "Request failed"
+      "error": "Request failed",
+      "notConfigured": "Not configured",
+      "mtlsEnabled": "mTLS Enabled",
+      "mtlsDisabled": "mTLS Disabled",
+      "httpsNoAuth": "HTTPS (No Auth)",
+      "noHttpsCert": "No HTTPS Cert"
+    },
+    "form": {
+      "selectPlaceholder": "-- Select --"
     }
   }
 }

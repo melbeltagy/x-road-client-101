@@ -2,12 +2,12 @@
   "global": {
     "title": "X-Road REST Client",
     "menu": {
-      "home": "Home",
-      "language": "Language",
+      "home": "Etusivu",
+      "language": "Kieli",
       "theme": {
-        "light": "Light",
-        "dark": "Dark",
-        "system": "System"
+        "light": "Vaalea",
+        "dark": "Tumma",
+        "system": "Järjestelmä"
       }
     },
     "field": {
@@ -16,49 +16,54 @@
   },
   "entity": {
     "action": {
-      "back": "Back",
-      "cancel": "Cancel",
+      "back": "Takaisin",
+      "cancel": "Peruuta",
       "clear": "Tyhjennä",
-      "delete": "Delete",
-      "edit": "Edit",
-      "save": "Save",
-      "view": "View"
+      "delete": "Poista",
+      "edit": "Muokkaa",
+      "save": "Tallenna",
+      "view": "Näytä"
     },
     "validation": {
-      "required": "This field is required.",
-      "minlength": "This field is required to be at least {min} characters.",
-      "maxlength": "This field cannot be longer than {max} characters.",
-      "pattern": "This field should follow pattern for {pattern}."
+      "required": "Tämä kenttä on pakollinen.",
+      "minlength": "Tämän kentän on oltava vähintään {min} merkkiä.",
+      "maxlength": "Tämä kenttä ei saa olla pidempi kuin {max} merkkiä.",
+      "pattern": "Tämän kentän on vastattava mallia {pattern}."
     }
   },
   "error": {
-    "title": "Error page!",
+    "title": "Virhe!",
     "http": {
-      "400": "Bad request.",
-      "403": "You are not authorized to access this page.",
-      "404": "The page does not exist.",
-      "405": "The HTTP verb you used is not supported for this URL.",
-      "500": "Internal server error."
+      "400": "Virheellinen pyyntö.",
+      "403": "Sinulla ei ole oikeutta käyttää tätä sivua.",
+      "404": "Sivua ei ole olemassa.",
+      "405": "Käytetty HTTP-metodi ei ole tuettu tälle URL:lle.",
+      "500": "Sisäinen palvelinvirhe."
     },
-    "internalServerError": "Internal server error",
-    "serverNotReachable": "Server not reachable",
-    "urlNotFound": "Not found",
-    "validation": "Validation error on the server."
+    "internalServerError": "Sisäinen palvelinvirhe",
+    "serverNotReachable": "Palvelin ei ole tavoitettavissa",
+    "urlNotFound": "Ei löytynyt",
+    "validation": "Vahvistusvirhe palvelimella."
   },
   "xroad": {
+    "tabs": {
+      "identifiers": "Tunnisteet",
+      "request": "Pyyntö",
+      "security": "Turvallisuus"
+    },
     "action": {
       "exportCurl": "Vie cURL"
     },
     "toast": {
-      "requestFailed": "Request failed",
-      "requestSuccessful": "Request successful",
-      "xroadError": "X-Road error",
-      "response": "Response",
-      "error": "Error",
-      "clientError": "Client Error",
-      "unknownError": "Unknown error",
-      "curlCopied": "cURL-komento kopioitu leikepoydale",
-      "curlCopyFailed": "cURL-komennon kopiointi epaonnistui"
+      "requestFailed": "Pyyntö epäonnistui",
+      "requestSuccessful": "Pyyntö onnistui",
+      "xroadError": "X-Road-virhe",
+      "response": "Vastaus",
+      "error": "Virhe",
+      "clientError": "Asiakasvirhe",
+      "unknownError": "Tuntematon virhe",
+      "curlCopied": "cURL-komento kopioitu leikepöydälle",
+      "curlCopyFailed": "cURL-komennon kopiointi epäonnistui"
     },
     "client": {
       "title": "Client Identifier",
@@ -69,7 +74,9 @@
       "securityServerUrl": "Security Server URL",
       "pemCertificates": "Client Certificates (Optional mTLS)",
       "pemCertificatesHelp": "Optional: Paste entire PEM file contents including certificate and private key",
-      "clear": "Clear"
+      "clear": "Clear",
+      "suggestionsAvailable": "{count} asiakasta saatavilla",
+      "fetchError": "Asiakkaiden haku epaonnistui"
     },
     "certificates": {
       "title": "mTLS Certificates (Optional)",
@@ -113,7 +120,9 @@
       "subsystemCode": "Subsystem Code",
       "serviceCode": "Service Code",
       "serviceVersion": "Service Version",
-      "clear": "Clear"
+      "clear": "Clear",
+      "servicesAvailable": "{count} palvelua saatavilla",
+      "fetchError": "Palveluiden lataus epäonnistui"
     },
     "request": {
       "title": "Request Details",
@@ -125,8 +134,11 @@
       "contentTypePlaceholder": "e.g., application/json, application/xml, text/plain",
       "contentTypeHelp": "Optional: Specify the Content-Type header for the request body",
       "clear": "Clear",
-      "submit": "Send Request",
-      "sending": "Sending..."
+      "submit": "Lähetä pyyntö",
+      "sending": "Lähetetään...",
+      "endpointsAvailable": "{count} päätepistettä saatavilla",
+      "selectEndpoint": "Valitse päätepiste",
+      "selectEndpointPlaceholder": "Valitse palvelun päätepiste"
     },
     "advanced": {
       "title": "Advanced Configuration",
@@ -135,41 +147,41 @@
       "add": "Add",
       "key": "Key",
       "value": "Value",
-      "headerName": "Header Name",
-      "headerValue": "Header Value",
-      "noQueryParams": "No query parameters. Click Add to include query parameters.",
-      "noCustomHeaders": "No custom headers. Click Add to include additional HTTP headers."
+      "headerName": "Otsikon nimi",
+      "headerValue": "Otsikon arvo",
+      "noQueryParams": "Ei kyselyparametreja. Napsauta Lisää lisätäksesi parametreja.",
+      "noCustomHeaders": "Ei mukautettuja otsikoita. Napsauta Lisää lisätäksesi HTTP-otsikoita."
     },
     "response": {
-      "title": "Response",
-      "status": "Status",
-      "headers": "Headers",
-      "body": "Body",
-      "noResponse": "No response yet. Send a request to see the response here.",
-      "responseStatus": "Response Status",
-      "error": "Error",
-      "timestamp": "Timestamp",
+      "title": "Vastaus",
+      "status": "Tila",
+      "headers": "Otsikot",
+      "body": "Sisältö",
+      "noResponse": "Ei vastausta vielä. Lähetä pyyntö nähdäksesi vastauksen täällä.",
+      "responseStatus": "Vastauksen tila",
+      "error": "Virhe",
+      "timestamp": "Aikaleima",
       "contentType": "Content-Type",
       "contentLength": "Content-Length",
-      "xroadHeaders": "X-Road Headers",
-      "xroadError": "X-Road Error",
-      "xroadErrorType": "Type",
-      "xroadErrorMessage": "Message",
-      "xroadErrorDetail": "Detail",
-      "xroadErrorFaultCode": "Fault Code",
-      "xroadErrorFaultString": "Fault String",
-      "allHeaders": "All Headers",
-      "httpHeaders": "HTTP Headers",
-      "noHeaders": "No headers",
-      "responseBody": "Response Body",
-      "size": "Size",
-      "tooLarge": "Too Large",
-      "noBody": "No body",
-      "bodyTooLargeMessage": "Response body is larger than 1MB and cannot be displayed inline.",
-      "downloadResponse": "Download Response",
-      "raw": "Raw",
-      "jsonFormat": "JSON Format",
-      "invalidJson": "Response body is not valid JSON. Displaying as raw text instead."
+      "xroadHeaders": "X-Road-otsikot",
+      "xroadError": "X-Road-virhe",
+      "xroadErrorType": "Tyyppi",
+      "xroadErrorMessage": "Viesti",
+      "xroadErrorDetail": "Yksityiskohta",
+      "xroadErrorFaultCode": "Virhekoodi",
+      "xroadErrorFaultString": "Virheilmoitus",
+      "allHeaders": "Kaikki otsikot",
+      "httpHeaders": "HTTP-otsikot",
+      "noHeaders": "Ei otsikoita",
+      "responseBody": "Vastauksen sisältö",
+      "size": "Koko",
+      "tooLarge": "Liian suuri",
+      "noBody": "Ei sisältöä",
+      "bodyTooLargeMessage": "Vastauksen sisältö on suurempi kuin 1MB eikä sitä voi näyttää.",
+      "downloadResponse": "Lataa vastaus",
+      "raw": "Raaka",
+      "jsonFormat": "JSON-muoto",
+      "invalidJson": "Vastauksen sisältö ei ole kelvollista JSON:ia. Näytetään raakatekstinä."
     },
     "placeholders": {
       "instanceId": "e.g., DEV, PROD, FI-TEST",
@@ -200,27 +212,37 @@
       "method": "Method is required"
     },
     "history": {
-      "title": "Request History",
-      "button": "History",
-      "empty": "No request history yet",
-      "emptyDescription": "Make a request to see it here",
-      "clearAll": "Clear All History",
-      "confirmClear": "Are you sure you want to clear all history? This cannot be undone.",
-      "cleared": "History cleared successfully",
-      "delete": "Delete",
-      "deleted": "History entry deleted",
-      "indicator": "This request is from history",
+      "title": "Pyyntöhistoria",
+      "button": "Historia",
+      "empty": "Ei pyyntöhistoriaa",
+      "emptyDescription": "Lähetä pyyntö nähdäksesi sen täällä",
+      "clearAll": "Tyhjennä historia",
+      "confirmClear": "Haluatko varmasti tyhjentää koko historian? Tätä ei voi perua.",
+      "cleared": "Historia tyhjennetty",
+      "delete": "Poista",
+      "deleted": "Historiamerkintä poistettu",
+      "indicator": "Tämä pyyntö on historiasta",
       "entry": {
-        "status": "Status",
-        "timestamp": "Time"
+        "status": "Tila",
+        "timestamp": "Aika",
+        "client": "Asiakas",
+        "method": "Metodi"
       }
     },
     "status": {
-      "client": "Client",
-      "serviceUrl": "Service URL",
-      "notSent": "Not sent",
-      "success": "Request successful",
-      "error": "Request failed"
+      "client": "X-Road-Client",
+      "serviceUrl": "Palvelun URL",
+      "notSent": "Ei lähetetty",
+      "success": "Pyyntö onnistui",
+      "error": "Pyyntö epäonnistui",
+      "notConfigured": "Ei määritetty",
+      "mtlsEnabled": "mTLS käytössä",
+      "mtlsDisabled": "mTLS pois käytöstä",
+      "httpsNoAuth": "HTTPS (ei todennusta)",
+      "noHttpsCert": "Ei HTTPS-sertifikaattia"
+    },
+    "form": {
+      "selectPlaceholder": "-- Valitse --"
     }
   }
 }

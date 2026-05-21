@@ -14,12 +14,49 @@ vi.mock('dayjs', () => ({
   },
 }));
 
-import { useLocaleStore, SUPPORTED_LOCALES } from '../locale';
+import {
+  useLocaleStore,
+  SUPPORTED_LOCALES,
+  detectInitialLocale,
+  LOCALE_STORAGE_KEY,
+} from '../locale';
 
 describe('Locale Store', () => {
+  // Track localStorage values for mocking
+  let localStorageValues: Record<string, string> = {};
+
   beforeEach(() => {
     setActivePinia(createPinia());
     vi.clearAllMocks();
+
+    // Reset localStorage mock values
+    localStorageValues = {};
+
+    // Configure localStorage mock to actually store/retrieve values
+    vi.mocked(localStorage.getItem).mockImplementation((key: string) => {
+      return localStorageValues[key] ?? null;
+    });
+    vi.mocked(localStorage.setItem).mockImplementation((key: string, value: string) => {
+      localStorageValues[key] = value;
+    });
+    vi.mocked(localStorage.clear).mockImplementation(() => {
+      localStorageValues = {};
+    });
+    vi.mocked(localStorage.removeItem).mockImplementation((key: string) => {
+      delete localStorageValues[key];
+    });
+
+    // Reset navigator.languages to default English
+    Object.defineProperty(navigator, 'languages', {
+      value: ['en-US'],
+      writable: true,
+      configurable: true,
+    });
+    Object.defineProperty(navigator, 'language', {
+      value: 'en-US',
+      writable: true,
+      configurable: true,
+    });
   });
 
   describe('SUPPORTED_LOCALES', () => {
@@ -37,8 +74,40 @@ describe('Locale Store', () => {
     });
   });
 
+  describe('detectInitialLocale', () => {
+    it('should default to en when no stored locale and browser is English', () => {
+      expect(detectInitialLocale()).toBe('en');
+    });
+
+    it('should use stored locale from localStorage', () => {
+      localStorage.setItem(LOCALE_STORAGE_KEY, 'de');
+      expect(detectInitialLocale()).toBe('de');
+    });
+
+    it('should detect browser locale when no stored preference', () => {
+      Object.defineProperty(navigator, 'languages', {
+        value: ['fi-FI', 'en-US'],
+        configurable: true,
+      });
+      expect(detectInitialLocale()).toBe('fi');
+    });
+
+    it('should fallback to en for unsupported browser locale', () => {
+      Object.defineProperty(navigator, 'languages', {
+        value: ['ja-JP', 'zh-CN'],
+        configurable: true,
+      });
+      expect(detectInitialLocale()).toBe('en');
+    });
+
+    it('should ignore invalid stored locale', () => {
+      localStorage.setItem(LOCALE_STORAGE_KEY, 'invalid');
+      expect(detectInitialLocale()).toBe('en');
+    });
+  });
+
   describe('initial state', () => {
-    it('should have en as default locale', () => {
+    it('should have en as default locale when browser is English', () => {
       const store = useLocaleStore();
       expect(store.currentLocale).toBe('en');
     });
@@ -54,6 +123,12 @@ describe('Locale Store', () => {
       const store = useLocaleStore();
       await store.setLocale('et');
       expect(store.currentLocale).toBe('et');
+    });
+
+    it('should persist locale to localStorage', async () => {
+      const store = useLocaleStore();
+      await store.setLocale('fr');
+      expect(localStorage.getItem(LOCALE_STORAGE_KEY)).toBe('fr');
     });
 
     it('should set locale to fi', async () => {

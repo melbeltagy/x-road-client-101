@@ -5,7 +5,11 @@ import type { SubsystemId } from '@/types';
 
 const props = defineProps<{
   subsystem: SubsystemId;
+  securityServerUrl: string;
   errors: Record<string, string>;
+  suggestions?: SubsystemId[];
+  isLoading?: boolean;
+  fetchError?: string | null;
 }>();
 
 const emit = defineEmits<{
@@ -21,11 +25,41 @@ function updateSubsystemField(field: keyof SubsystemId, value: string): void {
     [field]: value,
   });
 }
+
+function handleSubsystemSelect(subsystem: SubsystemId): void {
+  emit('update:subsystem', { ...subsystem });
+}
 </script>
 
 <template>
   <div>
-    <div class="d-flex justify-end mb-2">
+    <div class="d-flex justify-space-between align-center mb-2">
+      <div class="d-flex align-center">
+        <v-progress-circular
+          v-if="isLoading"
+          indeterminate
+          size="16"
+          width="2"
+          color="primary"
+          class="mr-2"
+        />
+        <v-chip
+          v-if="suggestions && suggestions.length > 0"
+          size="small"
+          color="success"
+          variant="tonal"
+        >
+          {{ t('xroad.client.suggestionsAvailable', { count: suggestions.length }) }}
+        </v-chip>
+        <v-chip
+          v-else-if="fetchError"
+          size="small"
+          color="warning"
+          variant="tonal"
+        >
+          {{ fetchError }}
+        </v-chip>
+      </div>
       <v-btn
         size="small"
         variant="tonal"
@@ -50,10 +84,12 @@ function updateSubsystemField(field: keyof SubsystemId, value: string): void {
         memberCode: errors['client.subsystem.memberCode'] ?? '',
         subsystemCode: errors['client.subsystem.subsystemCode'] ?? '',
       }"
+      :suggestions="suggestions"
       @update:instance-id="updateSubsystemField('instanceId', $event)"
       @update:member-class="updateSubsystemField('memberClass', $event)"
       @update:member-code="updateSubsystemField('memberCode', $event)"
       @update:subsystem-code="updateSubsystemField('subsystemCode', $event)"
+      @select="handleSubsystemSelect"
     />
   </div>
 </template>

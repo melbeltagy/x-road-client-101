@@ -5,3 +5,14 @@ export interface ServiceId {
   serviceCode: string;
   serviceVersion?: string;
 }
+
+export interface ServiceEndpoint {
+  method: string;
+  path: string;
+}
+
+export interface ServiceInfo {
+  serviceCode: string;
+  serviceType: string;
+  endpoints: ServiceEndpoint[];
+}

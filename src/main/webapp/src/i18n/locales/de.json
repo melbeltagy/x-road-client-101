@@ -2,11 +2,11 @@
   "global": {
     "title": "X-Road REST Client",
     "menu": {
-      "home": "Home",
-      "language": "Language",
+      "home": "Startseite",
+      "language": "Sprache",
       "theme": {
-        "light": "Light",
-        "dark": "Dark",
+        "light": "Hell",
+        "dark": "Dunkel",
         "system": "System"
       }
     },
@@ -16,47 +16,52 @@
   },
   "entity": {
     "action": {
-      "back": "Back",
-      "cancel": "Cancel",
+      "back": "Zurück",
+      "cancel": "Abbrechen",
       "clear": "Löschen",
-      "delete": "Delete",
-      "edit": "Edit",
-      "save": "Save",
-      "view": "View"
+      "delete": "Löschen",
+      "edit": "Bearbeiten",
+      "save": "Speichern",
+      "view": "Anzeigen"
     },
     "validation": {
-      "required": "This field is required.",
-      "minlength": "This field is required to be at least {min} characters.",
-      "maxlength": "This field cannot be longer than {max} characters.",
-      "pattern": "This field should follow pattern for {pattern}."
+      "required": "Dieses Feld ist erforderlich.",
+      "minlength": "Dieses Feld muss mindestens {min} Zeichen lang sein.",
+      "maxlength": "Dieses Feld darf nicht länger als {max} Zeichen sein.",
+      "pattern": "Dieses Feld muss dem Muster {pattern} entsprechen."
     }
   },
   "error": {
-    "title": "Error page!",
+    "title": "Fehlerseite!",
     "http": {
-      "400": "Bad request.",
-      "403": "You are not authorized to access this page.",
-      "404": "The page does not exist.",
-      "405": "The HTTP verb you used is not supported for this URL.",
-      "500": "Internal server error."
+      "400": "Ungültige Anfrage.",
+      "403": "Sie sind nicht berechtigt, auf diese Seite zuzugreifen.",
+      "404": "Die Seite existiert nicht.",
+      "405": "Das verwendete HTTP-Verb wird für diese URL nicht unterstützt.",
+      "500": "Interner Serverfehler."
     },
-    "internalServerError": "Internal server error",
-    "serverNotReachable": "Server not reachable",
-    "urlNotFound": "Not found",
-    "validation": "Validation error on the server."
+    "internalServerError": "Interner Serverfehler",
+    "serverNotReachable": "Server nicht erreichbar",
+    "urlNotFound": "Nicht gefunden",
+    "validation": "Validierungsfehler auf dem Server."
   },
   "xroad": {
+    "tabs": {
+      "identifiers": "Identifikatoren",
+      "request": "Anfrage",
+      "security": "Sicherheit"
+    },
     "action": {
       "exportCurl": "Als cURL exportieren"
     },
     "toast": {
-      "requestFailed": "Request failed",
-      "requestSuccessful": "Request successful",
-      "xroadError": "X-Road error",
-      "response": "Response",
-      "error": "Error",
-      "clientError": "Client Error",
-      "unknownError": "Unknown error",
+      "requestFailed": "Anfrage fehlgeschlagen",
+      "requestSuccessful": "Anfrage erfolgreich",
+      "xroadError": "X-Road-Fehler",
+      "response": "Antwort",
+      "error": "Fehler",
+      "clientError": "Client-Fehler",
+      "unknownError": "Unbekannter Fehler",
       "curlCopied": "cURL-Befehl in Zwischenablage kopiert",
       "curlCopyFailed": "Kopieren des cURL-Befehls fehlgeschlagen"
     },
@@ -69,7 +74,9 @@
       "securityServerUrl": "Security Server URL",
       "pemCertificates": "Client Certificates (Optional mTLS)",
       "pemCertificatesHelp": "Optional: Paste entire PEM file contents including certificate and private key",
-      "clear": "Clear"
+      "clear": "Clear",
+      "suggestionsAvailable": "{count} Clients verfügbar",
+      "fetchError": "Clients konnten nicht abgerufen werden"
     },
     "certificates": {
       "title": "mTLS Certificates (Optional)",
@@ -113,7 +120,9 @@
       "subsystemCode": "Subsystem Code",
       "serviceCode": "Service Code",
       "serviceVersion": "Service Version",
-      "clear": "Clear"
+      "clear": "Clear",
+      "servicesAvailable": "{count} Dienste verfügbar",
+      "fetchError": "Dienste konnten nicht abgerufen werden"
     },
     "request": {
       "title": "Request Details",
@@ -125,8 +134,11 @@
       "contentTypePlaceholder": "e.g., application/json, application/xml, text/plain",
       "contentTypeHelp": "Optional: Specify the Content-Type header for the request body",
       "clear": "Clear",
-      "submit": "Send Request",
-      "sending": "Sending..."
+      "submit": "Anfrage senden",
+      "sending": "Wird gesendet...",
+      "endpointsAvailable": "{count} Endpunkte verfügbar",
+      "selectEndpoint": "Endpunkt auswählen",
+      "selectEndpointPlaceholder": "Wählen Sie einen Endpunkt des Dienstes"
     },
     "advanced": {
       "title": "Advanced Configuration",
@@ -135,41 +147,41 @@
       "add": "Add",
       "key": "Key",
       "value": "Value",
-      "headerName": "Header Name",
-      "headerValue": "Header Value",
-      "noQueryParams": "No query parameters. Click Add to include query parameters.",
-      "noCustomHeaders": "No custom headers. Click Add to include additional HTTP headers."
+      "headerName": "Header-Name",
+      "headerValue": "Header-Wert",
+      "noQueryParams": "Keine Abfrageparameter. Klicken Sie auf Hinzufügen, um Parameter einzufügen.",
+      "noCustomHeaders": "Keine benutzerdefinierten Header. Klicken Sie auf Hinzufügen, um zusätzliche HTTP-Header einzufügen."
     },
     "response": {
-      "title": "Response",
+      "title": "Antwort",
       "status": "Status",
-      "headers": "Headers",
-      "body": "Body",
-      "noResponse": "No response yet. Send a request to see the response here.",
-      "responseStatus": "Response Status",
-      "error": "Error",
-      "timestamp": "Timestamp",
+      "headers": "Header",
+      "body": "Inhalt",
+      "noResponse": "Noch keine Antwort. Senden Sie eine Anfrage, um die Antwort hier zu sehen.",
+      "responseStatus": "Antwortstatus",
+      "error": "Fehler",
+      "timestamp": "Zeitstempel",
       "contentType": "Content-Type",
       "contentLength": "Content-Length",
-      "xroadHeaders": "X-Road Headers",
-      "xroadError": "X-Road Error",
-      "xroadErrorType": "Type",
-      "xroadErrorMessage": "Message",
+      "xroadHeaders": "X-Road Header",
+      "xroadError": "X-Road-Fehler",
+      "xroadErrorType": "Typ",
+      "xroadErrorMessage": "Nachricht",
       "xroadErrorDetail": "Detail",
-      "xroadErrorFaultCode": "Fault Code",
-      "xroadErrorFaultString": "Fault String",
-      "allHeaders": "All Headers",
-      "httpHeaders": "HTTP Headers",
-      "noHeaders": "No headers",
-      "responseBody": "Response Body",
-      "size": "Size",
-      "tooLarge": "Too Large",
-      "noBody": "No body",
-      "bodyTooLargeMessage": "Response body is larger than 1MB and cannot be displayed inline.",
-      "downloadResponse": "Download Response",
-      "raw": "Raw",
-      "jsonFormat": "JSON Format",
-      "invalidJson": "Response body is not valid JSON. Displaying as raw text instead."
+      "xroadErrorFaultCode": "Fehlercode",
+      "xroadErrorFaultString": "Fehlermeldung",
+      "allHeaders": "Alle Header",
+      "httpHeaders": "HTTP Header",
+      "noHeaders": "Keine Header",
+      "responseBody": "Antwortinhalt",
+      "size": "Größe",
+      "tooLarge": "Zu groß",
+      "noBody": "Kein Inhalt",
+      "bodyTooLargeMessage": "Der Antwortinhalt ist größer als 1MB und kann nicht inline angezeigt werden.",
+      "downloadResponse": "Antwort herunterladen",
+      "raw": "Roh",
+      "jsonFormat": "JSON-Format",
+      "invalidJson": "Der Antwortinhalt ist kein gültiges JSON. Wird stattdessen als Rohtext angezeigt."
     },
     "placeholders": {
       "instanceId": "e.g., DEV, PROD, FI-TEST",
@@ -200,27 +212,37 @@
       "method": "Method is required"
     },
     "history": {
-      "title": "Request History",
-      "button": "History",
-      "empty": "No request history yet",
-      "emptyDescription": "Make a request to see it here",
-      "clearAll": "Clear All History",
-      "confirmClear": "Are you sure you want to clear all history? This cannot be undone.",
-      "cleared": "History cleared successfully",
-      "delete": "Delete",
-      "deleted": "History entry deleted",
-      "indicator": "This request is from history",
+      "title": "Anfrageverlauf",
+      "button": "Verlauf",
+      "empty": "Noch kein Anfrageverlauf",
+      "emptyDescription": "Senden Sie eine Anfrage, um sie hier zu sehen",
+      "clearAll": "Gesamten Verlauf löschen",
+      "confirmClear": "Sind Sie sicher, dass Sie den gesamten Verlauf löschen möchten? Dies kann nicht rückgängig gemacht werden.",
+      "cleared": "Verlauf erfolgreich gelöscht",
+      "delete": "Löschen",
+      "deleted": "Verlaufseintrag gelöscht",
+      "indicator": "Diese Anfrage stammt aus dem Verlauf",
       "entry": {
         "status": "Status",
-        "timestamp": "Time"
+        "timestamp": "Zeit",
+        "client": "Client",
+        "method": "Methode"
       }
     },
     "status": {
-      "client": "Client",
-      "serviceUrl": "Service URL",
-      "notSent": "Not sent",
-      "success": "Request successful",
-      "error": "Request failed"
+      "client": "X-Road-Client",
+      "serviceUrl": "Service-URL",
+      "notSent": "Nicht gesendet",
+      "success": "Anfrage erfolgreich",
+      "error": "Anfrage fehlgeschlagen",
+      "notConfigured": "Nicht konfiguriert",
+      "mtlsEnabled": "mTLS aktiviert",
+      "mtlsDisabled": "mTLS deaktiviert",
+      "httpsNoAuth": "HTTPS (ohne Auth)",
+      "noHttpsCert": "Kein HTTPS-Zertifikat"
+    },
+    "form": {
+      "selectPlaceholder": "-- Auswählen --"
     }
   }
 }

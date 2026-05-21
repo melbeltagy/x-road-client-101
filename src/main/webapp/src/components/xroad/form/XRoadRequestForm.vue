@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { ref, reactive, watch, computed, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
-import type { XRoadRequest, MTlsCertificates, SubsystemId } from '@/types';
+import type { XRoadRequest, MTlsCertificates, SubsystemId, ServiceInfo, ServiceEndpoint } from '@/types';
 import { type KeyValuePair } from './KeyValuePairList.vue';
+import { fetchRegisteredClients } from '@/services/security-server.service';
 import ClientSection from './ClientSection.vue';
 import ServiceSection from './ServiceSection.vue';
 import CertificateSection from './CertificateSection.vue';
@@ -69,6 +70,69 @@ const openRequestPanels = ref(['endpoint']);
 
 // Expansion panel state for Security tab
 const openSecurityPanels = ref(['certificates']);
+
+// Subsystem suggestions from security server
+const subsystemSuggestions = ref<SubsystemId[]>([]);
+const isLoadingSuggestions = ref(false);
+const suggestionsError = ref<string | null>(null);
+let suggestionsDebounceTimer: ReturnType<typeof setTimeout> | null = null;
+
+// Available services from selected service provider
+const availableServices = ref<ServiceInfo[]>([]);
+
+// Compute endpoints for the selected service
+const selectedServiceEndpoints = computed<ServiceEndpoint[]>(() => {
+  if (!formData.service.serviceCode || availableServices.value.length === 0) {
+    return [];
+  }
+  const selectedService = availableServices.value.find(
+    (s) => s.serviceCode === formData.service.serviceCode
+  );
+  return selectedService?.endpoints ?? [];
+});
+
+// Fetch subsystem suggestions when security server URL changes
+async function loadSubsystemSuggestions(url: string): Promise<void> {
+  if (!url) {
+    subsystemSuggestions.value = [];
+    suggestionsError.value = null;
+    return;
+  }
+
+  try {
+    new URL(url);
+  } catch {
+    subsystemSuggestions.value = [];
+    return;
+  }
+
+  isLoadingSuggestions.value = true;
+  suggestionsError.value = null;
+
+  try {
+    const clients = await fetchRegisteredClients(url);
+    subsystemSuggestions.value = clients;
+  } catch (error) {
+    console.error('Failed to fetch subsystem suggestions:', error);
+    suggestionsError.value = t('xroad.client.fetchError');
+    subsystemSuggestions.value = [];
+  } finally {
+    isLoadingSuggestions.value = false;
+  }
+}
+
+watch(
+  () => formData.client.securityServerUrl,
+  (newUrl) => {
+    if (suggestionsDebounceTimer) {
+      clearTimeout(suggestionsDebounceTimer);
+    }
+    suggestionsDebounceTimer = setTimeout(() => {
+      loadSubsystemSuggestions(newUrl);
+    }, 500);
+  },
+  { immediate: true }
+);
 
 // Validation errors
 const errors = ref<Record<string, string>>({});
@@ -453,15 +517,15 @@ defineExpose({
         >
           <v-btn value="identifiers" class="flex-grow-1">
             <v-icon start size="large">badge</v-icon>
-            Identifiers
+            {{ t('xroad.tabs.identifiers') }}
           </v-btn>
           <v-btn value="request" class="flex-grow-1">
             <v-icon start size="large">send</v-icon>
-            Request
+            {{ t('xroad.tabs.request') }}
           </v-btn>
           <v-btn value="security" class="flex-grow-1">
             <v-icon start size="large">security</v-icon>
-            Security
+            {{ t('xroad.tabs.security') }}
           </v-btn>
         </v-btn-toggle>
       </div>
@@ -477,13 +541,17 @@ defineExpose({
                 <v-expansion-panel-title>
                   <div class="d-flex align-center">
                     <v-icon start color="primary">person</v-icon>
-                    <strong>Client Identifier</strong>
+                    <strong>{{ t('xroad.client.title') }}</strong>
                   </div>
                 </v-expansion-panel-title>
                 <v-expansion-panel-text>
                   <ClientSection
                     :subsystem="formData.client.subsystem"
+                    :security-server-url="formData.client.securityServerUrl"
                     :errors="errors"
+                    :suggestions="subsystemSuggestions"
+                    :is-loading="isLoadingSuggestions"
+                    :fetch-error="suggestionsError"
                     @update:subsystem="formData.client.subsystem = $event"
                     @clear="handleClearClient"
                   />
@@ -494,7 +562,7 @@ defineExpose({
                 <v-expansion-panel-title>
                   <div class="d-flex align-center">
                     <v-icon start color="primary">dns</v-icon>
-                    <strong>Service Identifier</strong>
+                    <strong>{{ t('xroad.service.title') }}</strong>
                   </div>
                 </v-expansion-panel-title>
                 <v-expansion-panel-text>
@@ -503,9 +571,13 @@ defineExpose({
                     :service-code="formData.service.serviceCode"
                     :service-version="formData.service.serviceVersion"
                     :errors="errors"
+                    :suggestions="subsystemSuggestions"
+                    :client-subsystem="formData.client.subsystem"
+                    :security-server-url="formData.client.securityServerUrl"
                     @update:subsystem="formData.service.subsystem = $event"
                     @update:service-code="formData.service.serviceCode = $event"
                     @update:service-version="formData.service.serviceVersion = $event"
+                    @update:available-services="availableServices = $event"
                     @clear="handleClearService"
                   />
                 </v-expansion-panel-text>
@@ -531,6 +603,7 @@ defineExpose({
                     :body="formData.request.body"
                     :content-type="formData.request.contentType"
                     :errors="errors"
+                    :endpoints="selectedServiceEndpoints"
                     @update:method="formData.request.method = $event as HttpMethod"
                     @update:path="formData.request.path = $event"
                     @update:body="formData.request.body = $event"

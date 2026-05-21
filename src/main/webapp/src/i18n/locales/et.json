@@ -2,12 +2,12 @@
   "global": {
     "title": "X-Road REST Client",
     "menu": {
-      "home": "Home",
-      "language": "Language",
+      "home": "Avaleht",
+      "language": "Keel",
       "theme": {
-        "light": "Light",
-        "dark": "Dark",
-        "system": "System"
+        "light": "Hele",
+        "dark": "Tume",
+        "system": "Süsteem"
       }
     },
     "field": {
@@ -16,49 +16,54 @@
   },
   "entity": {
     "action": {
-      "back": "Back",
-      "cancel": "Cancel",
+      "back": "Tagasi",
+      "cancel": "Tühista",
       "clear": "Tühjenda",
-      "delete": "Delete",
-      "edit": "Edit",
-      "save": "Save",
-      "view": "View"
+      "delete": "Kustuta",
+      "edit": "Muuda",
+      "save": "Salvesta",
+      "view": "Vaata"
     },
     "validation": {
-      "required": "This field is required.",
-      "minlength": "This field is required to be at least {min} characters.",
-      "maxlength": "This field cannot be longer than {max} characters.",
-      "pattern": "This field should follow pattern for {pattern}."
+      "required": "See väli on kohustuslik.",
+      "minlength": "See väli peab olema vähemalt {min} tähemärki.",
+      "maxlength": "See väli ei tohi olla pikem kui {max} tähemärki.",
+      "pattern": "See väli peab vastama mustrile {pattern}."
     }
   },
   "error": {
-    "title": "Error page!",
+    "title": "Vealeht!",
     "http": {
-      "400": "Bad request.",
-      "403": "You are not authorized to access this page.",
-      "404": "The page does not exist.",
-      "405": "The HTTP verb you used is not supported for this URL.",
-      "500": "Internal server error."
+      "400": "Vigane päring.",
+      "403": "Teil pole õigust sellele lehele juurde pääseda.",
+      "404": "Lehte ei eksisteeri.",
+      "405": "Kasutatud HTTP-meetod pole selle URL-i jaoks toetatud.",
+      "500": "Sisemine serveri viga."
     },
-    "internalServerError": "Internal server error",
-    "serverNotReachable": "Server not reachable",
-    "urlNotFound": "Not found",
-    "validation": "Validation error on the server."
+    "internalServerError": "Sisemine serveri viga",
+    "serverNotReachable": "Server pole kättesaadav",
+    "urlNotFound": "Ei leitud",
+    "validation": "Valideerimise viga serveris."
   },
   "xroad": {
+    "tabs": {
+      "identifiers": "Identifikaatorid",
+      "request": "Päring",
+      "security": "Turvalisus"
+    },
     "action": {
       "exportCurl": "Ekspordi cURL"
     },
     "toast": {
-      "requestFailed": "Request failed",
-      "requestSuccessful": "Request successful",
-      "xroadError": "X-Road error",
-      "response": "Response",
-      "error": "Error",
-      "clientError": "Client Error",
-      "unknownError": "Unknown error",
-      "curlCopied": "cURL kask kopeeritud",
-      "curlCopyFailed": "cURL kaske kopeerimine ebaonnestus"
+      "requestFailed": "Päring ebaõnnestus",
+      "requestSuccessful": "Päring õnnestus",
+      "xroadError": "X-Road viga",
+      "response": "Vastus",
+      "error": "Viga",
+      "clientError": "Kliendi viga",
+      "unknownError": "Tundmatu viga",
+      "curlCopied": "cURL käsk kopeeritud",
+      "curlCopyFailed": "cURL käsu kopeerimine ebaõnnestus"
     },
     "client": {
       "title": "Client Identifier",
@@ -69,7 +74,9 @@
       "securityServerUrl": "Security Server URL",
       "pemCertificates": "Client Certificates (Optional mTLS)",
       "pemCertificatesHelp": "Optional: Paste entire PEM file contents including certificate and private key",
-      "clear": "Clear"
+      "clear": "Clear",
+      "suggestionsAvailable": "{count} klienti saadaval",
+      "fetchError": "Klientide paarimine ebaonnestus"
     },
     "certificates": {
       "title": "mTLS Certificates (Optional)",
@@ -113,7 +120,9 @@
       "subsystemCode": "Subsystem Code",
       "serviceCode": "Service Code",
       "serviceVersion": "Service Version",
-      "clear": "Clear"
+      "clear": "Clear",
+      "servicesAvailable": "{count} teenust saadaval",
+      "fetchError": "Teenuste laadimine ebaõnnestus"
     },
     "request": {
       "title": "Request Details",
@@ -125,8 +134,11 @@
       "contentTypePlaceholder": "e.g., application/json, application/xml, text/plain",
       "contentTypeHelp": "Optional: Specify the Content-Type header for the request body",
       "clear": "Clear",
-      "submit": "Send Request",
-      "sending": "Sending..."
+      "submit": "Saada päring",
+      "sending": "Saatmine...",
+      "endpointsAvailable": "{count} lõpp-punkti saadaval",
+      "selectEndpoint": "Vali lõpp-punkt",
+      "selectEndpointPlaceholder": "Vali teenuse lõpp-punkt"
     },
     "advanced": {
       "title": "Advanced Configuration",
@@ -135,41 +147,41 @@
       "add": "Add",
       "key": "Key",
       "value": "Value",
-      "headerName": "Header Name",
-      "headerValue": "Header Value",
-      "noQueryParams": "No query parameters. Click Add to include query parameters.",
-      "noCustomHeaders": "No custom headers. Click Add to include additional HTTP headers."
+      "headerName": "Päise nimi",
+      "headerValue": "Päise väärtus",
+      "noQueryParams": "Päringuparameetrid puuduvad. Klõpsake Lisa, et lisada parameetreid.",
+      "noCustomHeaders": "Kohandatud päised puuduvad. Klõpsake Lisa, et lisada HTTP päiseid."
     },
     "response": {
-      "title": "Response",
-      "status": "Status",
-      "headers": "Headers",
-      "body": "Body",
-      "noResponse": "No response yet. Send a request to see the response here.",
-      "responseStatus": "Response Status",
-      "error": "Error",
-      "timestamp": "Timestamp",
+      "title": "Vastus",
+      "status": "Olek",
+      "headers": "Päised",
+      "body": "Sisu",
+      "noResponse": "Vastus puudub. Saatke päring, et näha vastust siin.",
+      "responseStatus": "Vastuse olek",
+      "error": "Viga",
+      "timestamp": "Ajatempel",
       "contentType": "Content-Type",
       "contentLength": "Content-Length",
-      "xroadHeaders": "X-Road Headers",
-      "xroadError": "X-Road Error",
-      "xroadErrorType": "Type",
-      "xroadErrorMessage": "Message",
+      "xroadHeaders": "X-Road päised",
+      "xroadError": "X-Road viga",
+      "xroadErrorType": "Tüüp",
+      "xroadErrorMessage": "Teade",
       "xroadErrorDetail": "Detail",
-      "xroadErrorFaultCode": "Fault Code",
-      "xroadErrorFaultString": "Fault String",
-      "allHeaders": "All Headers",
-      "httpHeaders": "HTTP Headers",
-      "noHeaders": "No headers",
-      "responseBody": "Response Body",
-      "size": "Size",
-      "tooLarge": "Too Large",
-      "noBody": "No body",
-      "bodyTooLargeMessage": "Response body is larger than 1MB and cannot be displayed inline.",
-      "downloadResponse": "Download Response",
-      "raw": "Raw",
-      "jsonFormat": "JSON Format",
-      "invalidJson": "Response body is not valid JSON. Displaying as raw text instead."
+      "xroadErrorFaultCode": "Veakood",
+      "xroadErrorFaultString": "Veateade",
+      "allHeaders": "Kõik päised",
+      "httpHeaders": "HTTP päised",
+      "noHeaders": "Päised puuduvad",
+      "responseBody": "Vastuse sisu",
+      "size": "Suurus",
+      "tooLarge": "Liiga suur",
+      "noBody": "Sisu puudub",
+      "bodyTooLargeMessage": "Vastuse sisu on suurem kui 1MB ja seda ei saa kuvada.",
+      "downloadResponse": "Laadi vastus alla",
+      "raw": "Toores",
+      "jsonFormat": "JSON-vorming",
+      "invalidJson": "Vastuse sisu ei ole kehtiv JSON. Kuvatakse toorena."
     },
     "placeholders": {
       "instanceId": "e.g., DEV, PROD, FI-TEST",
@@ -200,27 +212,37 @@
       "method": "Method is required"
     },
     "history": {
-      "title": "Request History",
-      "button": "History",
-      "empty": "No request history yet",
-      "emptyDescription": "Make a request to see it here",
-      "clearAll": "Clear All History",
-      "confirmClear": "Are you sure you want to clear all history? This cannot be undone.",
-      "cleared": "History cleared successfully",
-      "delete": "Delete",
-      "deleted": "History entry deleted",
-      "indicator": "This request is from history",
+      "title": "Päringute ajalugu",
+      "button": "Ajalugu",
+      "empty": "Päringute ajalugu puudub",
+      "emptyDescription": "Tehke päring, et seda siin näha",
+      "clearAll": "Kustuta kogu ajalugu",
+      "confirmClear": "Kas olete kindel, et soovite kogu ajaloo kustutada? Seda ei saa tagasi võtta.",
+      "cleared": "Ajalugu edukalt kustutatud",
+      "delete": "Kustuta",
+      "deleted": "Ajaloo kirje kustutatud",
+      "indicator": "See päring on ajaloost",
       "entry": {
-        "status": "Status",
-        "timestamp": "Time"
+        "status": "Olek",
+        "timestamp": "Aeg",
+        "client": "Klient",
+        "method": "Meetod"
       }
     },
     "status": {
-      "client": "Client",
-      "serviceUrl": "Service URL",
-      "notSent": "Not sent",
-      "success": "Request successful",
-      "error": "Request failed"
+      "client": "X-Road-Client",
+      "serviceUrl": "Teenuse URL",
+      "notSent": "Saatmata",
+      "success": "Päring õnnestus",
+      "error": "Päring ebaõnnestus",
+      "notConfigured": "Seadistamata",
+      "mtlsEnabled": "mTLS lubatud",
+      "mtlsDisabled": "mTLS keelatud",
+      "httpsNoAuth": "HTTPS (ilma autentimiseta)",
+      "noHttpsCert": "HTTPS sertifikaat puudub"
+    },
+    "form": {
+      "selectPlaceholder": "-- Vali --"
     }
   }
 }

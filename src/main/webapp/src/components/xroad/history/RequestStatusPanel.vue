@@ -3,6 +3,7 @@ import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { MTlsCertificates, XRoadRequest } from '@/types';
 import { generateCurlCommand } from '@/utils/curl-generator';
+import { buildServiceUrlFromParts } from '@/utils/xroad-url';
 
 const props = defineProps<{
   client: {
@@ -62,16 +63,17 @@ const serviceUrl = computed(() => {
     return null;
   }
 
-  const serviceParts = [instanceId, memberClass, memberCode, subsystemCode, serviceCode];
-  if (serviceVersion) {
-    serviceParts.push(serviceVersion);
-  }
-  const serviceId = serviceParts.map(p => p || '').join('/');
-
-  const baseUrl = securityServerUrl || '';
-  const fullPath = path || '';
-
-  return `${baseUrl}/r1/${serviceId}${fullPath}`;
+  // Use shared utility for URL construction
+  return buildServiceUrlFromParts(
+    securityServerUrl || '',
+    instanceId || '',
+    memberClass || '',
+    memberCode || '',
+    subsystemCode || '',
+    serviceCode || '',
+    serviceVersion || undefined,
+    path || ''
+  );
 });
 
 const hasMtls = computed(() => {
@@ -149,7 +151,7 @@ async function copyAsCurl(): Promise<void> {
                 :class="{ 'text-warning': !isClientComplete }"
               >{{ clientHeader }}</span>
             </template>
-            <span v-else class="text-medium-emphasis">Not configured</span>
+            <span v-else class="text-medium-emphasis">{{ t('xroad.status.notConfigured') }}</span>
           </div>
         </v-col>
       </v-row>
@@ -171,7 +173,7 @@ async function copyAsCurl(): Promise<void> {
                 :class="{ 'text-warning': !isServiceComplete }"
               >{{ serviceUrl }}</span>
             </template>
-            <span v-else class="text-medium-emphasis">Not configured</span>
+            <span v-else class="text-medium-emphasis">{{ t('xroad.status.notConfigured') }}</span>
           </div>
         </v-col>
       </v-row>
@@ -188,7 +190,7 @@ async function copyAsCurl(): Promise<void> {
             >
               {{ hasMtls ? 'check_circle' : 'cancel' }}
             </v-icon>
-            <span class="text-h6">{{ hasMtls ? 'mTLS Enabled' : 'mTLS Disabled' }}</span>
+            <span class="text-h6">{{ hasMtls ? t('xroad.status.mtlsEnabled') : t('xroad.status.mtlsDisabled') }}</span>
           </div>
         </v-col>
 
@@ -202,7 +204,7 @@ async function copyAsCurl(): Promise<void> {
             >
               {{ hasHttpsNoAuth ? 'check_circle' : 'cancel' }}
             </v-icon>
-            <span class="text-h6">{{ hasHttpsNoAuth ? 'HTTPS (No Auth)' : 'No HTTPS Cert' }}</span>
+            <span class="text-h6">{{ hasHttpsNoAuth ? t('xroad.status.httpsNoAuth') : t('xroad.status.noHttpsCert') }}</span>
           </div>
         </v-col>
 
