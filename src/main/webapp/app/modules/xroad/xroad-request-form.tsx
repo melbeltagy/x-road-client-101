@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
 import { Form } from 'reactstrap';
 import { XRoadRequest } from 'app/shared/model/xroad-request.model';

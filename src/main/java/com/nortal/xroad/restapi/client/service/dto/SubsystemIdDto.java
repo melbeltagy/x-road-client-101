@@ -1,6 +1,7 @@
 package com.nortal.xroad.restapi.client.service.dto;
 
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 
 public record SubsystemIdDto(
     @NotBlank(message = "Instance ID is required")

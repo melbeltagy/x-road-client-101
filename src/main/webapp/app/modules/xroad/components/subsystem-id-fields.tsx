@@ -1,6 +1,6 @@
 import React from 'react';
-import { FormGroup, Label, Row, Col } from 'reactstrap';
-import { UseFormRegister, FieldErrors } from 'react-hook-form';
+import { Col, FormGroup, Label, Row } from 'reactstrap';
+import { FieldErrors, UseFormRegister } from 'react-hook-form';
 import { Translate, translate } from 'app/shared/i18n';
 import { XRoadRequest } from 'app/shared/model/xroad-request.model';
 

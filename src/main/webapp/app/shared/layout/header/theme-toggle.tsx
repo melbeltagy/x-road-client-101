@@ -2,7 +2,7 @@ import React from 'react';
 import { DropdownItem } from 'reactstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Translate } from 'app/shared/i18n';
-import { useTheme, ThemeMode } from 'app/config/theme-context';
+import { ThemeMode, useTheme } from 'app/config/theme-context';
 import { NavDropdown } from '../menus/menu-components';
 
 const themeIcons: Record<ThemeMode, any> = {

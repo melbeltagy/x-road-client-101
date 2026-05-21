@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Container, Row, Col, Alert } from 'reactstrap';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { Alert, Col, Container, Row } from 'reactstrap';
 import { Translate, translate } from 'app/shared/i18n';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { XRoadRequestForm } from './xroad-request-form';
@@ -11,7 +11,7 @@ import { XRoadRequest } from 'app/shared/model/xroad-request.model';
 import { XRoadResponse } from 'app/shared/model/xroad-response.model';
 import { MTlsCertificates } from 'app/shared/model/mtls-certificates.model';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
-import { addRequestToHistory, deleteHistoryEntry, selectHistoryEntry, RequestHistoryEntry } from 'app/shared/reducers/xroad-history';
+import { addRequestToHistory, deleteHistoryEntry, RequestHistoryEntry, selectHistoryEntry } from 'app/shared/reducers/xroad-history';
 
 export const XRoad: React.FC = () => {
   const dispatch = useAppDispatch();

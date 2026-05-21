@@ -1,47 +1,19 @@
-# ===================================================================
-# Spring Boot configuration
-# ===================================================================
-
 spring:
   application:
     name: xRoadExampleRestapiClient
   jmx:
     enabled: false
-  main:
-    allow-bean-definition-overriding: true
   mvc:
     problemdetails:
       enabled: true
-  jackson:
-    serialization:
-      indent-output: true
-  task:
-    execution:
-      thread-name-prefix: x-road-example-restapi-client-task-
-      pool:
-        core-size: 2
-        max-size: 50
-        queue-capacity: 10000
-    scheduling:
-      thread-name-prefix: x-road-example-restapi-client-scheduling-
-      pool:
-        size: 2
-  output:
-    ansi:
-      console-available: true
 
 server:
   port: 8080
   shutdown: graceful
-  forward-headers-strategy: native
   compression:
     enabled: true
     mime-types: text/html,text/xml,text/plain,text/css,application/javascript,application/json,image/svg+xml
     min-response-size: 1024
-  servlet:
-    session:
-      cookie:
-        http-only: true
 
 logging:
   level:
@@ -57,36 +29,8 @@ management:
     health:
       show-details: always
 
-# ===================================================================
-# Application specific properties
-# ===================================================================
-
-app:
-  clientApp:
-    name: 'xRoadExampleRestapiClientApp'
-  cors:
-    allowed-origins:
-      - 'http://localhost:*'
-      - 'https://localhost:*'
-    allowed-methods:
-      - '*'
-    allowed-headers:
-      - '*'
-    exposed-headers:
-      - 'Link'
-      - 'X-Total-Count'
-      - 'X-${app.clientApp.name}-alert'
-      - 'X-${app.clientApp.name}-error'
-      - 'X-${app.clientApp.name}-params'
-    allow-credentials: true
-    max-age: 1800
-
-# ===================================================================
-# X-Road specific configuration
-# ===================================================================
-
 application:
   xroad:
     timeout:
-      connect-ms: 60000 # 60 seconds
-      read-ms: 120000 # 120 seconds
+      connect-ms: 60000
+      read-ms: 120000

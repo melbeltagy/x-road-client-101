@@ -1,29 +1,21 @@
 package com.nortal.xroad.restapi.client;
 
-import com.nortal.xroad.restapi.client.config.AppProperties;
 import com.nortal.xroad.restapi.client.config.ApplicationProperties;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Optional;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.core.env.Environment;
 
+@Slf4j
 @SpringBootApplication
-@EnableConfigurationProperties({ ApplicationProperties.class, AppProperties.class })
+@EnableConfigurationProperties({ ApplicationProperties.class })
 public class XRoadExampleRestapiClientApp {
 
-    private static final Logger LOG = LoggerFactory.getLogger(XRoadExampleRestapiClientApp.class);
-
-    /**
-     * Main method, used to run the application.
-     *
-     * @param args the command line arguments.
-     */
     public static void main(String[] args) {
         SpringApplication app = new SpringApplication(XRoadExampleRestapiClientApp.class);
         Environment env = app.run(args).getEnvironment();
@@ -43,9 +35,9 @@ public class XRoadExampleRestapiClientApp {
         try {
             hostAddress = InetAddress.getLocalHost().getHostAddress();
         } catch (UnknownHostException e) {
-            LOG.warn("The host name could not be determined, using `localhost` as fallback");
+            log.warn("The host name could not be determined, using `localhost` as fallback");
         }
-        LOG.info(
+        log.info(
             """
 
             ----------------------------------------------------------

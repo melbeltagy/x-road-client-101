@@ -27,7 +27,6 @@ repositories {
 
 apply(plugin = "io.spring.dependency-management")
 
-// -Pprod for production build (webpack optimization)
 val isProd = project.hasProperty("prod")
 
 idea {
@@ -52,14 +51,6 @@ springBoot {
     mainClass.set("com.nortal.xroad.restapi.client.XRoadExampleRestapiClientApp")
 }
 
-tasks.bootRun {
-    jvmArgs("--enable-native-access=ALL-UNNAMED")  // Required for Netty with Java 21+
-}
-
-// =============================================================================
-// Testing
-// =============================================================================
-
 tasks.test {
     useJUnitPlatform()
     exclude("**/*IT*", "**/*IntTest*")
@@ -70,7 +61,7 @@ tasks.test {
     jvmArgs(
         "-Djava.security.egd=file:/dev/./urandom",
         "-Xmx512m",
-        "-Dnet.bytebuddy.experimental=true"  // Required for Mockito to work with Java 25
+        "-Dnet.bytebuddy.experimental=true"
     )
     reports.html.required.set(false)
 }
@@ -108,15 +99,11 @@ tasks.register<TestReport>("integrationTestReport") {
     testResults.from(tasks.named("integrationTest"))
 }
 
-// =============================================================================
-// Java Compiler
-// =============================================================================
-
 tasks.withType<JavaCompile>().configureEach {
     options.compilerArgs.addAll(listOf(
         "-Xlint:all",
         "-Xlint:deprecation",
-        "-Xlint:-processing",  // MapStruct generates these
+        "-Xlint:-processing",
         "-Xlint:-serial",
         "-Werror"
     ))
@@ -124,10 +111,6 @@ tasks.withType<JavaCompile>().configureEach {
     options.encoding = "UTF-8"
     options.isIncremental = true
 }
-
-// =============================================================================
-// Frontend (Webpack)
-// =============================================================================
 
 val webpackCommand = if (isProd) "webapp:prod" else "webapp:build"
 
@@ -149,10 +132,6 @@ tasks.register<NpmTask>("webapp") {
     args.set(listOf("run", webpackCommand))
     environment.set(mapOf("APP_VERSION" to project.version.toString()))
 }
-
-// =============================================================================
-// Resource Processing
-// =============================================================================
 
 tasks.processResources {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
@@ -182,36 +161,26 @@ tasks.register<Delete>("cleanResources") {
     delete("build/resources")
 }
 
-// =============================================================================
-// Dependencies
-// =============================================================================
-
-configurations {
-    create("providedRuntime")
-}
-
 dependencies {
-    // Spring Boot
-    implementation("org.springframework.boot:spring-boot-starter-actuator")
-    implementation("org.springframework.boot:spring-boot-starter-logging")
-    implementation("org.springframework.boot:spring-boot-starter-validation")
-    implementation("org.springframework.boot:spring-boot-starter-web")
-    implementation("org.springframework.boot:spring-boot-starter-webflux")
-    annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
+    implementation(libs.spring.boot.starter.actuator)
+    implementation(libs.spring.boot.starter.logging)
+    implementation(libs.spring.boot.starter.validation)
+    implementation(libs.spring.boot.starter.web)
+    annotationProcessor(libs.spring.boot.configuration.processor)
 
-    // Jackson
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
+    implementation(libs.jackson.datatype.jsr310)
 
-    // MapStruct
     implementation(libs.mapstruct)
     annotationProcessor(libs.mapstruct.processor)
 
-    // Utilities
-    implementation("org.apache.commons:commons-lang3")
+    compileOnly(libs.lombok)
+    annotationProcessor(libs.lombok)
 
-    // Testing
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testImplementation("org.springframework.boot:spring-boot-test")
+    implementation(libs.commons.lang3)
+    implementation(libs.bouncycastle.pkix)
+
+    testImplementation(libs.spring.boot.starter.test)
+    testImplementation(libs.spring.boot.test)
     testImplementation(libs.archunit.junit5.api) {
         exclude(group = "org.slf4j", module = "slf4j-api")
     }

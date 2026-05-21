@@ -1,11 +1,11 @@
 import {
   ActionReducerMapBuilder,
   AsyncThunk,
+  createSlice,
   SerializedError,
   SliceCaseReducers,
   UnknownAction,
   ValidateSliceCaseReducers,
-  createSlice,
 } from '@reduxjs/toolkit';
 import { AxiosError, isAxiosError } from 'axios';
 

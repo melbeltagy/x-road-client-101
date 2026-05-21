@@ -1,9 +1,9 @@
-import React, { useState, useMemo, useEffect } from 'react';
-import { Card, CardHeader, CardBody, Collapse, Button, ButtonGroup, Badge, Alert } from 'reactstrap';
+import React, { useEffect, useMemo, useState } from 'react';
+import { Alert, Badge, Button, ButtonGroup, Card, CardBody, CardHeader, Collapse } from 'reactstrap';
 import { Translate } from 'app/shared/i18n';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronDown, faChevronRight } from '@fortawesome/free-solid-svg-icons';
-import { JsonView, allExpanded, defaultStyles, darkStyles } from 'react-json-view-lite';
+import { allExpanded, darkStyles, defaultStyles, JsonView } from 'react-json-view-lite';
 import 'react-json-view-lite/dist/index.css';
 
 interface ResponseBodySectionProps {

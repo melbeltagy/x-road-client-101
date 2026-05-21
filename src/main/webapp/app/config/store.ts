@@ -1,4 +1,4 @@
-import { ThunkAction, UnknownAction, configureStore } from '@reduxjs/toolkit';
+import { configureStore, ThunkAction, UnknownAction } from '@reduxjs/toolkit';
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 import { loadingBarMiddleware } from 'react-redux-loading-bar';
 

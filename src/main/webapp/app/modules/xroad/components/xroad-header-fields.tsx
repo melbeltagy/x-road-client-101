@@ -1,5 +1,5 @@
 import React from 'react';
-import { FormGroup, Label, Input, Row, Col, FormText } from 'reactstrap';
+import { Col, FormGroup, FormText, Input, Label, Row } from 'reactstrap';
 import { UseFormRegister } from 'react-hook-form';
 import { Translate } from 'app/shared/i18n';
 import { XRoadRequest } from 'app/shared/model/xroad-request.model';

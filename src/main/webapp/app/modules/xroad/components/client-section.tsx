@@ -1,8 +1,8 @@
 import React from 'react';
-import { Card, CardHeader, CardBody, FormGroup, Label, Button, Collapse } from 'reactstrap';
+import { Button, Card, CardBody, CardHeader, Collapse, FormGroup, Label } from 'reactstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTrash, faChevronDown, faChevronRight } from '@fortawesome/free-solid-svg-icons';
-import { UseFormRegister, FieldErrors } from 'react-hook-form';
+import { faChevronDown, faChevronRight, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { FieldErrors, UseFormRegister } from 'react-hook-form';
 import { Translate, translate } from 'app/shared/i18n';
 import { XRoadRequest } from 'app/shared/model/xroad-request.model';
 import { SubsystemIdFields } from './subsystem-id-fields';

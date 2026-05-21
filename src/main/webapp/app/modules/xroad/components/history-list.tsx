@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
-import { Offcanvas, OffcanvasBody, OffcanvasHeader, Button, Alert, ListGroup } from 'reactstrap';
+import { Alert, Button, ListGroup, Offcanvas, OffcanvasBody, OffcanvasHeader } from 'reactstrap';
 import { Translate, translate } from 'app/shared/i18n';
-import { useAppSelector, useAppDispatch } from 'app/config/store';
-import { RequestHistoryEntry, clearHistory, closeHistorySidebar } from 'app/shared/reducers/xroad-history';
+import { useAppDispatch, useAppSelector } from 'app/config/store';
+import { clearHistory, closeHistorySidebar, RequestHistoryEntry } from 'app/shared/reducers/xroad-history';
 import { HistoryEntry } from './history-entry';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 

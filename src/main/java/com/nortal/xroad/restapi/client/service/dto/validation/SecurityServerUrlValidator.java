@@ -4,16 +4,13 @@ import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import java.net.URI;
 import java.net.URISyntaxException;
+import org.apache.commons.lang3.StringUtils;
 
-/**
- * Validator for Security Server URLs.
- * Uses Java's URI class for RFC 3986 compliant validation (similar to browser's URL constructor).
- */
 public class SecurityServerUrlValidator implements ConstraintValidator<ValidSecurityServerUrl, String> {
 
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
-        if (value == null || value.isBlank()) {
+        if (StringUtils.isBlank(value)) {
             return false;
         }
 

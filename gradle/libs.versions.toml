@@ -1,14 +1,33 @@
 [versions]
+spring-boot = "4.0.6"
 jacoco = "0.8.14"
-checkstyle = "10.26.1"
+checkstyle = "13.4.2"
 mapstruct = "1.6.3"
-archunit = "1.4.1"
+archunit = "1.4.2"
+bouncycastle = "1.84"
 
 [libraries]
+spring-boot-starter-actuator = { module = "org.springframework.boot:spring-boot-starter-actuator" }
+spring-boot-starter-logging = { module = "org.springframework.boot:spring-boot-starter-logging" }
+spring-boot-starter-validation = { module = "org.springframework.boot:spring-boot-starter-validation" }
+spring-boot-starter-web = { module = "org.springframework.boot:spring-boot-starter-web" }
+spring-boot-starter-test = { module = "org.springframework.boot:spring-boot-starter-test" }
+spring-boot-test = { module = "org.springframework.boot:spring-boot-test" }
+spring-boot-configuration-processor = { module = "org.springframework.boot:spring-boot-configuration-processor" }
+
+jackson-datatype-jsr310 = { module = "com.fasterxml.jackson.datatype:jackson-datatype-jsr310" }
+
 mapstruct = { module = "org.mapstruct:mapstruct", version.ref = "mapstruct" }
 mapstruct-processor = { module = "org.mapstruct:mapstruct-processor", version.ref = "mapstruct" }
+
+lombok = { module = "org.projectlombok:lombok" }
+
+commons-lang3 = { module = "org.apache.commons:commons-lang3" }
+
+bouncycastle-pkix = { module = "org.bouncycastle:bcpkix-jdk18on", version.ref = "bouncycastle" }
+
 archunit-junit5-api = { module = "com.tngtech.archunit:archunit-junit5-api", version.ref = "archunit" }
 archunit-junit5-engine = { module = "com.tngtech.archunit:archunit-junit5-engine", version.ref = "archunit" }
 
 [plugins]
-spring-boot = { id = "org.springframework.boot", version = "4.0.1" }
+spring-boot = { id = "org.springframework.boot", version.ref = "spring-boot" }

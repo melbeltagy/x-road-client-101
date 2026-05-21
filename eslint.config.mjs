@@ -16,6 +16,7 @@ export default tseslint.config(
   },
   { ignores: ['src/main/docker/'] },
   { ignores: ['build/resources/main/static/', 'build/'] },
+  { ignores: ['.claude/'] },
   eslint.configs.recommended,
   {
     files: ['**/*.{js,cjs,mjs}'],

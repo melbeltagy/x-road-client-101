@@ -1,5 +1,5 @@
-import React, { useState, useRef, useEffect, DragEvent } from 'react';
-import { Modal, ModalHeader, ModalBody, ModalFooter, Button, FormGroup, Label, Input, FormText } from 'reactstrap';
+import React, { DragEvent, useEffect, useRef, useState } from 'react';
+import { Button, FormGroup, FormText, Input, Label, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
 import { Translate } from 'app/shared/i18n';
 import { CertificateType } from 'app/shared/model/mtls-certificates.model';
 import './certificate-upload-modal.scss';

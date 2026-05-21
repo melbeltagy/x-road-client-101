@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Card, CardHeader, CardBody, Collapse, Button, Badge } from 'reactstrap';
+import { Badge, Button, Card, CardBody, CardHeader, Collapse } from 'reactstrap';
 import { Translate, translate } from 'app/shared/i18n';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronDown, faChevronRight } from '@fortawesome/free-solid-svg-icons';
