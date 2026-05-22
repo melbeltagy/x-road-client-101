@@ -5,16 +5,12 @@ env:
 
 on:
   workflow_dispatch:
-  workflow_run:
-    workflows: [Build]
-    types: [completed]
-    branches: [main]
+  workflow_call:
   push:
     tags: ['v*']
 
 jobs:
   docker:
-    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -44,6 +40,6 @@ jobs:
         with:
           context: .
           file: docker/Dockerfile
-          push: ${{ github.event_name != 'pull_request' }}
+          push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}

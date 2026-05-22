@@ -72,3 +72,12 @@ jobs:
           name: jar
           path: build/libs/*.jar
           retention-days: 7
+
+  docker:
+    name: Docker
+    needs: build
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    uses: ./.github/workflows/docker.yml
+    permissions:
+      contents: read
+      packages: write
