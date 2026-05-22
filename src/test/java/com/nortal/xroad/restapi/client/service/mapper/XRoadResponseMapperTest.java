@@ -5,14 +5,14 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.nortal.xroad.restapi.client.service.dto.XRoadResponseDTO;
-import java.net.http.HttpHeaders;
-import java.net.http.HttpResponse;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.OptionalLong;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.client.ClientHttpResponse;
 
 class XRoadResponseMapperTest {
 
@@ -24,8 +24,8 @@ class XRoadResponseMapperTest {
     }
 
     @Test
-    void toDtoMapsStatusCode() {
-        HttpResponse<String> response = createMockResponse(200, "OK", "{}", Map.of());
+    void toDtoMapsStatusCode() throws IOException {
+        ClientHttpResponse response = createMockResponse(200, "{}", new HttpHeaders());
 
         XRoadResponseDTO dto = mapper.toDto(response);
 
@@ -34,9 +34,9 @@ class XRoadResponseMapperTest {
     }
 
     @Test
-    void toDtoMapsBody() {
+    void toDtoMapsBody() throws IOException {
         String body = "{\"result\": \"success\"}";
-        HttpResponse<String> response = createMockResponse(200, "OK", body, Map.of());
+        ClientHttpResponse response = createMockResponse(200, body, new HttpHeaders());
 
         XRoadResponseDTO dto = mapper.toDto(response);
 
@@ -44,12 +44,11 @@ class XRoadResponseMapperTest {
     }
 
     @Test
-    void toDtoMapsHeaders() {
-        Map<String, List<String>> headers = Map.of(
-            "Content-Type", List.of("application/json"),
-            "X-Custom-Header", List.of("value1", "value2")
-        );
-        HttpResponse<String> response = createMockResponse(200, "OK", "{}", headers);
+    void toDtoMapsHeaders() throws IOException {
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Type", "application/json");
+        headers.add("X-Custom-Header", "value1");
+        ClientHttpResponse response = createMockResponse(200, "{}", headers);
 
         XRoadResponseDTO dto = mapper.toDto(response);
 
@@ -58,9 +57,10 @@ class XRoadResponseMapperTest {
     }
 
     @Test
-    void toDtoExtractsContentType() {
-        Map<String, List<String>> headers = Map.of("Content-Type", List.of("application/json; charset=utf-8"));
-        HttpResponse<String> response = createMockResponse(200, "OK", "{}", headers);
+    void toDtoExtractsContentType() throws IOException {
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Type", "application/json; charset=utf-8");
+        ClientHttpResponse response = createMockResponse(200, "{}", headers);
 
         XRoadResponseDTO dto = mapper.toDto(response);
 
@@ -68,9 +68,10 @@ class XRoadResponseMapperTest {
     }
 
     @Test
-    void toDtoExtractsContentLength() {
-        Map<String, List<String>> headers = Map.of("Content-Length", List.of("1234"));
-        HttpResponse<String> response = createMockResponseWithContentLength(200, "{}", headers, 1234L);
+    void toDtoExtractsContentLength() throws IOException {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentLength(1234L);
+        ClientHttpResponse response = createMockResponse(200, "{}", headers);
 
         XRoadResponseDTO dto = mapper.toDto(response);
 
@@ -78,13 +79,12 @@ class XRoadResponseMapperTest {
     }
 
     @Test
-    void toDtoExtractsXRoadHeaders() {
-        Map<String, List<String>> headers = Map.of(
-            "X-Road-Id", List.of("abc123"),
-            "X-Road-Request-Hash", List.of("hash456"),
-            "X-Road-Request-Id", List.of("req789")
-        );
-        HttpResponse<String> response = createMockResponse(200, "OK", "{}", headers);
+    void toDtoExtractsXRoadHeaders() throws IOException {
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("X-Road-Id", "abc123");
+        headers.add("X-Road-Request-Hash", "hash456");
+        headers.add("X-Road-Request-Id", "req789");
+        ClientHttpResponse response = createMockResponse(200, "{}", headers);
 
         XRoadResponseDTO dto = mapper.toDto(response);
 
@@ -94,10 +94,11 @@ class XRoadResponseMapperTest {
     }
 
     @Test
-    void toDtoParsesXRoadErrorHeader() {
+    void toDtoParsesXRoadErrorHeader() throws IOException {
         String errorJson = "{\"type\":\"Server.ServerProxy.ServiceFailed\",\"message\":\"Service failed\",\"detail\":\"Connection refused\"}";
-        Map<String, List<String>> headers = Map.of("X-Road-Error", List.of(errorJson));
-        HttpResponse<String> response = createMockResponse(500, "Internal Server Error", "", headers);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("X-Road-Error", errorJson);
+        ClientHttpResponse response = createMockResponse(500, "", headers);
 
         XRoadResponseDTO dto = mapper.toDto(response);
 
@@ -108,9 +109,10 @@ class XRoadResponseMapperTest {
     }
 
     @Test
-    void toDtoHandlesInvalidXRoadErrorHeader() {
-        Map<String, List<String>> headers = Map.of("X-Road-Error", List.of("Not valid JSON"));
-        HttpResponse<String> response = createMockResponse(500, "Internal Server Error", "", headers);
+    void toDtoHandlesInvalidXRoadErrorHeader() throws IOException {
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("X-Road-Error", "Not valid JSON");
+        ClientHttpResponse response = createMockResponse(500, "", headers);
 
         XRoadResponseDTO dto = mapper.toDto(response);
 
@@ -120,8 +122,8 @@ class XRoadResponseMapperTest {
     }
 
     @Test
-    void toDtoSetsTimestamp() {
-        HttpResponse<String> response = createMockResponse(200, "OK", "{}", Map.of());
+    void toDtoSetsTimestamp() throws IOException {
+        ClientHttpResponse response = createMockResponse(200, "{}", new HttpHeaders());
 
         XRoadResponseDTO dto = mapper.toDto(response);
 
@@ -129,8 +131,8 @@ class XRoadResponseMapperTest {
     }
 
     @Test
-    void toDtoHandlesUnknownStatusCode() {
-        HttpResponse<String> response = createMockResponse(599, null, "{}", Map.of());
+    void toDtoHandlesUnknownStatusCode() throws IOException {
+        ClientHttpResponse response = createMockResponse(599, "{}", new HttpHeaders());
 
         XRoadResponseDTO dto = mapper.toDto(response);
 
@@ -138,33 +140,12 @@ class XRoadResponseMapperTest {
         assertThat(dto.statusText()).isEqualTo("599");
     }
 
-    @SuppressWarnings("unchecked")
-    private HttpResponse<String> createMockResponse(int statusCode, String statusText, String body, Map<String, List<String>> headers) {
-        HttpResponse<String> response = mock(HttpResponse.class);
-        HttpHeaders httpHeaders = HttpHeaders.of(headers, (k, v) -> true);
+    private ClientHttpResponse createMockResponse(int statusCode, String body, HttpHeaders headers) throws IOException {
+        ClientHttpResponse response = mock(ClientHttpResponse.class);
 
-        when(response.statusCode()).thenReturn(statusCode);
-        when(response.body()).thenReturn(body);
-        when(response.headers()).thenReturn(httpHeaders);
-
-        return response;
-    }
-
-    @SuppressWarnings("unchecked")
-    private HttpResponse<String> createMockResponseWithContentLength(int statusCode, String body, Map<String, List<String>> headers, long contentLength) {
-        HttpResponse<String> response = mock(HttpResponse.class);
-        HttpHeaders httpHeaders = mock(HttpHeaders.class);
-
-        when(response.statusCode()).thenReturn(statusCode);
-        when(response.body()).thenReturn(body);
-        when(response.headers()).thenReturn(httpHeaders);
-        when(httpHeaders.map()).thenReturn(headers);
-        when(httpHeaders.firstValue("Content-Type")).thenReturn(Optional.empty());
-        when(httpHeaders.firstValue("X-Road-Id")).thenReturn(Optional.empty());
-        when(httpHeaders.firstValue("X-Road-Request-Hash")).thenReturn(Optional.empty());
-        when(httpHeaders.firstValue("X-Road-Request-Id")).thenReturn(Optional.empty());
-        when(httpHeaders.firstValue("X-Road-Error")).thenReturn(Optional.empty());
-        when(httpHeaders.firstValueAsLong("Content-Length")).thenReturn(OptionalLong.of(contentLength));
+        when(response.getStatusCode()).thenReturn(HttpStatusCode.valueOf(statusCode));
+        when(response.getBody()).thenReturn(new ByteArrayInputStream(body.getBytes(StandardCharsets.UTF_8)));
+        when(response.getHeaders()).thenReturn(headers);
 
         return response;
     }

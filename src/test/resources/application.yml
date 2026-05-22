@@ -1,0 +1,10 @@
+# Test configuration overrides
+spring:
+  application:
+    name: xRoadExampleRestapiClient
+  main:
+    allow-bean-definition-overriding: true
+
+server:
+  port: 10344
+  address: localhost

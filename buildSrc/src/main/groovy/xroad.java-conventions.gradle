@@ -31,9 +31,48 @@ jacoco {
     toolVersion = libs.findVersion("jacoco").get().toString()
 }
 
+// Classes to exclude from coverage (DTOs, config, main app, etc.)
+def jacocoExcludes = [
+    '**/dto/**',
+    '**/config/**',
+    '**/*App.class',
+    '**/*Application.class',
+    '**/web/filter/**',
+    '**/validation/**'
+]
+
 tasks.withType(JacocoReport) {
     reports {
         xml.required = true
         html.required = true
     }
+
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: jacocoExcludes)
+        }))
+    }
+}
+
+tasks.withType(JacocoCoverageVerification) {
+    dependsOn tasks.named('test')
+    dependsOn tasks.named('jacocoTestReport')
+
+    violationRules {
+        rule {
+            limit {
+                minimum = 0.80
+            }
+        }
+    }
+
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: jacocoExcludes)
+        }))
+    }
+}
+
+tasks.named('check') {
+    dependsOn tasks.withType(JacocoCoverageVerification)
 }

@@ -4,12 +4,13 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nortal.xroad.restapi.client.service.dto.XRoadErrorDTO;
 import com.nortal.xroad.restapi.client.service.dto.XRoadResponseDTO;
-import java.net.http.HttpResponse;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -17,12 +18,15 @@ public class XRoadResponseMapper {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    public XRoadResponseDTO toDto(HttpResponse<String> response) {
+    public XRoadResponseDTO toDto(ClientHttpResponse response) throws IOException {
+        int statusCode = response.getStatusCode().value();
+        String body = new String(response.getBody().readAllBytes(), StandardCharsets.UTF_8);
+
         return new XRoadResponseDTO(
-            response.statusCode(),
-            getStatusText(response.statusCode()),
+            statusCode,
+            getStatusText(statusCode),
             mapHeaders(response),
-            response.body(),
+            body,
             extractHeader(response, "Content-Type"),
             extractContentLength(response),
             extractHeader(response, "X-Road-Id"),
@@ -33,8 +37,10 @@ public class XRoadResponseMapper {
         );
     }
 
-    private Map<String, List<String>> mapHeaders(HttpResponse<String> response) {
-        return response.headers().map().entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+    private Map<String, List<String>> mapHeaders(ClientHttpResponse response) {
+        Map<String, List<String>> headers = new java.util.HashMap<>();
+        response.getHeaders().forEach((key, values) -> headers.put(key, new java.util.ArrayList<>(values)));
+        return headers;
     }
 
     private String getStatusText(int statusCode) {
@@ -42,15 +48,16 @@ public class XRoadResponseMapper {
         return httpStatus != null ? httpStatus.getReasonPhrase() : String.valueOf(statusCode);
     }
 
-    private String extractHeader(HttpResponse<String> response, String headerName) {
-        return response.headers().firstValue(headerName).orElse(null);
+    private String extractHeader(ClientHttpResponse response, String headerName) {
+        return response.getHeaders().getFirst(headerName);
     }
 
-    private Long extractContentLength(HttpResponse<String> response) {
-        return response.headers().firstValueAsLong("Content-Length").stream().boxed().findFirst().orElse(null);
+    private Long extractContentLength(ClientHttpResponse response) {
+        long contentLength = response.getHeaders().getContentLength();
+        return contentLength >= 0 ? contentLength : null;
     }
 
-    private XRoadErrorDTO parseXRoadError(HttpResponse<String> response) {
+    private XRoadErrorDTO parseXRoadError(ClientHttpResponse response) {
         String errorHeader = extractHeader(response, "X-Road-Error");
         if (errorHeader == null) {
             return null;

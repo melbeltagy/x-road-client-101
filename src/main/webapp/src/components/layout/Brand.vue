@@ -5,7 +5,7 @@ const { t } = useI18n();
 </script>
 
 <template>
-  <router-link to="/" class="brand-link text-decoration-none">
+  <router-link to="/" class="brand-link text-decoration-none ml-4">
     <v-toolbar-title class="font-weight-bold">
       {{ t('global.title') }}
     </v-toolbar-title>

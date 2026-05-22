@@ -172,6 +172,7 @@ dependencies {
     implementation(libs.spring.boot.starter.logging)
     implementation(libs.spring.boot.starter.validation)
     implementation(libs.spring.boot.starter.web)
+    implementation(libs.spring.boot.restclient)
     annotationProcessor(libs.spring.boot.configuration.processor)
 
     implementation(libs.jackson.datatype.jsr310)
@@ -187,6 +188,7 @@ dependencies {
 
     testImplementation(libs.spring.boot.starter.test)
     testImplementation(libs.spring.boot.test)
+    testImplementation(libs.spring.boot.test.autoconfigure)
     testImplementation(libs.archunit.junit5.api) {
         exclude(group = "org.slf4j", module = "slf4j-api")
     }

@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { toHumanReadableSize } from '@/utils/format';
 
 const props = defineProps<{
   statusCode: number;
@@ -11,7 +12,6 @@ const props = defineProps<{
 }>();
 
 const { t } = useI18n();
-const isOpen = ref(true);
 
 const statusColor = computed(() => {
   if (props.statusCode === 0) return 'error';
@@ -20,12 +20,6 @@ const statusColor = computed(() => {
   if (props.statusCode >= 400 && props.statusCode < 500) return 'warning';
   return 'error';
 });
-
-function formatBytes(bytes: number): string {
-  if (bytes < 1024) return `${bytes} B`;
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(2)} KB`;
-  return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
-}
 
 const formattedTimestamp = computed(() => {
   return new Date(props.timestamp).toLocaleString();
@@ -57,7 +51,7 @@ const formattedTimestamp = computed(() => {
       </div>
       <div v-if="contentLength != null" class="mb-2">
         <span class="text-caption text-medium-emphasis">{{ t('xroad.response.contentLength') }}:</span>
-        {{ formatBytes(contentLength) }}
+        {{ toHumanReadableSize(contentLength) }}
       </div>
     </v-expansion-panel-text>
   </v-expansion-panel>

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { toHumanReadableSize } from '@/utils/format';
 
 const props = defineProps<{
   body?: string;
@@ -17,12 +18,6 @@ function isBodyTooLarge(body?: string): boolean {
   if (!body) return false;
   const sizeInBytes = new Blob([body]).size;
   return sizeInBytes > 1024 * 1024; // 1MB limit
-}
-
-function formatBytes(bytes: number): string {
-  if (bytes < 1024) return `${bytes} B`;
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(2)} KB`;
-  return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
 }
 
 const parsedJson = computed(() => {
@@ -88,7 +83,7 @@ function downloadResponse(): void {
           </v-btn-toggle>
 
           <span v-if="body" class="text-caption text-medium-emphasis">
-            {{ t('xroad.response.size') }}: {{ formatBytes(bodySize) }}
+            {{ t('xroad.response.size') }}: {{ toHumanReadableSize(bodySize) }}
             <v-chip v-if="bodyTooLarge" color="warning" size="x-small" class="ml-1">
               {{ t('xroad.response.tooLarge') }}
             </v-chip>

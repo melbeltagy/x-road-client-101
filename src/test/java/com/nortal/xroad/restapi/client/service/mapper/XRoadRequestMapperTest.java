@@ -2,43 +2,37 @@ package com.nortal.xroad.restapi.client.service.mapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.nortal.xroad.restapi.client.config.ApplicationProperties;
 import com.nortal.xroad.restapi.client.service.dto.ClientDto;
 import com.nortal.xroad.restapi.client.service.dto.RequestDetailsDto;
 import com.nortal.xroad.restapi.client.service.dto.ServiceIdDto;
 import com.nortal.xroad.restapi.client.service.dto.SubsystemIdDto;
 import com.nortal.xroad.restapi.client.service.dto.XRoadRequestDTO;
-import java.net.http.HttpRequest;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 
 class XRoadRequestMapperTest {
 
     private XRoadRequestMapper mapper;
-    private ApplicationProperties properties;
 
     @BeforeEach
     void setUp() {
-        properties = new ApplicationProperties();
-        properties.getXroad().getTimeout().setReadMs(30000);
-        properties.getXroad().getTimeout().setConnectMs(10000);
-        mapper = new XRoadRequestMapper(properties);
+        mapper = new XRoadRequestMapper();
     }
 
     @Test
-    void toHttpRequestBuildsCorrectUrl() {
+    void buildUrlBuildsCorrectUrl() {
         XRoadRequestDTO request = createRequest(HttpMethod.GET, "/api/users", null);
 
-        HttpRequest httpRequest = mapper.toHttpRequest(request);
+        String url = mapper.buildUrl(request);
 
-        assertThat(httpRequest.uri().toString())
-            .isEqualTo("http://localhost:8080/r1/TEST/GOV/123456/TestSubsystem/testService/api/users");
+        assertThat(url).isEqualTo("http://localhost:8080/r1/TEST/GOV/123456/TestSubsystem/testService/api/users");
     }
 
     @Test
-    void toHttpRequestIncludesServiceVersion() {
+    void buildUrlIncludesServiceVersion() {
         SubsystemIdDto serviceSubsystem = new SubsystemIdDto("TEST", "GOV", "123456", "TestSubsystem");
         ServiceIdDto service = new ServiceIdDto(serviceSubsystem, "testService", "v1");
         XRoadRequestDTO request = new XRoadRequestDTO(
@@ -47,14 +41,13 @@ class XRoadRequestMapperTest {
             new RequestDetailsDto(HttpMethod.GET, "/api/users", null, null, null, null)
         );
 
-        HttpRequest httpRequest = mapper.toHttpRequest(request);
+        String url = mapper.buildUrl(request);
 
-        assertThat(httpRequest.uri().toString())
-            .contains("/testService/v1/api/users");
+        assertThat(url).contains("/testService/v1/api/users");
     }
 
     @Test
-    void toHttpRequestIncludesQueryParams() {
+    void buildUrlIncludesQueryParams() {
         RequestDetailsDto details = new RequestDetailsDto(
             HttpMethod.GET,
             "/api/users",
@@ -65,37 +58,36 @@ class XRoadRequestMapperTest {
         );
         XRoadRequestDTO request = new XRoadRequestDTO(createClient(), createService(), details);
 
-        HttpRequest httpRequest = mapper.toHttpRequest(request);
+        String url = mapper.buildUrl(request);
 
-        assertThat(httpRequest.uri().getQuery()).contains("page=1");
-        assertThat(httpRequest.uri().getQuery()).contains("size=10");
+        assertThat(url).contains("page=1");
+        assertThat(url).contains("size=10");
     }
 
     @Test
-    void toHttpRequestSetsXRoadClientHeader() {
+    void addHeadersSetsXRoadClientHeader() {
         XRoadRequestDTO request = createRequest(HttpMethod.GET, "/api/test", null);
+        HttpHeaders headers = new HttpHeaders();
 
-        HttpRequest httpRequest = mapper.toHttpRequest(request);
+        mapper.addHeaders(headers, request);
 
-        assertThat(httpRequest.headers().firstValue("X-Road-Client"))
-            .hasValue("TEST/GOV/123456/ClientSubsystem");
+        assertThat(headers.getFirst("X-Road-Client")).isEqualTo("TEST/GOV/123456/ClientSubsystem");
     }
 
     @Test
-    void toHttpRequestSetsXRoadRequestIdHeader() {
+    void addHeadersSetsXRoadRequestIdHeader() {
         XRoadRequestDTO request = createRequest(HttpMethod.GET, "/api/test", null);
+        HttpHeaders headers = new HttpHeaders();
 
-        HttpRequest httpRequest = mapper.toHttpRequest(request);
+        mapper.addHeaders(headers, request);
 
-        assertThat(httpRequest.headers().firstValue("X-Road-Request-Id"))
-            .isPresent()
-            .get()
-            .asString()
+        assertThat(headers.getFirst("X-Road-Request-Id"))
+            .isNotNull()
             .matches("[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}");
     }
 
     @Test
-    void toHttpRequestSetsContentTypeHeader() {
+    void addHeadersSetsContentTypeHeader() {
         RequestDetailsDto details = new RequestDetailsDto(
             HttpMethod.POST,
             "/api/users",
@@ -105,15 +97,15 @@ class XRoadRequestMapperTest {
             "application/json"
         );
         XRoadRequestDTO request = new XRoadRequestDTO(createClient(), createService(), details);
+        HttpHeaders headers = new HttpHeaders();
 
-        HttpRequest httpRequest = mapper.toHttpRequest(request);
+        mapper.addHeaders(headers, request);
 
-        assertThat(httpRequest.headers().firstValue("Content-Type"))
-            .hasValue("application/json");
+        assertThat(headers.getFirst("Content-Type")).isEqualTo("application/json");
     }
 
     @Test
-    void toHttpRequestAddsCustomHeaders() {
+    void addHeadersAddsCustomHeaders() {
         RequestDetailsDto details = new RequestDetailsDto(
             HttpMethod.GET,
             "/api/users",
@@ -123,36 +115,32 @@ class XRoadRequestMapperTest {
             null
         );
         XRoadRequestDTO request = new XRoadRequestDTO(createClient(), createService(), details);
+        HttpHeaders headers = new HttpHeaders();
 
-        HttpRequest httpRequest = mapper.toHttpRequest(request);
+        mapper.addHeaders(headers, request);
 
-        assertThat(httpRequest.headers().firstValue("X-Custom-Header"))
-            .hasValue("custom-value");
-        assertThat(httpRequest.headers().firstValue("Authorization"))
-            .hasValue("Bearer token");
+        assertThat(headers.getFirst("X-Custom-Header")).isEqualTo("custom-value");
+        assertThat(headers.getFirst("Authorization")).isEqualTo("Bearer token");
     }
 
     @Test
-    void toHttpRequestSetsHttpMethod() {
-        XRoadRequestDTO postRequest = createRequest(HttpMethod.POST, "/api/users", "{\"name\": \"test\"}");
-        XRoadRequestDTO deleteRequest = createRequest(HttpMethod.DELETE, "/api/users/1", null);
+    void addHeadersDoesNotDuplicateContentType() {
+        RequestDetailsDto details = new RequestDetailsDto(
+            HttpMethod.POST,
+            "/api/users",
+            null,
+            Map.of("Content-Type", "text/plain"),
+            "{\"name\": \"test\"}",
+            "application/json"
+        );
+        XRoadRequestDTO request = new XRoadRequestDTO(createClient(), createService(), details);
+        HttpHeaders headers = new HttpHeaders();
 
-        HttpRequest postHttpRequest = mapper.toHttpRequest(postRequest);
-        HttpRequest deleteHttpRequest = mapper.toHttpRequest(deleteRequest);
+        mapper.addHeaders(headers, request);
 
-        assertThat(postHttpRequest.method()).isEqualTo("POST");
-        assertThat(deleteHttpRequest.method()).isEqualTo("DELETE");
-    }
-
-    @Test
-    void toHttpRequestSetsTimeout() {
-        XRoadRequestDTO request = createRequest(HttpMethod.GET, "/api/test", null);
-
-        HttpRequest httpRequest = mapper.toHttpRequest(request);
-
-        assertThat(httpRequest.timeout())
-            .isPresent()
-            .hasValueSatisfying(timeout -> assertThat(timeout.toMillis()).isEqualTo(30000));
+        // contentType parameter takes precedence
+        assertThat(headers.getFirst("Content-Type")).isEqualTo("application/json");
+        assertThat(headers.get("Content-Type")).hasSize(1);
     }
 
     private XRoadRequestDTO createRequest(HttpMethod method, String path, String body) {

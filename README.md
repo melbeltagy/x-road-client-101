@@ -73,17 +73,54 @@ docker compose -f docker/docker-compose.yml build --build-arg VITE_MAX_HISTORY_E
 
 Or edit `docker/docker-compose.yml` to change the default value.
 
-## Development
+## Testing
+
+### Backend Tests
 
 ```bash
-# Backend tests
+# Run unit tests
 ./gradlew test
-# Frontend tests
-cd src/main/webapp && pnpm test
-# Code style check
+
+# Run integration tests
+./gradlew integrationTest
+
+# Run all tests with coverage report
+./gradlew test jacocoTestReport
+
+# Run tests with coverage verification (fails if coverage < 80%)
+./gradlew check
+```
+
+**Coverage reports:** `build/reports/jacoco/test/html/index.html`
+
+### Frontend Tests
+
+```bash
+cd src/main/webapp
+
+# Run tests in watch mode
+pnpm test
+
+# Run tests once
+pnpm test:run
+
+# Run tests with coverage report
+pnpm test:coverage
+```
+
+**Coverage reports:** `src/main/webapp/coverage/index.html`
+
+### Code Quality
+
+```bash
+# Backend: Checkstyle
 ./gradlew checkstyleMain -x webapp
-# ESLint check
+
+# Frontend: ESLint
 cd src/main/webapp && pnpm lint
+
+# Frontend: TypeScript check
+cd src/main/webapp && pnpm type-check
 ```
 
 ## Tech Stack
