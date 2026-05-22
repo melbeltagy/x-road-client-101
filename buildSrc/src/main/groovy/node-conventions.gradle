@@ -9,6 +9,7 @@ plugins {
 node {
     nodeProjectDir = file("${project.projectDir}/src/main/webapp")
     version = "24.16.0"  // LTS version
+    pnpmVersion = "11.2.2"
     download = true
 }
 
