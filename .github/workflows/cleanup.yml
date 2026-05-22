@@ -1,0 +1,21 @@
+name: Cleanup old images
+
+on:
+  schedule:
+    - cron: '0 0 * * 0'  # Every Sunday at midnight
+  workflow_dispatch:  # Manual trigger
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+    steps:
+      - name: Delete old package versions
+        uses: actions/delete-package-versions@v5
+        with:
+          package-name: x-road-example-restapi-client
+          package-type: container
+          min-versions-to-keep: 10
+          delete-only-untagged-versions: false
+          ignore-versions: '^(latest|main|v\\d+\\.\\d+\\.\\d+)$'
