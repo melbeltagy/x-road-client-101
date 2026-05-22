@@ -1,12 +1,17 @@
 name: Docker
 
 on:
-  push:
+  workflow_dispatch:
+  workflow_run:
+    workflows: [Build]
+    types: [completed]
     branches: [main]
+  push:
     tags: ['v*']
 
 jobs:
   docker:
+    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
