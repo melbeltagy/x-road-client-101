@@ -56,5 +56,11 @@
   "engines": {
     "node": ">=22 <=24",
     "pnpm": ">=10"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild",
+      "@parcel/watcher"
+    ]
   }
 }
