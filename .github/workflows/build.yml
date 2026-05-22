@@ -2,7 +2,7 @@ name: Build
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-  COREPACK_INTEGRITY_KEYS: 0
+  pnpm_config_minimumReleaseAge: 0
 
 on:
   workflow_dispatch:
