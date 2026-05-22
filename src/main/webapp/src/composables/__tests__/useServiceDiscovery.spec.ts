@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
-import { useServiceDiscovery } from '../useServiceDiscovery';
+import { useServiceDiscovery } from '..';
 import { fetchRegisteredClients } from '@/services/security-server.service';
 
 // Mock vue-i18n
@@ -101,8 +101,11 @@ describe('useServiceDiscovery', () => {
 
     it('should handle fetch errors', async () => {
       vi.mocked(fetchRegisteredClients).mockRejectedValue(new Error('Network error'));
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
       await discovery.loadSubsystemSuggestions('https://ss.example.com');
+
+      consoleSpy.mockRestore();
 
       expect(discovery.subsystemSuggestions.value).toEqual([]);
       expect(discovery.suggestionsError.value).toBe('xroad.client.fetchError');
