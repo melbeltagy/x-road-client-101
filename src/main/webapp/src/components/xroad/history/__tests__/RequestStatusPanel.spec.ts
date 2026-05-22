@@ -1,8 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { mount } from '@vue/test-utils';
-import { createVuetify } from 'vuetify';
-import * as components from 'vuetify/components';
-import * as directives from 'vuetify/directives';
 import { createI18n } from 'vue-i18n';
 import RequestStatusPanel from '../RequestStatusPanel.vue';
 import type { XRoadRequest, MTlsCertificates } from '@/types';
@@ -13,8 +10,6 @@ Object.assign(navigator, {
     writeText: vi.fn().mockResolvedValue(undefined),
   },
 });
-
-const vuetify = createVuetify({ components, directives });
 
 const i18n = createI18n({
   legacy: false,
@@ -142,7 +137,7 @@ const mountComponent = (props = createDefaultProps()) => {
   return mount(RequestStatusPanel, {
     props,
     global: {
-      plugins: [vuetify, i18n],
+      plugins: [i18n],
       stubs: {
         VFooter: {
           template: '<div class="v-footer"><slot /></div>',

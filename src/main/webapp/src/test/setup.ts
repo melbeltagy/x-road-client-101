@@ -2,7 +2,6 @@ import { config } from '@vue/test-utils';
 import { createVuetify } from 'vuetify';
 import * as components from 'vuetify/components';
 import * as directives from 'vuetify/directives';
-import { createI18n } from 'vue-i18n';
 import { createPinia, setActivePinia } from 'pinia';
 import { vi } from 'vitest';
 
@@ -44,17 +43,8 @@ const vuetify = createVuetify({
   directives,
 });
 
-// Create i18n instance for tests
-const i18n = createI18n({
-  legacy: false,
-  locale: 'en',
-  messages: {
-    en: {},
-  },
-});
-
 // Configure Vue Test Utils
-config.global.plugins = [vuetify, i18n];
+config.global.plugins = [vuetify];
 
 // Reset pinia before each test
 beforeEach(() => {
