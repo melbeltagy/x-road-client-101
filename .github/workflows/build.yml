@@ -2,9 +2,12 @@ name: Build
 
 on:
   push:
-    branches: [main]
+    branches: [*]
+    paths-ignore:
+      - *.md
+      - .github/dependabot.yml
   pull_request:
-    branches: [main]
+    branches: [*]
 
 jobs:
   build:
