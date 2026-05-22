@@ -2,12 +2,19 @@ name: Build
 
 on:
   push:
-    branches: [*]
+    branches: ['*']
     paths-ignore:
-      - *.md
-      - .github/dependabot.yml
+      - '**/*.md'
+      - '.github/dependabot.yml'
+      - '.gitignore'
+      - 'LICENSE'
   pull_request:
-    branches: [*]
+    branches: ['*']
+    paths-ignore:
+      - '**/*.md'
+      - '.github/dependabot.yml'
+      - '.gitignore'
+      - 'LICENSE'
 
 jobs:
   build:
