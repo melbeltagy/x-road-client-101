@@ -31,4 +31,7 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+    groups:
+        ci:
+          patterns: ["*"]
     open-pull-requests-limit: 3
