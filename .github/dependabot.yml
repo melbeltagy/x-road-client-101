@@ -6,10 +6,19 @@ updates:
     schedule:
       interval: "weekly"
     groups:
-      spring:
-        patterns: ["org.springframework*"]
-      testing:
-        patterns: ["*junit*", "*mockito*", "*archunit*"]
+      spring-patch:
+        patterns:
+          - "org.springframework*"
+        update-types:
+          - "patch"
+      backend-minor-patch:
+        patterns:
+          - "*"
+        exclude-patterns:
+          - "org.springframework*"
+        update-types:
+          - "minor"
+          - "patch"
     open-pull-requests-limit: 5
 
   # npm/pnpm dependencies
@@ -18,12 +27,12 @@ updates:
     schedule:
       interval: "weekly"
     groups:
-      vue:
-        patterns: ["vue*", "@vue*"]
-      vuetify:
-        patterns: ["vuetify*"]
-      testing:
-        patterns: ["vitest*", "@vitest*"]
+      javascript-minor-patch:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
     open-pull-requests-limit: 5
 
   # GitHub Actions
@@ -32,6 +41,10 @@ updates:
     schedule:
       interval: "weekly"
     groups:
-        ci:
-          patterns: ["*"]
+      actions-minor-patch:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
     open-pull-requests-limit: 3
