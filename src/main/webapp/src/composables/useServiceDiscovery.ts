@@ -1,4 +1,4 @@
-import { ref, watch, onUnmounted } from 'vue';
+import { ref, watch, onUnmounted, getCurrentInstance } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { fetchRegisteredClients } from '@/services/security-server.service';
 import type { SubsystemId, ServiceInfo } from '@/types';
@@ -41,8 +41,7 @@ export function useServiceDiscovery(options: UseServiceDiscoveryOptions = {}) {
     suggestionsError.value = null;
 
     try {
-      const clients = await fetchRegisteredClients(url);
-      subsystemSuggestions.value = clients;
+      subsystemSuggestions.value = await fetchRegisteredClients(url);
     } catch (error) {
       console.error('Failed to fetch subsystem suggestions:', error);
       suggestionsError.value = t('xroad.client.fetchError');
@@ -74,12 +73,14 @@ export function useServiceDiscovery(options: UseServiceDiscoveryOptions = {}) {
     availableServices.value = [];
   }
 
-  // Cleanup on unmount
-  onUnmounted(() => {
-    if (debounceTimer) {
-      clearTimeout(debounceTimer);
-    }
-  });
+  // Cleanup on unmount (only if in component context)
+  if (getCurrentInstance()) {
+    onUnmounted(() => {
+      if (debounceTimer) {
+        clearTimeout(debounceTimer);
+      }
+    });
+  }
 
   /**
    * Creates a watcher for security server URL changes
