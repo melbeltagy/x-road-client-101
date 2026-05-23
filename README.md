@@ -116,3 +116,17 @@ cd src/main/webapp && pnpm lint
 # Frontend: TypeScript check
 cd src/main/webapp && pnpm type-check
 ```
+
+## Screenshots
+
+**Client and service identifiers with auto-complete dropdowns**
+
+![Identifiers Tab](images/IDs-tab.png)
+
+**Request configuration, response viewer, and request history**
+
+![Request Tab](images/Request-tab.png)
+
+**Dark theme**
+
+![Dark Theme](images/dark-theme.png)
