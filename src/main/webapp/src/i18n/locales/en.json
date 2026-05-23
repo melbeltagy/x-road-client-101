@@ -138,7 +138,8 @@
       "sending": "Sending...",
       "endpointsAvailable": "{count} endpoints available",
       "selectEndpoint": "Select Endpoint",
-      "selectEndpointPlaceholder": "Choose an endpoint from the service"
+      "selectEndpointPlaceholder": "Choose an endpoint from the service",
+      "serviceNotFound": "Service not found"
     },
     "advanced": {
       "title": "Advanced Configuration",

@@ -20,6 +20,8 @@ const emit = defineEmits<{
   'update:serviceCode': [value: string];
   'update:serviceVersion': [value: string];
   'update:availableServices': [services: ServiceInfo[]];
+  'update:isLoadingServices': [value: boolean];
+  'update:servicesError': [value: string | null];
   clear: [];
 }>();
 
@@ -77,12 +79,16 @@ function handleServiceCodeUpdate(value: string | { value: string } | null): void
 async function loadServices(): Promise<void> {
   if (!props.securityServerUrl || !isClientComplete.value || !isSubsystemComplete.value) {
     availableServices.value = [];
+    servicesError.value = null;
     emit('update:availableServices', []);
+    emit('update:servicesError', null);
     return;
   }
 
   isLoadingServices.value = true;
   servicesError.value = null;
+  emit('update:isLoadingServices', true);
+  emit('update:servicesError', null);
 
   try {
     const services = await fetchServices(
@@ -96,8 +102,11 @@ async function loadServices(): Promise<void> {
     console.error('Failed to fetch services:', error);
     servicesError.value = t('xroad.service.fetchError');
     availableServices.value = [];
+    emit('update:availableServices', []);
+    emit('update:servicesError', servicesError.value);
   } finally {
     isLoadingServices.value = false;
+    emit('update:isLoadingServices', false);
   }
 }
 
@@ -105,6 +114,12 @@ async function loadServices(): Promise<void> {
 watch(
   [() => props.subsystem, () => props.clientSubsystem, () => props.securityServerUrl],
   () => {
+    // Clear immediately when fields change
+    availableServices.value = [];
+    servicesError.value = null;
+    emit('update:availableServices', []);
+    emit('update:servicesError', null);
+
     if (debounceTimer) {
       clearTimeout(debounceTimer);
     }
@@ -129,33 +144,7 @@ function handleSubsystemSelect(subsystem: SubsystemId): void {
 
 <template>
   <div>
-    <div class="d-flex justify-space-between align-center mb-2">
-      <div class="d-flex align-center">
-        <v-progress-circular
-          v-if="isLoadingServices"
-          indeterminate
-          size="16"
-          width="2"
-          color="primary"
-          class="mr-2"
-        />
-        <v-chip
-          v-if="availableServices.length > 0"
-          size="small"
-          color="success"
-          variant="tonal"
-        >
-          {{ t('xroad.service.servicesAvailable', { count: availableServices.length }) }}
-        </v-chip>
-        <v-chip
-          v-else-if="servicesError"
-          size="small"
-          color="warning"
-          variant="tonal"
-        >
-          {{ servicesError }}
-        </v-chip>
-      </div>
+    <div class="d-flex justify-end mb-2">
       <v-btn
         size="small"
         variant="tonal"

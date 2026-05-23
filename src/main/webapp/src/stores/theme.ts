@@ -8,11 +8,16 @@ export const useThemeStore = defineStore(
   'theme',
   () => {
     const themeMode = ref<ThemeMode>('system');
+    const systemPrefersDark = ref(
+      typeof window !== 'undefined'
+        ? window.matchMedia('(prefers-color-scheme: dark)').matches
+        : false
+    );
     const vuetifyTheme = useTheme();
 
     const effectiveTheme = computed<'light' | 'dark'>(() => {
       if (themeMode.value === 'system') {
-        return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        return systemPrefersDark.value ? 'dark' : 'light';
       }
       return themeMode.value;
     });
@@ -32,16 +37,14 @@ export const useThemeStore = defineStore(
       // Listen for system theme changes
       if (typeof window !== 'undefined') {
         const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-        mediaQuery.addEventListener('change', () => {
-          if (themeMode.value === 'system') {
-            applyTheme();
-          }
+        mediaQuery.addEventListener('change', (e) => {
+          systemPrefersDark.value = e.matches;
         });
       }
     }
 
-    // Watch for theme mode changes
-    watch(themeMode, () => {
+    // Watch for effective theme changes (covers both manual mode and system preference changes)
+    watch(effectiveTheme, () => {
       applyTheme();
     });
 

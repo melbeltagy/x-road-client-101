@@ -70,17 +70,7 @@ const selectedEndpoint = computed(() => {
 
 <template>
   <div>
-    <div class="d-flex justify-space-between align-center mb-2">
-      <div class="d-flex align-center">
-        <v-chip
-          v-if="hasEndpoints"
-          size="small"
-          color="success"
-          variant="tonal"
-        >
-          {{ t('xroad.request.endpointsAvailable', { count: endpoints?.length ?? 0 }) }}
-        </v-chip>
-      </div>
+    <div class="d-flex justify-end mb-2">
       <v-btn
         size="small"
         variant="tonal"

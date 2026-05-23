@@ -138,7 +138,8 @@
       "sending": "Envoi en cours...",
       "endpointsAvailable": "{count} points de terminaison disponibles",
       "selectEndpoint": "Sélectionner un point de terminaison",
-      "selectEndpointPlaceholder": "Choisissez un point de terminaison du service"
+      "selectEndpointPlaceholder": "Choisissez un point de terminaison du service",
+      "serviceNotFound": "Service non trouvé"
     },
     "advanced": {
       "title": "Advanced Configuration",

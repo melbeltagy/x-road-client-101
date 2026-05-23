@@ -138,7 +138,8 @@
       "sending": "Wird gesendet...",
       "endpointsAvailable": "{count} Endpunkte verfügbar",
       "selectEndpoint": "Endpunkt auswählen",
-      "selectEndpointPlaceholder": "Wählen Sie einen Endpunkt des Dienstes"
+      "selectEndpointPlaceholder": "Wählen Sie einen Endpunkt des Dienstes",
+      "serviceNotFound": "Dienst nicht gefunden"
     },
     "advanced": {
       "title": "Advanced Configuration",

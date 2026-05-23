@@ -138,7 +138,8 @@
       "sending": "Lähetetään...",
       "endpointsAvailable": "{count} päätepistettä saatavilla",
       "selectEndpoint": "Valitse päätepiste",
-      "selectEndpointPlaceholder": "Valitse palvelun päätepiste"
+      "selectEndpointPlaceholder": "Valitse palvelun päätepiste",
+      "serviceNotFound": "Palvelua ei löytynyt"
     },
     "advanced": {
       "title": "Advanced Configuration",
