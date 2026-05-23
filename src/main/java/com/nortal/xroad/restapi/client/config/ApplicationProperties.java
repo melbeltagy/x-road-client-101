@@ -9,6 +9,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class ApplicationProperties {
 
     private final Xroad xroad = new Xroad();
+    private final Frontend frontend = new Frontend();
 
     @Getter
     public static class Xroad {
@@ -22,5 +23,12 @@ public class ApplicationProperties {
             private int connectMs = 60000;
             private int readMs = 120000;
         }
+    }
+
+    @Getter
+    @Setter
+    public static class Frontend {
+
+        private int maxHistoryEntries = 15;
     }
 }

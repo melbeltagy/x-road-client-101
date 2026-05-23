@@ -34,3 +34,5 @@ application:
     timeout:
       connect-ms: 60000
       read-ms: 120000
+  frontend:
+    max-history-entries: ${MAX_HISTORY_ENTRIES:15}

@@ -6,3 +6,4 @@ export * from './request-details.model';
 export * from './xroad-error.model';
 export * from './xroad-request.model';
 export * from './xroad-response.model';
+export * from './frontend-config.model';

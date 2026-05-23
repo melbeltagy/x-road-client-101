@@ -1,9 +1,7 @@
 import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
 import type { XRoadRequest, XRoadResponse } from '@/types';
-
-const DEFAULT_MAX_HISTORY_ENTRIES = 25;
-const MAX_HISTORY_ENTRIES = parseInt(import.meta.env.VITE_MAX_HISTORY_ENTRIES || '', 10) || DEFAULT_MAX_HISTORY_ENTRIES;
+import { useConfigStore } from './config';
 
 export interface RequestHistoryEntry {
   id: string;
@@ -48,7 +46,8 @@ export const useXRoadHistoryStore = defineStore(
         response,
       };
 
-      entries.value = [entry, ...entries.value].slice(0, MAX_HISTORY_ENTRIES);
+      const configStore = useConfigStore();
+      entries.value = [entry, ...entries.value].slice(0, configStore.maxHistoryEntries);
       selectedEntryId.value = entry.id;
     }
 

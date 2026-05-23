@@ -104,15 +104,15 @@ describe('XRoad History Store', () => {
       expect(store.entries[0].request.service.serviceCode).toBe('secondService');
     });
 
-    it('should limit to 25 entries', () => {
+    it('should limit to max history entries (default 15)', () => {
       const store = useXRoadHistoryStore();
       const response = createMockResponse();
 
-      for (let i = 0; i < 30; i++) {
+      for (let i = 0; i < 20; i++) {
         store.addRequestToHistory(createMockRequest(), response);
       }
 
-      expect(store.entries).toHaveLength(25);
+      expect(store.entries).toHaveLength(15);
     });
 
     it('should sanitize mTLS certificates from request', () => {

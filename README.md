@@ -55,20 +55,15 @@ application:
 
 ### Frontend
 
-Frontend settings are configured via environment variables at build time:
+Frontend settings are configured via environment variables at runtime:
 
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `VITE_MAX_HISTORY_ENTRIES` | 25 | Maximum number of requests to keep in history |
+| Variable              | Default | Description                                   |
+|-----------------------|---------|-----------------------------------------------|
+| `MAX_HISTORY_ENTRIES` | 15      | Maximum number of requests to keep in history |
 
-**Development:**
+**Docker:**
 ```bash
-VITE_MAX_HISTORY_ENTRIES=50 pnpm build
-```
-
-**Docker (custom build):**
-```bash
-docker build -f docker/Dockerfile --build-arg VITE_MAX_HISTORY_ENTRIES=50 -t xroad-rest-client .
+docker run -p 8080:8080 -e MAX_HISTORY_ENTRIES=50 ghcr.io/melbeltagy/x-road-example-restapi-client:latest
 ```
 
 ## Testing

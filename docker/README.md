@@ -47,6 +47,14 @@ Then use `http://<ip-address>:8080/` as the Security Server URL in the UI.
 
 ## Configuration
 
+| Variable              | Default | Description                              |
+|-----------------------|---------|------------------------------------------|
+| `MAX_HISTORY_ENTRIES` | 15      | Maximum requests kept in browser history |
+
+```bash
+docker run -p 8080:8080 -e MAX_HISTORY_ENTRIES=50 ghcr.io/melbeltagy/x-road-example-restapi-client:latest
+```
+
 ### Application Properties
 
 Override Spring Boot properties via environment variables:
@@ -66,18 +74,6 @@ docker build -f docker/Dockerfile -t xroad-rest-client .
 
 # Run the locally built image
 docker run -p 8080:8080 xroad-rest-client
-```
-
-### Build Arguments
-
-| Argument                   | Default | Description                      |
-|----------------------------|---------|----------------------------------|
-| `VITE_MAX_HISTORY_ENTRIES` | 25      | Maximum requests kept in history |
-
-```bash
-docker build -f docker/Dockerfile \
-  --build-arg VITE_MAX_HISTORY_ENTRIES=50 \
-  -t xroad-rest-client .
 ```
 
 ## Tags
