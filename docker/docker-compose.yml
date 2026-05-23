@@ -1,12 +1,7 @@
 name: xroad-rest-client
 services:
   app:
-    build:
-      context: ..
-      dockerfile: docker/Dockerfile
-      args:
-        # Frontend configuration (build-time)
-        VITE_MAX_HISTORY_ENTRIES: 25
+    image: ghcr.io/melbeltagy/x-road-example-restapi-client:latest
     ports:
       - '8080:8080'
     healthcheck:

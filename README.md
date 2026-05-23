@@ -31,7 +31,7 @@ java -jar build/libs/*.jar
 ### Docker
 
 ```bash
-docker compose -f docker/docker-compose.yml up -d --build
+docker compose -f docker/docker-compose.yml up -d
 ```
 
 ## Requirements
@@ -66,12 +66,10 @@ Frontend settings are configured via environment variables at build time:
 VITE_MAX_HISTORY_ENTRIES=50 pnpm build
 ```
 
-**Docker:**
+**Docker (custom build):**
 ```bash
-docker compose -f docker/docker-compose.yml build --build-arg VITE_MAX_HISTORY_ENTRIES=50
+docker build -f docker/Dockerfile --build-arg VITE_MAX_HISTORY_ENTRIES=50 -t xroad-rest-client .
 ```
-
-Or edit `docker/docker-compose.yml` to change the default value.
 
 ## Testing
 
