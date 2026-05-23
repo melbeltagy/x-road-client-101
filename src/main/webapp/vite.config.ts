@@ -23,6 +23,14 @@ export default defineConfig({
     },
   },
 
+  optimizeDeps: {
+    include: [
+      'vuetify',
+      'vuetify/components',
+      'vuetify/directives',
+    ],
+  },
+
   server: {
     port: 9000,
     proxy: {

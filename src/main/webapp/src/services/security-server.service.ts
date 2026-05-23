@@ -16,18 +16,10 @@ export async function fetchServices(
   clientSubsystem: SubsystemId,
   serviceSubsystem: SubsystemId
 ): Promise<ServiceInfo[]> {
-  const response = await axios.get<ServiceInfo[]>(SERVICES_URL, {
-    params: {
-      securityServerUrl,
-      clientInstanceId: clientSubsystem.instanceId,
-      clientMemberClass: clientSubsystem.memberClass,
-      clientMemberCode: clientSubsystem.memberCode,
-      clientSubsystemCode: clientSubsystem.subsystemCode,
-      serviceInstanceId: serviceSubsystem.instanceId,
-      serviceMemberClass: serviceSubsystem.memberClass,
-      serviceMemberCode: serviceSubsystem.memberCode,
-      serviceSubsystemCode: serviceSubsystem.subsystemCode,
-    },
+  const response = await axios.post<ServiceInfo[]>(SERVICES_URL, {
+    securityServerUrl,
+    clientSubsystem,
+    serviceSubsystem,
   });
   return response.data;
 }

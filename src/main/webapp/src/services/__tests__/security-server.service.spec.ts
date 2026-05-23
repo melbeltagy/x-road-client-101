@@ -6,6 +6,7 @@ import type { SubsystemId, ServiceInfo } from '@/types';
 vi.mock('@/plugins/axios', () => ({
   default: {
     get: vi.fn(),
+    post: vi.fn(),
   },
 }));
 
@@ -85,22 +86,14 @@ describe('security-server.service', () => {
 
     it('should call the API with all required parameters', async () => {
       const services: ServiceInfo[] = [createMockServiceInfo()];
-      vi.mocked(axios.get).mockResolvedValueOnce({ data: services });
+      vi.mocked(axios.post).mockResolvedValueOnce({ data: services });
 
       await fetchServices('https://ss.example.com', clientSubsystem, serviceSubsystem);
 
-      expect(axios.get).toHaveBeenCalledWith('/api/security-server/services', {
-        params: {
-          securityServerUrl: 'https://ss.example.com',
-          clientInstanceId: 'TEST',
-          clientMemberClass: 'GOV',
-          clientMemberCode: '1234567-8',
-          clientSubsystemCode: 'ClientApp',
-          serviceInstanceId: 'TEST',
-          serviceMemberClass: 'GOV',
-          serviceMemberCode: '9876543-2',
-          serviceSubsystemCode: 'ServiceProvider',
-        },
+      expect(axios.post).toHaveBeenCalledWith('/api/security-server/services', {
+        securityServerUrl: 'https://ss.example.com',
+        clientSubsystem,
+        serviceSubsystem,
       });
     });
 
@@ -112,7 +105,7 @@ describe('security-server.service', () => {
           endpoints: [{ method: 'GET', path: '/users' }],
         }),
       ];
-      vi.mocked(axios.get).mockResolvedValueOnce({ data: services });
+      vi.mocked(axios.post).mockResolvedValueOnce({ data: services });
 
       const result = await fetchServices('https://ss.example.com', clientSubsystem, serviceSubsystem);
 
@@ -124,7 +117,7 @@ describe('security-server.service', () => {
     });
 
     it('should return empty array when no services', async () => {
-      vi.mocked(axios.get).mockResolvedValueOnce({ data: [] });
+      vi.mocked(axios.post).mockResolvedValueOnce({ data: [] });
 
       const result = await fetchServices('https://ss.example.com', clientSubsystem, serviceSubsystem);
 
@@ -133,7 +126,7 @@ describe('security-server.service', () => {
 
     it('should propagate API errors', async () => {
       const error = new Error('Service unavailable');
-      vi.mocked(axios.get).mockRejectedValueOnce(error);
+      vi.mocked(axios.post).mockRejectedValueOnce(error);
 
       await expect(
         fetchServices('https://ss.example.com', clientSubsystem, serviceSubsystem)

@@ -76,7 +76,7 @@ export const useLocaleStore = defineStore('locale', () => {
     // Update dayjs locale
     try {
       if (locale !== 'en') {
-        await import(`dayjs/locale/${locale}.js`);
+        await import(/* @vite-ignore */ `dayjs/locale/${locale}.js`);
       }
       dayjs.locale(locale);
     } catch {
