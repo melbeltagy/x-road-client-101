@@ -1,0 +1,22 @@
+# CODEOWNERS for x-road-client-101
+# https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Default owner for all files
+* @melbeltagy
+
+# Frontend (webapp)
+/src/main/webapp/ @melbeltagy
+
+# Backend (Java)
+/src/main/java/ @melbeltagy
+/src/test/java/ @melbeltagy
+
+# Build configuration
+/build.gradle.kts @melbeltagy
+/buildSrc/ @melbeltagy
+
+# Docker configuration
+/docker/ @melbeltagy
+
+# GitHub workflows and configuration
+/.github/ @melbeltagy
