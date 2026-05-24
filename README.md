@@ -1,12 +1,12 @@
-# X-Road Generic REST Client
+# X-Road Client 101
 
-A web-based tool for testing X-Road REST services. Configure client/service identifiers, send requests, and view responses with formatted JSON and syntax highlighting.
+A learning tool for developers new to X-Road. See how client and service identifiers map to X-Road headers and service URLs, send test requests, and inspect responses.
 
 ## Quick Start
 
 **Docker:**
 ```bash
-docker run -p 8080:8080 ghcr.io/melbeltagy/x-road-example-restapi-client:latest
+docker run -p 8080:8080 ghcr.io/melbeltagy/x-road-client-101:latest
 ```
 
 **From source:**

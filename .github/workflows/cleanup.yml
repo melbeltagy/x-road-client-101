@@ -14,7 +14,7 @@ jobs:
       - name: Delete old package versions
         uses: actions/delete-package-versions@v5
         with:
-          package-name: x-road-example-restapi-client
+          package-name: x-road-client-101
           package-type: container
           min-versions-to-keep: 10
           delete-only-untagged-versions: false

@@ -1,7 +1,7 @@
-name: xroad-rest-client
+name: xroad-client-101
 services:
   app:
-    image: ghcr.io/melbeltagy/x-road-example-restapi-client:latest
+    image: ghcr.io/melbeltagy/x-road-client-101:latest
     ports:
       - '8080:8080'
     healthcheck:

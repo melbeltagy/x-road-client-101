@@ -1,1 +1,1 @@
-rootProject.name = "x-road-example-restapi-client"
+rootProject.name = "x-road-client-101"
