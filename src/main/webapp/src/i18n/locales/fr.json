@@ -47,17 +47,14 @@
     "validation": "Erreur de validation sur le serveur."
   },
   "xroad": {
-    "tabs": {
-      "identifiers": "Identifiants",
-      "request": "Requête",
-      "security": "Sécurité"
-    },
     "progress": {
-      "securityServer": "Serveur de sécurité",
-      "clientIdentifier": "Identifiant client",
-      "serviceIdentifier": "Identifiant service",
-      "request": "Requête",
-      "security": "Sécurité",
+      "securityServer": "Serveur de sécurité *",
+      "clientIdentifier": "Identifiant client *",
+      "serviceIdentifier": "Identifiant service *",
+      "endpoint": "Point de terminaison *",
+      "queryParameters": "Paramètres de requête",
+      "customHeaders": "En-têtes personnalisés",
+      "certificates": "Certificats",
       "next": "Suivant"
     },
     "action": {

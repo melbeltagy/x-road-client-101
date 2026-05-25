@@ -28,10 +28,7 @@ const {
   certificates,
   queryParams,
   customHeaders,
-  activeTab,
-  openIdentifierPanels,
-  openRequestPanels,
-  openSecurityPanels,
+  openPanels,
   selectedServiceEndpoints,
   availableServices,
   buildRequest,
@@ -89,14 +86,34 @@ type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 
 // Focus an input by id and select its content. Used after step
 // navigation so the user can immediately overwrite the existing value.
-// preventScroll: true avoids fighting Vuetify's v-window/accordion
-// transitions — the browser otherwise scrolls the focused element
-// into view mid-animation, which looks like a jolt.
+// preventScroll: true keeps the browser from racing the explicit
+// smooth-scroll we kick off in navigateToStep.
 function focusAndSelect(inputId: string): void {
   const el = document.getElementById(inputId) as HTMLInputElement | null;
   if (!el) return;
   el.focus({ preventScroll: true });
   el.select?.();
+}
+
+// Vuetify's v-expansion-panel transition is ~300ms. Scrolling before
+// it settles races a moving target — the panel above is shrinking
+// while the target is growing, so the scroll lands mid-shift.
+const ACCORDION_TRANSITION_MS = 320;
+
+function waitForAccordion(): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ACCORDION_TRANSITION_MS));
+}
+
+async function scrollToPanel(panelId: string): Promise<void> {
+  await waitForAccordion();
+  const el = document.getElementById(panelId);
+  el?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+async function scrollToTop(): Promise<void> {
+  await waitForAccordion();
+  const el = document.getElementById('securityServerUrl');
+  el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
 
 // Submit handler
@@ -145,36 +162,44 @@ defineExpose({
       contentType: formData.request.contentType,
     },
   }),
-  // Navigate to a workflow step from the progress indicator: switch tab
-  // and expand the relevant accordion (and collapse the others) so the
-  // user lands directly on the right field group.
+  // Navigate to a workflow step from the progress indicator: expand
+  // the relevant accordion (collapsing the others), smooth-scroll it
+  // into view, and focus the first editable field where it makes sense.
   navigateToStep: async (stepKey: string) => {
     switch (stepKey) {
       case 'securityServer':
-        activeTab.value = 'identifiers';
-        openIdentifierPanels.value = []; // SS URL lives above the accordions; collapse both for clarity
-        await nextTick();
+        openPanels.value = []; // SS URL is above the accordions
+        await scrollToTop();
         focusAndSelect('securityServerUrl');
         break;
       case 'clientIdentifier':
-        activeTab.value = 'identifiers';
-        openIdentifierPanels.value = ['client'];
-        await nextTick();
-        focusAndSelect('instanceId'); // first field of client subsystem
+        openPanels.value = ['client'];
+        await scrollToPanel('panel-client');
+        focusAndSelect('instanceId');
         break;
       case 'serviceIdentifier':
-        activeTab.value = 'identifiers';
-        openIdentifierPanels.value = ['service'];
-        await nextTick();
-        focusAndSelect('serviceinstanceId'); // first field of service subsystem
+        openPanels.value = ['service'];
+        await scrollToPanel('panel-service');
+        focusAndSelect('serviceinstanceId');
         break;
-      case 'request':
-        activeTab.value = 'request';
-        await nextTick();
-        focusAndSelect('path'); // request path is the most-edited field
+      case 'endpoint':
+        openPanels.value = ['endpoint'];
+        await scrollToPanel('panel-endpoint');
+        focusAndSelect('path');
         break;
-      case 'security':
-        activeTab.value = 'security';
+      case 'queryParameters':
+        openPanels.value = ['queryParams'];
+        await scrollToPanel('panel-queryParams');
+        // no focus — list may be empty
+        break;
+      case 'customHeaders':
+        openPanels.value = ['customHeaders'];
+        await scrollToPanel('panel-customHeaders');
+        break;
+      case 'certificates':
+        openPanels.value = ['certificates'];
+        await scrollToPanel('panel-certificates');
+        // no auto-focus — cert textareas are large and easy to overwrite
         break;
     }
   },
@@ -202,38 +227,9 @@ defineExpose({
 
       <v-divider />
 
-      <div class="pa-2">
-        <v-btn-toggle
-          v-model="activeTab"
-          mandatory
-          color="primary"
-          variant="outlined"
-          divided
-          class="w-100"
-        >
-          <v-btn value="identifiers" class="flex-grow-1">
-            <v-icon start size="large">badge</v-icon>
-            {{ t('xroad.tabs.identifiers') }}
-          </v-btn>
-          <v-btn value="request" class="flex-grow-1">
-            <v-icon start size="large">send</v-icon>
-            {{ t('xroad.tabs.request') }}
-          </v-btn>
-          <v-btn value="security" class="flex-grow-1">
-            <v-icon start size="large">security</v-icon>
-            {{ t('xroad.tabs.security') }}
-          </v-btn>
-        </v-btn-toggle>
-      </div>
-
-      <v-divider />
-
       <v-card-text>
-        <v-window v-model="activeTab">
-          <!-- Identifiers Tab -->
-          <v-window-item value="identifiers">
-            <v-expansion-panels v-model="openIdentifierPanels" multiple>
-              <v-expansion-panel value="client">
+        <v-expansion-panels v-model="openPanels" multiple>
+          <v-expansion-panel id="panel-client" value="client">
                 <v-expansion-panel-title>
                   <div class="d-flex align-center">
                     <v-icon start color="primary">person</v-icon>
@@ -266,7 +262,7 @@ defineExpose({
                     </v-chip>
                   </div>
                 </v-expansion-panel-title>
-                <v-expansion-panel-text>
+                <v-expansion-panel-text eager>
                   <ClientSection
                     :subsystem="formData.client.subsystem"
                     :security-server-url="formData.client.securityServerUrl"
@@ -280,7 +276,7 @@ defineExpose({
                 </v-expansion-panel-text>
               </v-expansion-panel>
 
-              <v-expansion-panel value="service">
+              <v-expansion-panel id="panel-service" value="service">
                 <v-expansion-panel-title>
                   <div class="d-flex align-center">
                     <v-icon start color="primary">dns</v-icon>
@@ -313,7 +309,7 @@ defineExpose({
                     </v-chip>
                   </div>
                 </v-expansion-panel-title>
-                <v-expansion-panel-text>
+                <v-expansion-panel-text eager>
                   <ServiceSection
                     :subsystem="formData.service.subsystem"
                     :service-code="formData.service.serviceCode"
@@ -331,15 +327,10 @@ defineExpose({
                     @clear="clearService"
                   />
                 </v-expansion-panel-text>
-              </v-expansion-panel>
-            </v-expansion-panels>
-          </v-window-item>
+          </v-expansion-panel>
 
-          <!-- Request Tab -->
-          <v-window-item value="request">
-            <v-expansion-panels v-model="openRequestPanels" multiple>
-              <!-- Endpoint Details -->
-              <v-expansion-panel value="endpoint">
+          <!-- Endpoint Details -->
+          <v-expansion-panel id="panel-endpoint" value="endpoint">
                 <v-expansion-panel-title>
                   <div class="d-flex align-center">
                     <v-icon start color="primary">send</v-icon>
@@ -381,7 +372,7 @@ defineExpose({
                     </v-chip>
                   </div>
                 </v-expansion-panel-title>
-                <v-expansion-panel-text>
+                <v-expansion-panel-text eager>
                   <RequestSection
                     :method="formData.request.method"
                     :path="formData.request.path"
@@ -399,14 +390,14 @@ defineExpose({
               </v-expansion-panel>
 
               <!-- Query Parameters -->
-              <v-expansion-panel value="queryParams">
+              <v-expansion-panel id="panel-queryParams" value="queryParams">
                 <v-expansion-panel-title>
                   <div class="d-flex align-center">
                     <v-icon start color="primary">tune</v-icon>
                     <strong>{{ t('xroad.advanced.queryParams') }}</strong>
                   </div>
                 </v-expansion-panel-title>
-                <v-expansion-panel-text>
+                <v-expansion-panel-text eager>
                   <KeyValuePairList
                     :items="queryParams"
                     key-placeholder-key="xroad.advanced.key"
@@ -422,14 +413,14 @@ defineExpose({
               </v-expansion-panel>
 
               <!-- Custom Headers -->
-              <v-expansion-panel value="customHeaders">
+              <v-expansion-panel id="panel-customHeaders" value="customHeaders">
                 <v-expansion-panel-title>
                   <div class="d-flex align-center">
                     <v-icon start color="primary">list_alt</v-icon>
                     <strong>{{ t('xroad.advanced.customHeaders') }}</strong>
                   </div>
                 </v-expansion-panel-title>
-                <v-expansion-panel-text>
+                <v-expansion-panel-text eager>
                   <KeyValuePairList
                     :items="customHeaders"
                     key-placeholder-key="xroad.advanced.headerName"
@@ -442,30 +433,24 @@ defineExpose({
                     @clear="clearCustomHeaders"
                   />
                 </v-expansion-panel-text>
-              </v-expansion-panel>
-            </v-expansion-panels>
-          </v-window-item>
+          </v-expansion-panel>
 
-          <!-- Security Tab -->
-          <v-window-item value="security">
-            <v-expansion-panels v-model="openSecurityPanels" multiple>
-              <v-expansion-panel value="certificates">
+          <!-- Certificates -->
+          <v-expansion-panel id="panel-certificates" value="certificates">
                 <v-expansion-panel-title>
                   <div class="d-flex align-center">
                     <v-icon start color="primary">lock</v-icon>
                     <strong>{{ t('xroad.certificates.title') }}</strong>
                   </div>
                 </v-expansion-panel-title>
-                <v-expansion-panel-text>
+                <v-expansion-panel-text eager>
                   <CertificateSection
                     :certificates="certificates"
                     @update:certificates="certificates = $event"
                   />
                 </v-expansion-panel-text>
-              </v-expansion-panel>
-            </v-expansion-panels>
-          </v-window-item>
-        </v-window>
+          </v-expansion-panel>
+        </v-expansion-panels>
       </v-card-text>
     </v-card>
   </v-form>
@@ -474,5 +459,15 @@ defineExpose({
 <style scoped>
 .v-card :deep(.v-expansion-panels) {
   gap: 0;
+}
+
+/* scrollIntoView targets — leave space at the top so the app bar
+   (sticky/fixed at the page top) doesn't cover the scrolled-to title
+   or the Security Server URL field. 80px ≈ app bar height + breathing room. */
+.v-card :deep(.v-expansion-panel) {
+  scroll-margin-top: 80px;
+}
+#securityServerUrl {
+  scroll-margin-top: 80px;
 }
 </style>

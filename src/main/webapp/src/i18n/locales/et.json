@@ -47,17 +47,14 @@
     "validation": "Valideerimise viga serveris."
   },
   "xroad": {
-    "tabs": {
-      "identifiers": "Identifikaatorid",
-      "request": "Päring",
-      "security": "Turvalisus"
-    },
     "progress": {
-      "securityServer": "Turvaserver",
-      "clientIdentifier": "Kliendi identifikaator",
-      "serviceIdentifier": "Teenuse identifikaator",
-      "request": "Päring",
-      "security": "Turvalisus",
+      "securityServer": "Turvaserver *",
+      "clientIdentifier": "Kliendi identifikaator *",
+      "serviceIdentifier": "Teenuse identifikaator *",
+      "endpoint": "Lõpp-punkt *",
+      "queryParameters": "Päringuparameetrid",
+      "customHeaders": "Kohandatud päised",
+      "certificates": "Sertifikaadid",
       "next": "Järgmine"
     },
     "action": {

@@ -47,17 +47,14 @@
     "validation": "Vahvistusvirhe palvelimella."
   },
   "xroad": {
-    "tabs": {
-      "identifiers": "Tunnisteet",
-      "request": "Pyyntö",
-      "security": "Turvallisuus"
-    },
     "progress": {
-      "securityServer": "Turvapalvelin",
-      "clientIdentifier": "Asiakkaan tunniste",
-      "serviceIdentifier": "Palvelun tunniste",
-      "request": "Pyyntö",
-      "security": "Turvallisuus",
+      "securityServer": "Turvapalvelin *",
+      "clientIdentifier": "Asiakkaan tunniste *",
+      "serviceIdentifier": "Palvelun tunniste *",
+      "endpoint": "Päätepiste *",
+      "queryParameters": "Kyselyparametrit",
+      "customHeaders": "Mukautetut otsikot",
+      "certificates": "Varmenteet",
       "next": "Seuraava"
     },
     "action": {

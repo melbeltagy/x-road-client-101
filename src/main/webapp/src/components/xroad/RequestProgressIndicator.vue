@@ -3,7 +3,14 @@ import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { XRoadRequest, MTlsCertificates } from '@/types';
 
-export type StepKey = 'securityServer' | 'clientIdentifier' | 'serviceIdentifier' | 'request' | 'security';
+export type StepKey =
+  | 'securityServer'
+  | 'clientIdentifier'
+  | 'serviceIdentifier'
+  | 'endpoint'
+  | 'queryParameters'
+  | 'customHeaders'
+  | 'certificates';
 
 const props = defineProps<{
   formData: Partial<XRoadRequest>;
@@ -29,26 +36,38 @@ const serviceIdComplete = computed(() => {
   return !!(s?.instanceId && s?.memberClass && s?.memberCode && s?.subsystemCode && code);
 });
 
-const requestComplete = computed(() => {
+const endpointComplete = computed(() => {
   const r = props.formData.request;
   return !!(r?.method && r?.path);
 });
 
-const securityComplete = computed(() => {
+const queryParametersComplete = computed(() => {
+  const q = props.formData.request?.queryParams;
+  return !!(q && Object.keys(q).length > 0);
+});
+
+const customHeadersComplete = computed(() => {
+  const h = props.formData.request?.headers;
+  return !!(h && Object.keys(h).length > 0);
+});
+
+const certificatesComplete = computed(() => {
   const c = props.certificates;
   return !!(c.clientCert || c.clientPrivateKey || c.securityServerCert);
 });
 
-// Required sequence. Security is optional and excluded from "Next".
-const requiredSteps: StepKey[] = ['securityServer', 'clientIdentifier', 'serviceIdentifier', 'request'];
+// Required sequence. Optional steps are excluded from the "Next" pointer.
+const requiredSteps: StepKey[] = ['securityServer', 'clientIdentifier', 'serviceIdentifier', 'endpoint'];
 
 const isComplete = (key: StepKey): boolean => {
   switch (key) {
     case 'securityServer': return securityServerComplete.value;
     case 'clientIdentifier': return clientIdComplete.value;
     case 'serviceIdentifier': return serviceIdComplete.value;
-    case 'request': return requestComplete.value;
-    case 'security': return securityComplete.value;
+    case 'endpoint': return endpointComplete.value;
+    case 'queryParameters': return queryParametersComplete.value;
+    case 'customHeaders': return customHeadersComplete.value;
+    case 'certificates': return certificatesComplete.value;
   }
 };
 
@@ -69,8 +88,10 @@ const steps: Step[] = [
   { key: 'securityServer', labelKey: 'xroad.progress.securityServer' },
   { key: 'clientIdentifier', labelKey: 'xroad.progress.clientIdentifier' },
   { key: 'serviceIdentifier', labelKey: 'xroad.progress.serviceIdentifier' },
-  { key: 'request', labelKey: 'xroad.progress.request' },
-  { key: 'security', labelKey: 'xroad.progress.security', optional: true },
+  { key: 'endpoint', labelKey: 'xroad.progress.endpoint' },
+  { key: 'queryParameters', labelKey: 'xroad.progress.queryParameters', optional: true },
+  { key: 'customHeaders', labelKey: 'xroad.progress.customHeaders', optional: true },
+  { key: 'certificates', labelKey: 'xroad.progress.certificates', optional: true },
 ];
 
 function iconFor(step: Step): { name: string; color: string } {

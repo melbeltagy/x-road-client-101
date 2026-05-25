@@ -49,16 +49,12 @@ describe('useXRoadForm', () => {
       expect(form.customHeaders.value).toEqual([]);
     });
 
-    it('should start on identifiers tab', () => {
-      expect(form.activeTab.value).toBe('identifiers');
-    });
-
-    it('should start with all identifier panels collapsed', () => {
+    it('should start with all panels collapsed', () => {
       // Fresh form matches the "Security Server is Next" state shown
       // by the progress chips: SS URL field is visible above the
-      // accordions; the accordions stay closed until the user clicks
-      // the chip for that section (or expands the accordion header).
-      expect(form.openIdentifierPanels.value).toEqual([]);
+      // accordions; all panels stay closed until the user clicks
+      // the corresponding chip (or the accordion header).
+      expect(form.openPanels.value).toEqual([]);
     });
   });
 
