@@ -19,6 +19,7 @@
       "back": "Tagasi",
       "cancel": "Tühista",
       "clear": "Tühjenda",
+      "confirm": "Kinnita",
       "delete": "Kustuta",
       "edit": "Muuda",
       "save": "Salvesta",
@@ -52,7 +53,15 @@
       "security": "Turvalisus"
     },
     "action": {
-      "exportCurl": "Ekspordi cURL"
+      "exportCurl": "Ekspordi cURL",
+      "importCurl": "Impordi cURL"
+    },
+    "curlImport": {
+      "title": "Impordi cURL käsust",
+      "description": "Kleebi cURL käsk, mis suunatakse X-Road REST lõpp-punkti. Päringu väljad täidetakse käsust. Sertifikaadid tuleb eraldi uuesti lisada.",
+      "importButton": "Impordi",
+      "success": "Päring imporditi cURL käsust",
+      "confirmReplace": "Vormis on juba andmed. Importimine asendab need. Kas jätkata?"
     },
     "toast": {
       "requestFailed": "Päring ebaõnnestus",

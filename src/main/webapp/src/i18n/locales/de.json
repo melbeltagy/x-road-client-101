@@ -19,6 +19,7 @@
       "back": "Zurück",
       "cancel": "Abbrechen",
       "clear": "Löschen",
+      "confirm": "Bestätigen",
       "delete": "Löschen",
       "edit": "Bearbeiten",
       "save": "Speichern",
@@ -52,7 +53,15 @@
       "security": "Sicherheit"
     },
     "action": {
-      "exportCurl": "Als cURL exportieren"
+      "exportCurl": "Als cURL exportieren",
+      "importCurl": "Aus cURL importieren"
+    },
+    "curlImport": {
+      "title": "Aus cURL importieren",
+      "description": "Fügen Sie einen cURL-Befehl ein, der auf einen X-Road REST-Endpunkt verweist. Die Anfragefelder werden aus dem Befehl gefüllt. Zertifikate müssen separat erneut angehängt werden.",
+      "importButton": "Importieren",
+      "success": "Anfrage aus cURL importiert",
+      "confirmReplace": "Das Formular enthält bereits Daten. Beim Importieren werden diese ersetzt. Fortfahren?"
     },
     "toast": {
       "requestFailed": "Anfrage fehlgeschlagen",

@@ -19,6 +19,7 @@
       "back": "Takaisin",
       "cancel": "Peruuta",
       "clear": "Tyhjennä",
+      "confirm": "Vahvista",
       "delete": "Poista",
       "edit": "Muokkaa",
       "save": "Tallenna",
@@ -52,7 +53,15 @@
       "security": "Turvallisuus"
     },
     "action": {
-      "exportCurl": "Vie cURL"
+      "exportCurl": "Vie cURL",
+      "importCurl": "Tuo cURL"
+    },
+    "curlImport": {
+      "title": "Tuo cURL-komennosta",
+      "description": "Liitä cURL-komento, joka kohdistuu X-Road REST -päätepisteeseen. Pyyntökentät täytetään komennosta. Varmenteet on lisättävä erikseen uudelleen.",
+      "importButton": "Tuo",
+      "success": "Pyyntö tuotu cURL-komennosta",
+      "confirmReplace": "Lomakkeessa on jo tietoja. Tuonti korvaa ne. Jatketaanko?"
     },
     "toast": {
       "requestFailed": "Pyyntö epäonnistui",

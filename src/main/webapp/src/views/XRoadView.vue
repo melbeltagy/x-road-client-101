@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { ref, computed, watch, onMounted } from 'vue';
+import { ref, computed, watch, onMounted, nextTick } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useXRoadHistoryStore, type RequestHistoryEntry } from '@/stores/xroad-history';
 import xroadProxyService from '@/services/xroad-proxy.service';
 import type { XRoadRequest, XRoadResponse, MTlsCertificates, SubsystemId, RequestDetails } from '@/types';
-import { XRoadRequestForm } from '@/components/xroad/form';
+import { XRoadRequestForm, CurlImportDialog } from '@/components/xroad/form';
+import ConfirmDialog from '@/components/common/ConfirmDialog.vue';
 import { XRoadResponseViewer } from '@/components/xroad/response';
 import { HistoryList, RequestStatusPanel } from '@/components/xroad/history';
 
@@ -174,6 +175,70 @@ function handleHistoryView(entry: RequestHistoryEntry): void {
   historyStore.selectHistoryEntry(entry.id);
 }
 
+// cURL import state and handlers
+const curlImportOpen = ref(false);
+
+function openCurlImport(): void {
+  curlImportOpen.value = true;
+}
+
+// True if the form has user-entered data we'd overwrite on import.
+function formHasData(): boolean {
+  const d = formData.value;
+  const hasSubsystem = (s: Partial<SubsystemId> | undefined): boolean =>
+    !!(s?.instanceId || s?.memberClass || s?.memberCode || s?.subsystemCode);
+  return !!(
+    d.client?.securityServerUrl ||
+    hasSubsystem(d.client?.subsystem) ||
+    hasSubsystem(d.service?.subsystem) ||
+    d.service?.serviceCode ||
+    d.service?.serviceVersion ||
+    d.request?.body ||
+    (d.request?.path && d.request.path !== '/') ||
+    (d.request?.headers && Object.keys(d.request.headers).length > 0) ||
+    (d.request?.queryParams && Object.keys(d.request.queryParams).length > 0)
+  );
+}
+
+async function applyImportedRequest(imported: XRoadRequest, warnings: string[]): Promise<void> {
+  // Force the watcher on initialRequest to re-fire even if the user
+  // imports the same shape twice.
+  currentRequest.value = null;
+  response.value = null;
+  isFromHistory.value = false;
+  await nextTick();
+  currentRequest.value = imported;
+  showAlert('success', t('xroad.curlImport.success'));
+  if (warnings.length > 0) {
+    historyAlert.value = { show: true, message: warnings.join(' • ') };
+  }
+}
+
+// Pending import held while the confirm dialog is open. Cleared on
+// confirm/cancel so a dismissed confirm doesn't apply later.
+const replaceConfirmOpen = ref(false);
+const pendingImport = ref<{ request: XRoadRequest; warnings: string[] } | null>(null);
+
+function handleCurlImport(payload: { request: XRoadRequest; warnings: string[] }): void {
+  if (formHasData()) {
+    pendingImport.value = payload;
+    replaceConfirmOpen.value = true;
+    return;
+  }
+  void applyImportedRequest(payload.request, payload.warnings);
+}
+
+async function confirmReplaceAndApply(): Promise<void> {
+  const pending = pendingImport.value;
+  pendingImport.value = null;
+  if (!pending) return;
+  await applyImportedRequest(pending.request, pending.warnings);
+}
+
+function cancelReplace(): void {
+  pendingImport.value = null;
+}
+
 // Handle history alert
 function handleHistoryAlert(color: 'success' | 'error' | 'warning', message: string): void {
   showAlert(color, message);
@@ -334,6 +399,22 @@ const lastRequestSuccess = computed(() => {
       :request="buildCurrentRequest()"
       @submit="handleStatusPanelSubmit"
       @show-alert="handleHistoryAlert"
+      @request-import="openCurlImport"
+    />
+
+    <!-- cURL Import Dialog -->
+    <CurlImportDialog
+      v-model="curlImportOpen"
+      @import="handleCurlImport"
+    />
+
+    <!-- Confirm: replace existing form data on import -->
+    <ConfirmDialog
+      v-model="replaceConfirmOpen"
+      :message="t('xroad.curlImport.confirmReplace')"
+      color="warning"
+      @confirm="confirmReplaceAndApply"
+      @cancel="cancelReplace"
     />
   </v-container>
 </template>

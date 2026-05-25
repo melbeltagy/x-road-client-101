@@ -19,6 +19,7 @@
       "back": "Back",
       "cancel": "Cancel",
       "clear": "Clear",
+      "confirm": "Confirm",
       "delete": "Delete",
       "edit": "Edit",
       "save": "Save",
@@ -52,7 +53,15 @@
       "security": "Security"
     },
     "action": {
-      "exportCurl": "Export cURL"
+      "exportCurl": "Export cURL",
+      "importCurl": "Import cURL"
+    },
+    "curlImport": {
+      "title": "Import from cURL",
+      "description": "Paste a cURL command that targets an X-Road REST endpoint. The request fields will be filled in from the command. Certificates must be re-attached separately.",
+      "importButton": "Import",
+      "success": "Imported request from cURL",
+      "confirmReplace": "The form already contains data. Importing will replace it. Continue?"
     },
     "toast": {
       "requestFailed": "Request failed",

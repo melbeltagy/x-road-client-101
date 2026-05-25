@@ -19,6 +19,7 @@
       "back": "Retour",
       "cancel": "Annuler",
       "clear": "Effacer",
+      "confirm": "Confirmer",
       "delete": "Supprimer",
       "edit": "Modifier",
       "save": "Enregistrer",
@@ -52,7 +53,15 @@
       "security": "Sécurité"
     },
     "action": {
-      "exportCurl": "Exporter en cURL"
+      "exportCurl": "Exporter en cURL",
+      "importCurl": "Importer depuis cURL"
+    },
+    "curlImport": {
+      "title": "Importer depuis cURL",
+      "description": "Collez une commande cURL ciblant un point de terminaison REST X-Road. Les champs de la requête seront remplis à partir de la commande. Les certificats doivent être ajoutés séparément.",
+      "importButton": "Importer",
+      "success": "Requête importée depuis cURL",
+      "confirmReplace": "Le formulaire contient déjà des données. L'import les remplacera. Continuer ?"
     },
     "toast": {
       "requestFailed": "Échec de la requête",
