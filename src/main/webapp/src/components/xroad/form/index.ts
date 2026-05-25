@@ -7,3 +7,4 @@ export { default as SubsystemIdFields } from './SubsystemIdFields.vue';
 export { default as KeyValuePairList, type KeyValuePair } from './KeyValuePairList.vue';
 export { default as CertificateUploadModal } from './CertificateUploadModal.vue';
 export { default as CurlImportDialog } from './CurlImportDialog.vue';
+export { default as CurlImportFlow } from './CurlImportFlow.vue';
