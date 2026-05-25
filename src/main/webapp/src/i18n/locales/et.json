@@ -19,6 +19,7 @@
       "back": "Tagasi",
       "cancel": "Tühista",
       "clear": "Tühjenda",
+      "confirm": "Kinnita",
       "delete": "Kustuta",
       "edit": "Muuda",
       "save": "Salvesta",
@@ -46,13 +47,26 @@
     "validation": "Valideerimise viga serveris."
   },
   "xroad": {
-    "tabs": {
-      "identifiers": "Identifikaatorid",
-      "request": "Päring",
-      "security": "Turvalisus"
+    "progress": {
+      "securityServer": "Turvaserver *",
+      "clientIdentifier": "Kliendi identifikaator *",
+      "serviceIdentifier": "Teenuse identifikaator *",
+      "endpoint": "Lõpp-punkt *",
+      "queryParameters": "Päringuparameetrid",
+      "customHeaders": "Kohandatud päised",
+      "certificates": "Sertifikaadid",
+      "next": "Järgmine"
     },
     "action": {
-      "exportCurl": "Ekspordi cURL"
+      "exportCurl": "Ekspordi cURL",
+      "importCurl": "Impordi cURL"
+    },
+    "curlImport": {
+      "title": "Impordi cURL käsust",
+      "description": "Kleebi cURL käsk, mis suunatakse X-Road REST lõpp-punkti. Päringu väljad täidetakse käsust. Sertifikaadid tuleb eraldi uuesti lisada.",
+      "importButton": "Impordi",
+      "success": "Päring imporditi cURL käsust",
+      "confirmReplace": "Vormis on juba andmed. Importimine asendab need. Kas jätkata?"
     },
     "toast": {
       "requestFailed": "Päring ebaõnnestus",
@@ -63,7 +77,8 @@
       "clientError": "Kliendi viga",
       "unknownError": "Tundmatu viga",
       "curlCopied": "cURL käsk kopeeritud",
-      "curlCopyFailed": "cURL käsu kopeerimine ebaõnnestus"
+      "curlCopyFailed": "cURL käsu kopeerimine ebaõnnestus",
+      "historyError": "Päringuajalugu ei õnnestunud uuendada"
     },
     "client": {
       "title": "Client Identifier",

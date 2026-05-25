@@ -19,6 +19,7 @@
       "back": "Back",
       "cancel": "Cancel",
       "clear": "Clear",
+      "confirm": "Confirm",
       "delete": "Delete",
       "edit": "Edit",
       "save": "Save",
@@ -46,13 +47,26 @@
     "validation": "Validation error on the server."
   },
   "xroad": {
-    "tabs": {
-      "identifiers": "Identifiers",
-      "request": "Request",
-      "security": "Security"
+    "progress": {
+      "securityServer": "Security Server *",
+      "clientIdentifier": "Client Identifier *",
+      "serviceIdentifier": "Service Identifier *",
+      "endpoint": "Endpoint *",
+      "queryParameters": "Query Parameters",
+      "customHeaders": "Custom Headers",
+      "certificates": "Certificates",
+      "next": "Next"
     },
     "action": {
-      "exportCurl": "Export cURL"
+      "exportCurl": "Export cURL",
+      "importCurl": "Import cURL"
+    },
+    "curlImport": {
+      "title": "Import from cURL",
+      "description": "Paste a cURL command that targets an X-Road REST endpoint. The request fields will be filled in from the command. Certificates must be re-attached separately.",
+      "importButton": "Import",
+      "success": "Imported request from cURL",
+      "confirmReplace": "The form already contains data. Importing will replace it. Continue?"
     },
     "toast": {
       "requestFailed": "Request failed",
@@ -63,7 +77,8 @@
       "clientError": "Client Error",
       "unknownError": "Unknown error",
       "curlCopied": "cURL command copied to clipboard",
-      "curlCopyFailed": "Failed to copy cURL command"
+      "curlCopyFailed": "Failed to copy cURL command",
+      "historyError": "Could not update request history"
     },
     "client": {
       "title": "Client Identifier",

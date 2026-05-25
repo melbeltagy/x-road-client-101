@@ -36,6 +36,7 @@ const props = defineProps<{
 const emit = defineEmits<{
   submit: [];
   showAlert: [type: 'success' | 'error' | 'warning', message: string];
+  requestImport: [];
 }>();
 
 const { t } = useI18n();
@@ -222,16 +223,21 @@ async function copyAsCurl(): Promise<void> {
           </div>
         </v-col>
 
-        <!-- Spacer -->
-        <v-col cols="12" md="2" />
-
-        <!-- Export cURL Button -->
-        <v-col cols="12" md="2" class="text-right">
+        <!-- cURL action group (Import + Export clustered together) -->
+        <v-col cols="12" md="4" class="d-flex justify-end align-center ga-2">
           <v-btn
             variant="outlined"
             color="primary"
-            size="x-large"
-            block
+            size="default"
+            @click="emit('requestImport')"
+          >
+            <v-icon start>download</v-icon>
+            {{ t('xroad.action.importCurl') }}
+          </v-btn>
+          <v-btn
+            variant="outlined"
+            color="primary"
+            size="default"
             :disabled="!request || !isServiceComplete"
             @click="copyAsCurl"
           >

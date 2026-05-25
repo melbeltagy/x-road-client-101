@@ -19,6 +19,7 @@
       "back": "Zurück",
       "cancel": "Abbrechen",
       "clear": "Löschen",
+      "confirm": "Bestätigen",
       "delete": "Löschen",
       "edit": "Bearbeiten",
       "save": "Speichern",
@@ -46,13 +47,26 @@
     "validation": "Validierungsfehler auf dem Server."
   },
   "xroad": {
-    "tabs": {
-      "identifiers": "Identifikatoren",
-      "request": "Anfrage",
-      "security": "Sicherheit"
+    "progress": {
+      "securityServer": "Security Server *",
+      "clientIdentifier": "Client-Identifikator *",
+      "serviceIdentifier": "Service-Identifikator *",
+      "endpoint": "Endpunkt *",
+      "queryParameters": "Abfrageparameter",
+      "customHeaders": "Benutzerdefinierte Header",
+      "certificates": "Zertifikate",
+      "next": "Weiter"
     },
     "action": {
-      "exportCurl": "Als cURL exportieren"
+      "exportCurl": "Als cURL exportieren",
+      "importCurl": "Aus cURL importieren"
+    },
+    "curlImport": {
+      "title": "Aus cURL importieren",
+      "description": "Fügen Sie einen cURL-Befehl ein, der auf einen X-Road REST-Endpunkt verweist. Die Anfragefelder werden aus dem Befehl gefüllt. Zertifikate müssen separat erneut angehängt werden.",
+      "importButton": "Importieren",
+      "success": "Anfrage aus cURL importiert",
+      "confirmReplace": "Das Formular enthält bereits Daten. Beim Importieren werden diese ersetzt. Fortfahren?"
     },
     "toast": {
       "requestFailed": "Anfrage fehlgeschlagen",
@@ -63,7 +77,8 @@
       "clientError": "Client-Fehler",
       "unknownError": "Unbekannter Fehler",
       "curlCopied": "cURL-Befehl in Zwischenablage kopiert",
-      "curlCopyFailed": "Kopieren des cURL-Befehls fehlgeschlagen"
+      "curlCopyFailed": "Kopieren des cURL-Befehls fehlgeschlagen",
+      "historyError": "Anfrageverlauf konnte nicht aktualisiert werden"
     },
     "client": {
       "title": "Client Identifier",

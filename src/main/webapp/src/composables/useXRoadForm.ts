@@ -80,10 +80,13 @@ export function useXRoadForm(options: UseXRoadFormOptions = {}) {
   const customHeaders = ref<KeyValuePair[]>([]);
 
   // UI state
-  const activeTab = ref('identifiers');
-  const openIdentifierPanels = ref(['client', 'service']);
-  const openRequestPanels = ref(['endpoint']);
-  const openSecurityPanels = ref(['certificates']);
+  // Single accordion state covering all six sections. Collapsed by
+  // default — matches the "Security Server is Next" state shown by the
+  // progress chips on a fresh form. The user expands a section by
+  // clicking the corresponding chip (or the accordion header).
+  // Possible values: 'client', 'service', 'endpoint', 'queryParams',
+  // 'customHeaders', 'certificates'.
+  const openPanels = ref<string[]>([]);
 
   // Track initial load state
   const isInitialLoad = ref(true);
@@ -307,7 +310,10 @@ export function useXRoadForm(options: UseXRoadFormOptions = {}) {
     certificatesCount: Object.keys(certificates.value).length,
   }));
 
-  // Watch for initial request prop changes
+  // Watch for initial request prop changes. Populate the form whenever
+  // a request is provided (history reload, cURL import, future sources).
+  // The isFromHistory flag is propagated separately and gates the
+  // "loaded from history" UI affordances, not the population itself.
   function watchInitialRequest(
     requestGetter: () => XRoadRequest | null | undefined,
     isFromHistoryGetter: () => boolean
@@ -315,8 +321,8 @@ export function useXRoadForm(options: UseXRoadFormOptions = {}) {
     watch(
       requestGetter,
       (newRequest) => {
-        if (newRequest && isFromHistoryGetter()) {
-          isFromHistory.value = true;
+        if (newRequest) {
+          isFromHistory.value = isFromHistoryGetter();
           populateFromRequest(newRequest);
         }
       },
@@ -376,10 +382,7 @@ export function useXRoadForm(options: UseXRoadFormOptions = {}) {
     certificates,
     queryParams,
     customHeaders,
-    activeTab,
-    openIdentifierPanels,
-    openRequestPanels,
-    openSecurityPanels,
+    openPanels,
     isInitialLoad,
     isFromHistory,
     availableServices,

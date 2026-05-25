@@ -19,6 +19,7 @@
       "back": "Takaisin",
       "cancel": "Peruuta",
       "clear": "Tyhjennä",
+      "confirm": "Vahvista",
       "delete": "Poista",
       "edit": "Muokkaa",
       "save": "Tallenna",
@@ -46,13 +47,26 @@
     "validation": "Vahvistusvirhe palvelimella."
   },
   "xroad": {
-    "tabs": {
-      "identifiers": "Tunnisteet",
-      "request": "Pyyntö",
-      "security": "Turvallisuus"
+    "progress": {
+      "securityServer": "Turvapalvelin *",
+      "clientIdentifier": "Asiakkaan tunniste *",
+      "serviceIdentifier": "Palvelun tunniste *",
+      "endpoint": "Päätepiste *",
+      "queryParameters": "Kyselyparametrit",
+      "customHeaders": "Mukautetut otsikot",
+      "certificates": "Varmenteet",
+      "next": "Seuraava"
     },
     "action": {
-      "exportCurl": "Vie cURL"
+      "exportCurl": "Vie cURL",
+      "importCurl": "Tuo cURL"
+    },
+    "curlImport": {
+      "title": "Tuo cURL-komennosta",
+      "description": "Liitä cURL-komento, joka kohdistuu X-Road REST -päätepisteeseen. Pyyntökentät täytetään komennosta. Varmenteet on lisättävä erikseen uudelleen.",
+      "importButton": "Tuo",
+      "success": "Pyyntö tuotu cURL-komennosta",
+      "confirmReplace": "Lomakkeessa on jo tietoja. Tuonti korvaa ne. Jatketaanko?"
     },
     "toast": {
       "requestFailed": "Pyyntö epäonnistui",
@@ -63,7 +77,8 @@
       "clientError": "Asiakasvirhe",
       "unknownError": "Tuntematon virhe",
       "curlCopied": "cURL-komento kopioitu leikepöydälle",
-      "curlCopyFailed": "cURL-komennon kopiointi epäonnistui"
+      "curlCopyFailed": "cURL-komennon kopiointi epäonnistui",
+      "historyError": "Pyyntöhistoriaa ei voitu päivittää"
     },
     "client": {
       "title": "Client Identifier",

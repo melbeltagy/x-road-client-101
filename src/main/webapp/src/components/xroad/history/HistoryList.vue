@@ -1,20 +1,33 @@
 <script setup lang="ts">
+import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useXRoadHistoryStore, type RequestHistoryEntry } from '@/stores/xroad-history';
 import HistoryEntry from './HistoryEntry.vue';
+import ConfirmDialog from '@/components/common/ConfirmDialog.vue';
 
 const emit = defineEmits<{
   view: [entry: RequestHistoryEntry];
   showAlert: [color: 'success' | 'error' | 'warning', message: string];
+  historyWarning: [message: string];
 }>();
 
 const { t } = useI18n();
 const historyStore = useXRoadHistoryStore();
 
+const clearConfirmOpen = ref(false);
+
 function handleClearAll(): void {
-  if (window.confirm(t('xroad.history.confirmClear'))) {
-    historyStore.clearHistory();
+  clearConfirmOpen.value = true;
+}
+
+function confirmClearAll(): void {
+  const ok = historyStore.clearHistory();
+  if (ok && !historyStore.lastError) {
     emit('showAlert', 'success', t('xroad.history.cleared'));
+    historyStore.closeHistorySidebar();
+  } else {
+    emit('historyWarning', t('xroad.toast.historyError'));
+    historyStore.clearError();
   }
 }
 
@@ -24,8 +37,13 @@ function handleView(entry: RequestHistoryEntry): void {
 }
 
 function handleDelete(entryId: string): void {
-  historyStore.deleteHistoryEntry(entryId);
-  emit('showAlert', 'success', t('xroad.history.deleted'));
+  const ok = historyStore.deleteHistoryEntry(entryId);
+  if (ok && !historyStore.lastError) {
+    emit('showAlert', 'success', t('xroad.history.deleted'));
+  } else {
+    emit('historyWarning', t('xroad.toast.historyError'));
+    historyStore.clearError();
+  }
 }
 
 function handleClose(): void {
@@ -85,6 +103,14 @@ function handleClose(): void {
       </v-list>
     </template>
   </v-navigation-drawer>
+
+  <!-- Confirm: wipe all history -->
+  <ConfirmDialog
+    v-model="clearConfirmOpen"
+    :message="t('xroad.history.confirmClear')"
+    color="error"
+    @confirm="confirmClearAll"
+  />
 </template>
 
 <style scoped>
