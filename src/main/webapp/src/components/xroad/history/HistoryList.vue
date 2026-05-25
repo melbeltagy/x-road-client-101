@@ -24,6 +24,7 @@ function confirmClearAll(): void {
   const ok = historyStore.clearHistory();
   if (ok && !historyStore.lastError) {
     emit('showAlert', 'success', t('xroad.history.cleared'));
+    historyStore.closeHistorySidebar();
   } else {
     emit('historyWarning', t('xroad.toast.historyError'));
     historyStore.clearError();
