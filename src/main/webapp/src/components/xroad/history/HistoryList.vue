@@ -6,6 +6,7 @@ import HistoryEntry from './HistoryEntry.vue';
 const emit = defineEmits<{
   view: [entry: RequestHistoryEntry];
   showAlert: [color: 'success' | 'error' | 'warning', message: string];
+  historyWarning: [message: string];
 }>();
 
 const { t } = useI18n();
@@ -13,8 +14,13 @@ const historyStore = useXRoadHistoryStore();
 
 function handleClearAll(): void {
   if (window.confirm(t('xroad.history.confirmClear'))) {
-    historyStore.clearHistory();
-    emit('showAlert', 'success', t('xroad.history.cleared'));
+    const ok = historyStore.clearHistory();
+    if (ok && !historyStore.lastError) {
+      emit('showAlert', 'success', t('xroad.history.cleared'));
+    } else {
+      emit('historyWarning', t('xroad.toast.historyError'));
+      historyStore.clearError();
+    }
   }
 }
 
@@ -24,8 +30,13 @@ function handleView(entry: RequestHistoryEntry): void {
 }
 
 function handleDelete(entryId: string): void {
-  historyStore.deleteHistoryEntry(entryId);
-  emit('showAlert', 'success', t('xroad.history.deleted'));
+  const ok = historyStore.deleteHistoryEntry(entryId);
+  if (ok && !historyStore.lastError) {
+    emit('showAlert', 'success', t('xroad.history.deleted'));
+  } else {
+    emit('historyWarning', t('xroad.toast.historyError'));
+    historyStore.clearError();
+  }
 }
 
 function handleClose(): void {

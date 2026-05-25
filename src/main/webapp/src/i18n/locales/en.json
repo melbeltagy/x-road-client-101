@@ -63,7 +63,8 @@
       "clientError": "Client Error",
       "unknownError": "Unknown error",
       "curlCopied": "cURL command copied to clipboard",
-      "curlCopyFailed": "Failed to copy cURL command"
+      "curlCopyFailed": "Failed to copy cURL command",
+      "historyError": "Could not update request history"
     },
     "client": {
       "title": "Client Identifier",

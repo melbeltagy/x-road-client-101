@@ -63,7 +63,8 @@
       "clientError": "Asiakasvirhe",
       "unknownError": "Tuntematon virhe",
       "curlCopied": "cURL-komento kopioitu leikepöydälle",
-      "curlCopyFailed": "cURL-komennon kopiointi epäonnistui"
+      "curlCopyFailed": "cURL-komennon kopiointi epäonnistui",
+      "historyError": "Pyyntöhistoriaa ei voitu päivittää"
     },
     "client": {
       "title": "Client Identifier",

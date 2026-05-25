@@ -240,4 +240,79 @@ describe('XRoad History Store', () => {
       expect(store.mostRecentEntry).toBeNull();
     });
   });
+
+  describe('error isolation', () => {
+    it('returns true and leaves lastError null on a healthy save', () => {
+      const store = useXRoadHistoryStore();
+
+      const ok = store.addRequestToHistory(createMockRequest(), createMockResponse());
+
+      expect(ok).toBe(true);
+      expect(store.lastError).toBeNull();
+      expect(store.entries).toHaveLength(1);
+    });
+
+    it('returns false and records lastError when sanitization throws', () => {
+      const store = useXRoadHistoryStore();
+      const badRequest = new Proxy({} as XRoadRequest, {
+        get() {
+          throw new Error('boom');
+        },
+      });
+
+      const ok = store.addRequestToHistory(badRequest, createMockResponse());
+
+      expect(ok).toBe(false);
+      expect(store.lastError).toMatchObject({ op: 'save', message: 'boom' });
+      expect(store.entries).toHaveLength(0);
+    });
+
+    it('does not throw out of addRequestToHistory even on internal failure', () => {
+      const store = useXRoadHistoryStore();
+      const badRequest = new Proxy({} as XRoadRequest, {
+        get() {
+          throw new Error('boom');
+        },
+      });
+
+      // The core promise of the isolation: failures must not bubble
+      // out of the store into the request flow.
+      expect(() => store.addRequestToHistory(badRequest, createMockResponse())).not.toThrow();
+    });
+
+    it('clearError resets lastError', () => {
+      const store = useXRoadHistoryStore();
+      const badRequest = new Proxy({} as XRoadRequest, {
+        get() {
+          throw new Error('boom');
+        },
+      });
+      store.addRequestToHistory(badRequest, createMockResponse());
+      expect(store.lastError).not.toBeNull();
+
+      store.clearError();
+      expect(store.lastError).toBeNull();
+    });
+
+    it('deleteHistoryEntry returns true on success', () => {
+      const store = useXRoadHistoryStore();
+      store.addRequestToHistory(createMockRequest(), createMockResponse());
+      const id = store.entries[0].id;
+
+      const ok = store.deleteHistoryEntry(id);
+
+      expect(ok).toBe(true);
+      expect(store.lastError).toBeNull();
+    });
+
+    it('clearHistory returns true on success', () => {
+      const store = useXRoadHistoryStore();
+      store.addRequestToHistory(createMockRequest(), createMockResponse());
+
+      const ok = store.clearHistory();
+
+      expect(ok).toBe(true);
+      expect(store.lastError).toBeNull();
+    });
+  });
 });

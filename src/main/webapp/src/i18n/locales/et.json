@@ -63,7 +63,8 @@
       "clientError": "Kliendi viga",
       "unknownError": "Tundmatu viga",
       "curlCopied": "cURL käsk kopeeritud",
-      "curlCopyFailed": "cURL käsu kopeerimine ebaõnnestus"
+      "curlCopyFailed": "cURL käsu kopeerimine ebaõnnestus",
+      "historyError": "Päringuajalugu ei õnnestunud uuendada"
     },
     "client": {
       "title": "Client Identifier",

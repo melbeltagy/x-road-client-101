@@ -37,20 +37,46 @@ const alert = ref<{
   message: '',
 });
 
+// Separate channel for history warnings so they don't replace the
+// primary request-result toast in the snackbar slot.
+const historyAlert = ref<{ show: boolean; message: string }>({
+  show: false,
+  message: '',
+});
+
 // Show alert helper
 function showAlert(type: 'success' | 'error' | 'warning' | 'info', message: string): void {
   alert.value = { show: true, type, message };
 }
 
+// Surface any deferred history failure without blocking the main flow.
+// History is auxiliary — the request always wins.
+function flushHistoryError(): void {
+  historyAlert.value = { show: true, message: t('xroad.toast.historyError') };
+  historyStore.clearError();
+}
+
+function handleHistoryWarning(message: string): void {
+  historyAlert.value = { show: true, message };
+}
+
 // Auto-load most recent request on page load
 onMounted(() => {
-  if (historyStore.entries.length > 0 && !hasAutoLoaded.value) {
-    const mostRecent = historyStore.entries[0];
-    currentRequest.value = mostRecent.request;
-    response.value = mostRecent.response;
-    isFromHistory.value = true;
-    historyStore.selectHistoryEntry(mostRecent.id);
-    hasAutoLoaded.value = true;
+  try {
+    if (historyStore.entries.length > 0 && !hasAutoLoaded.value) {
+      const mostRecent = historyStore.entries[0];
+      currentRequest.value = mostRecent.request;
+      response.value = mostRecent.response;
+      isFromHistory.value = true;
+      historyStore.selectHistoryEntry(mostRecent.id);
+      hasAutoLoaded.value = true;
+    }
+    if (historyStore.lastError) {
+      flushHistoryError();
+    }
+  } catch (err) {
+    console.warn('Failed to auto-load most recent history entry:', err);
+    showAlert('warning', t('xroad.toast.historyError'));
   }
 });
 
@@ -65,7 +91,7 @@ async function handleSubmit(data: XRoadRequest): Promise<void> {
     const result = await xroadProxyService.executeRequest(data);
     response.value = result;
 
-    historyStore.addRequestToHistory(data, result);
+    const saved = historyStore.addRequestToHistory(data, result);
 
     if (result.statusCode === 0) {
       showAlert('error', `${t('xroad.toast.requestFailed')}: ${result.body}`);
@@ -75,6 +101,10 @@ async function handleSubmit(data: XRoadRequest): Promise<void> {
       showAlert('error', `${t('xroad.toast.xroadError')}: ${result.xroadError.message}`);
     } else {
       showAlert('warning', `${t('xroad.toast.response')}: ${result.statusCode} ${result.statusText}`);
+    }
+
+    if (!saved || historyStore.lastError) {
+      flushHistoryError();
     }
   } catch (error: unknown) {
     console.error('X-Road request error:', error);
@@ -108,7 +138,10 @@ async function handleSubmit(data: XRoadRequest): Promise<void> {
       };
 
       response.value = errorResponse;
-      historyStore.addRequestToHistory(data, errorResponse);
+      const savedErr = historyStore.addRequestToHistory(data, errorResponse);
+      if (!savedErr || historyStore.lastError) {
+        flushHistoryError();
+      }
     } else {
       const errorMessage = axiosError.message || t('xroad.toast.unknownError');
       showAlert('error', `${t('xroad.toast.error')}: ${errorMessage}`);
@@ -122,7 +155,10 @@ async function handleSubmit(data: XRoadRequest): Promise<void> {
       };
 
       response.value = errorResponse;
-      historyStore.addRequestToHistory(data, errorResponse);
+      const savedErr = historyStore.addRequestToHistory(data, errorResponse);
+      if (!savedErr || historyStore.lastError) {
+        flushHistoryError();
+      }
     }
   } finally {
     loading.value = false;
@@ -213,6 +249,22 @@ const lastRequestSuccess = computed(() => {
       </template>
     </v-snackbar>
 
+    <!-- History warnings (separate slot so they don't overwrite the primary toast) -->
+    <v-snackbar
+      v-model="historyAlert.show"
+      color="warning"
+      :timeout="5000"
+      location="top right"
+    >
+      <v-icon start>history</v-icon>
+      {{ historyAlert.message }}
+      <template #actions>
+        <v-btn variant="text" @click="historyAlert.show = false">
+          <v-icon>close</v-icon>
+        </v-btn>
+      </template>
+    </v-snackbar>
+
     <!-- History indicator -->
     <v-alert
       v-if="isFromHistory"
@@ -250,6 +302,7 @@ const lastRequestSuccess = computed(() => {
     <HistoryList
       @view="handleHistoryView"
       @show-alert="handleHistoryAlert"
+      @history-warning="handleHistoryWarning"
     />
 
     <!-- Request Status Panel -->

@@ -63,7 +63,8 @@
       "clientError": "Erreur client",
       "unknownError": "Erreur inconnue",
       "curlCopied": "Commande cURL copiée dans le presse-papiers",
-      "curlCopyFailed": "Échec de la copie de la commande cURL"
+      "curlCopyFailed": "Échec de la copie de la commande cURL",
+      "historyError": "Impossible de mettre à jour l'historique des requêtes"
     },
     "client": {
       "title": "Client Identifier",

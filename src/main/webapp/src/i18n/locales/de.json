@@ -63,7 +63,8 @@
       "clientError": "Client-Fehler",
       "unknownError": "Unbekannter Fehler",
       "curlCopied": "cURL-Befehl in Zwischenablage kopiert",
-      "curlCopyFailed": "Kopieren des cURL-Befehls fehlgeschlagen"
+      "curlCopyFailed": "Kopieren des cURL-Befehls fehlgeschlagen",
+      "historyError": "Anfrageverlauf konnte nicht aktualisiert werden"
     },
     "client": {
       "title": "Client Identifier",
