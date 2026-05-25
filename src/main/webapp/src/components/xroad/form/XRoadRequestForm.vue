@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, nextTick } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { XRoadRequest, MTlsCertificates } from '@/types';
 import { useXRoadForm, useXRoadValidation, useServiceDiscovery } from '@/composables';
@@ -87,6 +87,18 @@ initializeAfterMount();
 // Type helper for HTTP methods
 type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 
+// Focus an input by id and select its content. Used after step
+// navigation so the user can immediately overwrite the existing value.
+// preventScroll: true avoids fighting Vuetify's v-window/accordion
+// transitions — the browser otherwise scrolls the focused element
+// into view mid-animation, which looks like a jolt.
+function focusAndSelect(inputId: string): void {
+  const el = document.getElementById(inputId) as HTMLInputElement | null;
+  if (!el) return;
+  el.focus({ preventScroll: true });
+  el.select?.();
+}
+
 // Submit handler
 function handleSubmit(): void {
   // Build form data for validation
@@ -133,6 +145,39 @@ defineExpose({
       contentType: formData.request.contentType,
     },
   }),
+  // Navigate to a workflow step from the progress indicator: switch tab
+  // and expand the relevant accordion (and collapse the others) so the
+  // user lands directly on the right field group.
+  navigateToStep: async (stepKey: string) => {
+    switch (stepKey) {
+      case 'securityServer':
+        activeTab.value = 'identifiers';
+        openIdentifierPanels.value = []; // SS URL lives above the accordions; collapse both for clarity
+        await nextTick();
+        focusAndSelect('securityServerUrl');
+        break;
+      case 'clientIdentifier':
+        activeTab.value = 'identifiers';
+        openIdentifierPanels.value = ['client'];
+        await nextTick();
+        focusAndSelect('instanceId'); // first field of client subsystem
+        break;
+      case 'serviceIdentifier':
+        activeTab.value = 'identifiers';
+        openIdentifierPanels.value = ['service'];
+        await nextTick();
+        focusAndSelect('serviceinstanceId'); // first field of service subsystem
+        break;
+      case 'request':
+        activeTab.value = 'request';
+        await nextTick();
+        focusAndSelect('path'); // request path is the most-edited field
+        break;
+      case 'security':
+        activeTab.value = 'security';
+        break;
+    }
+  },
   isValid,
 });
 </script>

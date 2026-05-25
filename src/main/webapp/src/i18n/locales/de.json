@@ -52,6 +52,14 @@
       "request": "Anfrage",
       "security": "Sicherheit"
     },
+    "progress": {
+      "securityServer": "Security Server",
+      "clientIdentifier": "Client-Identifikator",
+      "serviceIdentifier": "Service-Identifikator",
+      "request": "Anfrage",
+      "security": "Sicherheit",
+      "next": "Weiter"
+    },
     "action": {
       "exportCurl": "Als cURL exportieren",
       "importCurl": "Aus cURL importieren"

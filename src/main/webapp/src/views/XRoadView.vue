@@ -6,6 +6,7 @@ import xroadProxyService from '@/services/xroad-proxy.service';
 import type { XRoadRequest, XRoadResponse, MTlsCertificates, SubsystemId, RequestDetails } from '@/types';
 import { XRoadRequestForm, CurlImportDialog } from '@/components/xroad/form';
 import ConfirmDialog from '@/components/common/ConfirmDialog.vue';
+import RequestProgressIndicator from '@/components/xroad/RequestProgressIndicator.vue';
 import { XRoadResponseViewer } from '@/components/xroad/response';
 import { HistoryList, RequestStatusPanel } from '@/components/xroad/history';
 
@@ -347,6 +348,14 @@ const lastRequestSuccess = computed(() => {
     <v-row>
       <!-- Request Form -->
       <v-col cols="12" lg="6">
+        <!-- Workflow progress strip (chips wrap to new line on narrow widths) -->
+        <RequestProgressIndicator
+          :form-data="formData"
+          :certificates="certificates"
+          class="mb-3"
+          @navigate="(stepKey) => formRef?.navigateToStep(stepKey)"
+        />
+
         <XRoadRequestForm
           ref="formRef"
           :initial-request="currentRequest"

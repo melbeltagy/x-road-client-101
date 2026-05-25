@@ -52,6 +52,14 @@
       "request": "Päring",
       "security": "Turvalisus"
     },
+    "progress": {
+      "securityServer": "Turvaserver",
+      "clientIdentifier": "Kliendi identifikaator",
+      "serviceIdentifier": "Teenuse identifikaator",
+      "request": "Päring",
+      "security": "Turvalisus",
+      "next": "Järgmine"
+    },
     "action": {
       "exportCurl": "Ekspordi cURL",
       "importCurl": "Impordi cURL"

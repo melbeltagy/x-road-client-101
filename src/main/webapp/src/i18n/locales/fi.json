@@ -52,6 +52,14 @@
       "request": "Pyyntö",
       "security": "Turvallisuus"
     },
+    "progress": {
+      "securityServer": "Turvapalvelin",
+      "clientIdentifier": "Asiakkaan tunniste",
+      "serviceIdentifier": "Palvelun tunniste",
+      "request": "Pyyntö",
+      "security": "Turvallisuus",
+      "next": "Seuraava"
+    },
     "action": {
       "exportCurl": "Vie cURL",
       "importCurl": "Tuo cURL"
