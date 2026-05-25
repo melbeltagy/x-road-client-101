@@ -17,9 +17,13 @@ export const useXRoadHistoryStore = defineStore(
     const selectedEntryId = ref<string | null>(null);
     const sidebarOpen = ref(false);
 
-    const selectedEntry = computed(() => entries.value.find((e) => e.id === selectedEntryId.value));
+    const selectedEntry = computed(() =>
+      Array.isArray(entries.value) ? entries.value.find((e) => e.id === selectedEntryId.value) : undefined
+    );
 
-    const mostRecentEntry = computed(() => (entries.value.length > 0 ? entries.value[0] : null));
+    const mostRecentEntry = computed(() =>
+      Array.isArray(entries.value) && entries.value.length > 0 ? entries.value[0] : null
+    );
 
     function generateId(): string {
       return `${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
@@ -47,7 +51,8 @@ export const useXRoadHistoryStore = defineStore(
       };
 
       const configStore = useConfigStore();
-      entries.value = [entry, ...entries.value].slice(0, configStore.maxHistoryEntries);
+      const current = Array.isArray(entries.value) ? entries.value : [];
+      entries.value = [entry, ...current].slice(0, configStore.maxHistoryEntries);
       selectedEntryId.value = entry.id;
     }
 
@@ -56,7 +61,8 @@ export const useXRoadHistoryStore = defineStore(
     }
 
     function deleteHistoryEntry(entryId: string): void {
-      entries.value = entries.value.filter((e) => e.id !== entryId);
+      const current = Array.isArray(entries.value) ? entries.value : [];
+      entries.value = current.filter((e) => e.id !== entryId);
       if (selectedEntryId.value === entryId) {
         selectedEntryId.value = entries.value.length > 0 ? entries.value[0].id : null;
       }
@@ -99,6 +105,11 @@ export const useXRoadHistoryStore = defineStore(
       key: 'xroad-request-history',
       storage: localStorage,
       pick: ['entries'],
+      afterHydrate: (ctx) => {
+        if (!Array.isArray(ctx.store.entries)) {
+          ctx.store.entries = [];
+        }
+      },
     },
   }
 );
