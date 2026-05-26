@@ -1,7 +1,8 @@
 import { ref, nextTick } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { Ref } from 'vue';
-import type { XRoadRequest, SubsystemId } from '@/types';
+import type { XRoadRequest } from '@/types';
+import { hasAnySubsystemField } from '@/utils/subsystem';
 
 interface UseCurlImportOptions {
   /**
@@ -46,12 +47,10 @@ export function useCurlImport(opts: UseCurlImportOptions) {
   // True if the form has user-entered data we'd overwrite on import.
   function formHasData(): boolean {
     const d = opts.formData.value;
-    const hasSubsystem = (s: Partial<SubsystemId> | undefined): boolean =>
-      !!(s?.instanceId || s?.memberClass || s?.memberCode || s?.subsystemCode);
     return !!(
       d.client?.securityServerUrl ||
-      hasSubsystem(d.client?.subsystem) ||
-      hasSubsystem(d.service?.subsystem) ||
+      hasAnySubsystemField(d.client?.subsystem) ||
+      hasAnySubsystemField(d.service?.subsystem) ||
       d.service?.serviceCode ||
       d.service?.serviceVersion ||
       d.request?.body ||

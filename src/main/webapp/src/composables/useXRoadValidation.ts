@@ -1,24 +1,10 @@
 import { ref, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { SubsystemId } from '@/types';
+import type { XRoadFormState } from './useXRoadForm';
 
-export interface XRoadFormData {
-  client: {
-    subsystem: SubsystemId;
-    securityServerUrl: string;
-  };
-  service: {
-    subsystem: SubsystemId;
-    serviceCode: string;
-    serviceVersion: string;
-  };
-  request: {
-    method: string;
-    path: string;
-    body: string;
-    contentType: string;
-  };
-}
+/** @deprecated use `XRoadFormState` from `useXRoadForm` — kept for back-compat. */
+export type XRoadFormData = XRoadFormState;
 
 export function useXRoadValidation() {
   const { t } = useI18n();
@@ -109,7 +95,7 @@ export function useXRoadValidation() {
     }
   }
 
-  function validateForm(formData: XRoadFormData): boolean {
+  function validateForm(formData: XRoadFormState): boolean {
     const newErrors: Record<string, string> = {};
 
     // Validate client subsystem

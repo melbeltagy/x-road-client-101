@@ -3,8 +3,8 @@ import { useI18n } from 'vue-i18n';
 import xroadProxyService from '@/services/xroad-proxy.service';
 import { useXRoadHistoryStore } from '@/stores/xroad-history';
 import type { XRoadRequest, XRoadResponse } from '@/types';
-
-export type AlertType = 'success' | 'error' | 'warning' | 'info';
+import { coerceAxiosError, pickErrorMessage } from '@/utils/axios-error';
+import type { AlertType } from './useNotifications';
 
 interface ExecutorCallbacks {
   /** Show a primary-channel toast (request result). */
@@ -43,30 +43,20 @@ export function useRequestExecutor(callbacks: ExecutorCallbacks) {
   // Translate a thrown axios-like error into an XRoadResponse shape so
   // the response viewer can still render something useful.
   function buildErrorResponse(err: unknown): { response: XRoadResponse; alertMessage: string } {
-    const axiosError = err as {
-      response?: { data?: unknown; status?: number; statusText?: string };
-      message?: string;
-    };
-    const responseData = axiosError.response?.data;
+    const coerced = coerceAxiosError(err);
+    const unknownError = t('xroad.toast.unknownError');
+    const errorPrefix = t('xroad.toast.error');
+    const clientError = t('xroad.toast.clientError');
 
-    if (responseData && typeof responseData === 'object') {
-      const fullResponseJson = JSON.stringify(responseData, null, 2);
-      let errorMessage = t('xroad.toast.unknownError');
-      const respData = responseData as Record<string, unknown>;
-      if ('body' in respData) {
-        errorMessage = String(respData.body || respData.statusText || errorMessage);
-      } else if ('detail' in respData) {
-        errorMessage = String(respData.detail || respData.message || errorMessage);
-      } else if ('message' in respData) {
-        errorMessage = String(respData.message);
-      }
+    if (coerced.data && typeof coerced.data === 'object') {
+      const errorMessage = pickErrorMessage(coerced.data, unknownError);
       return {
-        alertMessage: `${t('xroad.toast.error')}: ${errorMessage}`,
+        alertMessage: `${errorPrefix}: ${errorMessage}`,
         response: {
-          statusCode: axiosError.response?.status || 0,
-          statusText: axiosError.response?.statusText || t('xroad.toast.clientError'),
+          statusCode: coerced.status || 0,
+          statusText: coerced.statusText || clientError,
           headers: {},
-          body: fullResponseJson,
+          body: JSON.stringify(coerced.data, null, 2),
           contentType: 'application/json',
           contentLength: undefined,
           timestamp: new Date().toISOString(),
@@ -74,12 +64,12 @@ export function useRequestExecutor(callbacks: ExecutorCallbacks) {
       };
     }
 
-    const errorMessage = axiosError.message || t('xroad.toast.unknownError');
+    const errorMessage = coerced.message || unknownError;
     return {
-      alertMessage: `${t('xroad.toast.error')}: ${errorMessage}`,
+      alertMessage: `${errorPrefix}: ${errorMessage}`,
       response: {
         statusCode: 0,
-        statusText: t('xroad.toast.clientError'),
+        statusText: clientError,
         headers: {},
         body: errorMessage,
         timestamp: new Date().toISOString(),

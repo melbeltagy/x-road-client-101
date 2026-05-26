@@ -3,7 +3,7 @@ import {
   formatXRoadClient,
   buildServicePath,
   buildServiceUrl,
-  buildServiceUrlFromParts,
+  isValidHttpUrl,
 } from '../xroad-url';
 import type { SubsystemId, ServiceId } from '@/types';
 
@@ -151,35 +151,35 @@ describe('xroad-url utilities', () => {
     });
   });
 
-  describe('buildServiceUrlFromParts', () => {
-    it('should build URL from individual parts without version', () => {
-      const result = buildServiceUrlFromParts(
-        'https://ss.example.com',
-        'TEST',
-        'GOV',
-        '9876543-2',
-        'DataService',
-        'getInfo',
-        undefined,
-        '/api/data'
-      );
-
-      expect(result).toBe('https://ss.example.com/r1/TEST/GOV/9876543-2/DataService/getInfo/api/data');
+  describe('isValidHttpUrl', () => {
+    it.each([
+      'http://example.com',
+      'https://example.com',
+      'http://localhost:8080',
+      'https://ss.example.com:8443/path?q=1',
+    ])('accepts %s', (url) => {
+      expect(isValidHttpUrl(url)).toBe(true);
     });
 
-    it('should build URL from individual parts with version', () => {
-      const result = buildServiceUrlFromParts(
-        'https://ss.example.com',
-        'PROD',
-        'COM',
-        '1111111-1',
-        'MyService',
-        'listItems',
-        'v3',
-        '/items'
-      );
+    it.each(['', null, undefined])('rejects empty/null/undefined (%s)', (url) => {
+      expect(isValidHttpUrl(url)).toBe(false);
+    });
 
-      expect(result).toBe('https://ss.example.com/r1/PROD/COM/1111111-1/MyService/listItems/v3/items');
+    it('rejects a non-URL string (the bug case)', () => {
+      // The reason we have this helper — "asdasd" used to trigger a fetch.
+      expect(isValidHttpUrl('asdasd')).toBe(false);
+    });
+
+    it.each(['ftp://example.com', 'file:///etc/passwd', 'data:text/plain,foo'])(
+      'rejects non-HTTP scheme (%s)',
+      (url) => {
+        expect(isValidHttpUrl(url)).toBe(false);
+      }
+    );
+
+    it('rejects a malformed URL', () => {
+      expect(isValidHttpUrl('http://')).toBe(false);
+      expect(isValidHttpUrl('http://[::1')).toBe(false);
     });
   });
 });

@@ -290,7 +290,10 @@ describe('useXRoadValidation', () => {
   describe('request validation', () => {
     it('should require method', () => {
       const formData = createValidFormData();
-      formData.request.method = '';
+      // Empty method is an invalid runtime state we still need to defend
+      // against (e.g. a malformed history entry). Cast bypasses the
+      // narrowed type at the boundary.
+      (formData.request as { method: string }).method = '';
 
       const result = validation.validateForm(formData);
       expect(result).toBe(false);

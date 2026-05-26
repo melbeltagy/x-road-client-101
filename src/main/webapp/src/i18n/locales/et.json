@@ -3,55 +3,37 @@
     "title": "X-Road Client 101",
     "menu": {
       "home": "Avaleht",
-      "language": "Keel",
       "theme": {
         "light": "Hele",
         "dark": "Tume",
         "system": "Süsteem"
       }
-    },
-    "field": {
-      "id": "ID"
     }
   },
   "entity": {
     "action": {
-      "back": "Tagasi",
+      "add": "Lisa",
       "cancel": "Tühista",
       "clear": "Tühjenda",
       "confirm": "Kinnita",
       "delete": "Kustuta",
-      "edit": "Muuda",
-      "save": "Salvesta",
-      "view": "Vaata"
-    },
-    "validation": {
-      "required": "See väli on kohustuslik.",
-      "minlength": "See väli peab olema vähemalt {min} tähemärki.",
-      "maxlength": "See väli ei tohi olla pikem kui {max} tähemärki.",
-      "pattern": "See väli peab vastama mustrile {pattern}."
+      "save": "Salvesta"
     }
   },
   "error": {
-    "title": "Vealeht!",
     "http": {
-      "400": "Vigane päring.",
-      "403": "Teil pole õigust sellele lehele juurde pääseda.",
-      "404": "Lehte ei eksisteeri.",
-      "405": "Kasutatud HTTP-meetod pole selle URL-i jaoks toetatud.",
-      "500": "Sisemine serveri viga."
-    },
-    "internalServerError": "Sisemine serveri viga",
-    "serverNotReachable": "Server pole kättesaadav",
-    "urlNotFound": "Ei leitud",
-    "validation": "Valideerimise viga serveris."
+      "404": "Lehte ei eksisteeri."
+    }
   },
   "xroad": {
+    "flow": {
+      "nextLabel": "Järgmine"
+    },
     "progress": {
       "securityServer": "Turvaserver *",
       "clientIdentifier": "Kliendi identifikaator *",
       "serviceIdentifier": "Teenuse identifikaator *",
-      "endpoint": "Lõpp-punkt *",
+      "endpoint": "Päringu üksikasjad *",
       "queryParameters": "Päringuparameetrid",
       "customHeaders": "Kohandatud päised",
       "certificates": "Sertifikaadid",
@@ -81,20 +63,18 @@
       "historyError": "Päringuajalugu ei õnnestunud uuendada"
     },
     "client": {
-      "title": "Client Identifier",
+      "title": "Kliendi identifikaator",
       "instanceId": "Instance ID",
       "memberClass": "Member Class",
       "memberCode": "Member Code",
       "subsystemCode": "Subsystem Code",
       "securityServerUrl": "Security Server URL",
-      "pemCertificates": "Client Certificates (Optional mTLS)",
-      "pemCertificatesHelp": "Optional: Paste entire PEM file contents including certificate and private key",
       "clear": "Clear",
       "suggestionsAvailable": "{count} klienti saadaval",
       "fetchError": "Klientide paarimine ebaonnestus"
     },
     "certificates": {
-      "title": "mTLS Certificates (Optional)",
+      "title": "mTLS sertifikaadid (valikuline)",
       "description": "Optional: Configure mTLS certificates for secure connection to X-Road Security Server",
       "securityServerCert": "Security Server Certificate",
       "securityServerCertDescription": "Security Server's public certificate to verify its identity",
@@ -103,9 +83,6 @@
       "clientPrivateKey": "Client Private Key",
       "clientPrivateKeyDescription": "Your client's private key (keep secure)",
       "add": "Add",
-      "set": "Set",
-      "configured": "Configured",
-      "uploaded": "Uploaded",
       "view": "View",
       "modal": {
         "title": {
@@ -128,7 +105,7 @@
       }
     },
     "service": {
-      "title": "Service Identifier",
+      "title": "Teenuse identifikaator",
       "instanceId": "Instance ID",
       "memberClass": "Member Class",
       "memberCode": "Member Code",
@@ -136,18 +113,17 @@
       "serviceCode": "Service Code",
       "serviceVersion": "Service Version",
       "clear": "Clear",
+      "providersAvailable": "{count} teenusepakkujat saadaval",
       "servicesAvailable": "{count} teenust saadaval",
       "fetchError": "Teenuste laadimine ebaõnnestus"
     },
     "request": {
-      "title": "Request Details",
+      "title": "Päringu üksikasjad",
       "method": "HTTP Method",
       "path": "Path",
       "body": "Request Body",
       "bodyPlaceholder": "Optional JSON, XML, or text payload",
       "contentType": "Content-Type",
-      "contentTypePlaceholder": "e.g., application/json, application/xml, text/plain",
-      "contentTypeHelp": "Optional: Specify the Content-Type header for the request body",
       "clear": "Clear",
       "submit": "Saada päring",
       "sending": "Saatmine...",
@@ -157,10 +133,8 @@
       "serviceNotFound": "Teenust ei leitud"
     },
     "advanced": {
-      "title": "Advanced Configuration",
-      "queryParams": "Query Parameters",
-      "customHeaders": "Custom HTTP Headers",
-      "add": "Add",
+      "queryParams": "Päringuparameetrid",
+      "customHeaders": "Kohandatud HTTP päised",
       "key": "Key",
       "value": "Value",
       "headerName": "Päise nimi",
@@ -169,10 +143,6 @@
       "noCustomHeaders": "Kohandatud päised puuduvad. Klõpsake Lisa, et lisada HTTP päiseid."
     },
     "response": {
-      "title": "Vastus",
-      "status": "Olek",
-      "headers": "Päised",
-      "body": "Sisu",
       "noResponse": "Vastus puudub. Saatke päring, et näha vastust siin.",
       "responseStatus": "Vastuse olek",
       "error": "Viga",
@@ -186,7 +156,6 @@
       "xroadErrorDetail": "Detail",
       "xroadErrorFaultCode": "Veakood",
       "xroadErrorFaultString": "Veateade",
-      "allHeaders": "Kõik päised",
       "httpHeaders": "HTTP päised",
       "noHeaders": "Päised puuduvad",
       "responseBody": "Vastuse sisu",
@@ -205,7 +174,6 @@
       "memberCode": "e.g., 1234567-8",
       "subsystemCode": "e.g., TestClient",
       "securityServerUrl": "e.g., https://localhost:8443 or http://ss.example.com:8080",
-      "pemCertificates": "Paste PEM certificate(s) here",
       "serviceMemberCode": "e.g., 9876543-2",
       "serviceSubsystemCode": "e.g., DataService",
       "serviceCode": "e.g., getInfo, list_users, get-data",
@@ -239,8 +207,6 @@
       "deleted": "Ajaloo kirje kustutatud",
       "indicator": "See päring on ajaloost",
       "entry": {
-        "status": "Olek",
-        "timestamp": "Aeg",
         "client": "Klient",
         "method": "Meetod"
       }

@@ -3,55 +3,37 @@
     "title": "X-Road Client 101",
     "menu": {
       "home": "Accueil",
-      "language": "Langue",
       "theme": {
         "light": "Clair",
         "dark": "Sombre",
         "system": "Système"
       }
-    },
-    "field": {
-      "id": "ID"
     }
   },
   "entity": {
     "action": {
-      "back": "Retour",
+      "add": "Ajouter",
       "cancel": "Annuler",
       "clear": "Effacer",
       "confirm": "Confirmer",
       "delete": "Supprimer",
-      "edit": "Modifier",
-      "save": "Enregistrer",
-      "view": "Voir"
-    },
-    "validation": {
-      "required": "Ce champ est requis.",
-      "minlength": "Ce champ doit contenir au moins {min} caractères.",
-      "maxlength": "Ce champ ne peut pas dépasser {max} caractères.",
-      "pattern": "Ce champ doit correspondre au modèle {pattern}."
+      "save": "Enregistrer"
     }
   },
   "error": {
-    "title": "Page d'erreur !",
     "http": {
-      "400": "Requête incorrecte.",
-      "403": "Vous n'êtes pas autorisé à accéder à cette page.",
-      "404": "La page n'existe pas.",
-      "405": "La méthode HTTP utilisée n'est pas supportée pour cette URL.",
-      "500": "Erreur interne du serveur."
-    },
-    "internalServerError": "Erreur interne du serveur",
-    "serverNotReachable": "Serveur inaccessible",
-    "urlNotFound": "Non trouvé",
-    "validation": "Erreur de validation sur le serveur."
+      "404": "La page n'existe pas."
+    }
   },
   "xroad": {
+    "flow": {
+      "nextLabel": "Suivant"
+    },
     "progress": {
       "securityServer": "Serveur de sécurité *",
       "clientIdentifier": "Identifiant client *",
       "serviceIdentifier": "Identifiant service *",
-      "endpoint": "Point de terminaison *",
+      "endpoint": "Détails de la requête *",
       "queryParameters": "Paramètres de requête",
       "customHeaders": "En-têtes personnalisés",
       "certificates": "Certificats",
@@ -81,20 +63,18 @@
       "historyError": "Impossible de mettre à jour l'historique des requêtes"
     },
     "client": {
-      "title": "Client Identifier",
+      "title": "Identifiant client",
       "instanceId": "Instance ID",
       "memberClass": "Member Class",
       "memberCode": "Member Code",
       "subsystemCode": "Subsystem Code",
       "securityServerUrl": "Security Server URL",
-      "pemCertificates": "Client Certificates (Optional mTLS)",
-      "pemCertificatesHelp": "Optional: Paste entire PEM file contents including certificate and private key",
       "clear": "Clear",
       "suggestionsAvailable": "{count} clients disponibles",
       "fetchError": "Impossible de recuperer les clients"
     },
     "certificates": {
-      "title": "mTLS Certificates (Optional)",
+      "title": "Certificats mTLS (optionnel)",
       "description": "Optional: Configure mTLS certificates for secure connection to X-Road Security Server",
       "securityServerCert": "Security Server Certificate",
       "securityServerCertDescription": "Security Server's public certificate to verify its identity",
@@ -103,9 +83,6 @@
       "clientPrivateKey": "Client Private Key",
       "clientPrivateKeyDescription": "Your client's private key (keep secure)",
       "add": "Add",
-      "set": "Set",
-      "configured": "Configured",
-      "uploaded": "Uploaded",
       "view": "View",
       "modal": {
         "title": {
@@ -128,7 +105,7 @@
       }
     },
     "service": {
-      "title": "Service Identifier",
+      "title": "Identifiant service",
       "instanceId": "Instance ID",
       "memberClass": "Member Class",
       "memberCode": "Member Code",
@@ -136,18 +113,17 @@
       "serviceCode": "Service Code",
       "serviceVersion": "Service Version",
       "clear": "Clear",
+      "providersAvailable": "{count} fournisseurs de services disponibles",
       "servicesAvailable": "{count} services disponibles",
       "fetchError": "Impossible de charger les services"
     },
     "request": {
-      "title": "Request Details",
+      "title": "Détails de la requête",
       "method": "HTTP Method",
       "path": "Path",
       "body": "Request Body",
       "bodyPlaceholder": "Optional JSON, XML, or text payload",
       "contentType": "Content-Type",
-      "contentTypePlaceholder": "e.g., application/json, application/xml, text/plain",
-      "contentTypeHelp": "Optional: Specify the Content-Type header for the request body",
       "clear": "Clear",
       "submit": "Envoyer la requête",
       "sending": "Envoi en cours...",
@@ -157,10 +133,8 @@
       "serviceNotFound": "Service non trouvé"
     },
     "advanced": {
-      "title": "Advanced Configuration",
-      "queryParams": "Query Parameters",
-      "customHeaders": "Custom HTTP Headers",
-      "add": "Add",
+      "queryParams": "Paramètres de requête",
+      "customHeaders": "En-têtes HTTP personnalisés",
       "key": "Key",
       "value": "Value",
       "headerName": "Nom de l'en-tête",
@@ -169,10 +143,6 @@
       "noCustomHeaders": "Aucun en-tête personnalisé. Cliquez sur Ajouter pour inclure des en-têtes HTTP."
     },
     "response": {
-      "title": "Réponse",
-      "status": "Statut",
-      "headers": "En-têtes",
-      "body": "Corps",
       "noResponse": "Pas encore de réponse. Envoyez une requête pour voir la réponse ici.",
       "responseStatus": "Statut de la réponse",
       "error": "Erreur",
@@ -186,7 +156,6 @@
       "xroadErrorDetail": "Détail",
       "xroadErrorFaultCode": "Code d'erreur",
       "xroadErrorFaultString": "Message d'erreur",
-      "allHeaders": "Tous les en-têtes",
       "httpHeaders": "En-têtes HTTP",
       "noHeaders": "Aucun en-tête",
       "responseBody": "Corps de la réponse",
@@ -205,7 +174,6 @@
       "memberCode": "e.g., 1234567-8",
       "subsystemCode": "e.g., TestClient",
       "securityServerUrl": "e.g., https://localhost:8443 or http://ss.example.com:8080",
-      "pemCertificates": "Paste PEM certificate(s) here",
       "serviceMemberCode": "e.g., 9876543-2",
       "serviceSubsystemCode": "e.g., DataService",
       "serviceCode": "e.g., getInfo, list_users, get-data",
@@ -239,8 +207,6 @@
       "deleted": "Entrée d'historique supprimée",
       "indicator": "Cette requête provient de l'historique",
       "entry": {
-        "status": "Statut",
-        "timestamp": "Heure",
         "client": "Client",
         "method": "Méthode"
       }

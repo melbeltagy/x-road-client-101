@@ -3,55 +3,37 @@
     "title": "X-Road Client 101",
     "menu": {
       "home": "Etusivu",
-      "language": "Kieli",
       "theme": {
         "light": "Vaalea",
         "dark": "Tumma",
         "system": "Järjestelmä"
       }
-    },
-    "field": {
-      "id": "ID"
     }
   },
   "entity": {
     "action": {
-      "back": "Takaisin",
+      "add": "Lisää",
       "cancel": "Peruuta",
       "clear": "Tyhjennä",
       "confirm": "Vahvista",
       "delete": "Poista",
-      "edit": "Muokkaa",
-      "save": "Tallenna",
-      "view": "Näytä"
-    },
-    "validation": {
-      "required": "Tämä kenttä on pakollinen.",
-      "minlength": "Tämän kentän on oltava vähintään {min} merkkiä.",
-      "maxlength": "Tämä kenttä ei saa olla pidempi kuin {max} merkkiä.",
-      "pattern": "Tämän kentän on vastattava mallia {pattern}."
+      "save": "Tallenna"
     }
   },
   "error": {
-    "title": "Virhe!",
     "http": {
-      "400": "Virheellinen pyyntö.",
-      "403": "Sinulla ei ole oikeutta käyttää tätä sivua.",
-      "404": "Sivua ei ole olemassa.",
-      "405": "Käytetty HTTP-metodi ei ole tuettu tälle URL:lle.",
-      "500": "Sisäinen palvelinvirhe."
-    },
-    "internalServerError": "Sisäinen palvelinvirhe",
-    "serverNotReachable": "Palvelin ei ole tavoitettavissa",
-    "urlNotFound": "Ei löytynyt",
-    "validation": "Vahvistusvirhe palvelimella."
+      "404": "Sivua ei ole olemassa."
+    }
   },
   "xroad": {
+    "flow": {
+      "nextLabel": "Seuraava"
+    },
     "progress": {
       "securityServer": "Turvapalvelin *",
       "clientIdentifier": "Asiakkaan tunniste *",
       "serviceIdentifier": "Palvelun tunniste *",
-      "endpoint": "Päätepiste *",
+      "endpoint": "Pyynnön tiedot *",
       "queryParameters": "Kyselyparametrit",
       "customHeaders": "Mukautetut otsikot",
       "certificates": "Varmenteet",
@@ -81,20 +63,18 @@
       "historyError": "Pyyntöhistoriaa ei voitu päivittää"
     },
     "client": {
-      "title": "Client Identifier",
+      "title": "Asiakkaan tunniste",
       "instanceId": "Instance ID",
       "memberClass": "Member Class",
       "memberCode": "Member Code",
       "subsystemCode": "Subsystem Code",
       "securityServerUrl": "Security Server URL",
-      "pemCertificates": "Client Certificates (Optional mTLS)",
-      "pemCertificatesHelp": "Optional: Paste entire PEM file contents including certificate and private key",
       "clear": "Clear",
       "suggestionsAvailable": "{count} asiakasta saatavilla",
       "fetchError": "Asiakkaiden haku epaonnistui"
     },
     "certificates": {
-      "title": "mTLS Certificates (Optional)",
+      "title": "mTLS-varmenteet (valinnainen)",
       "description": "Optional: Configure mTLS certificates for secure connection to X-Road Security Server",
       "securityServerCert": "Security Server Certificate",
       "securityServerCertDescription": "Security Server's public certificate to verify its identity",
@@ -103,9 +83,6 @@
       "clientPrivateKey": "Client Private Key",
       "clientPrivateKeyDescription": "Your client's private key (keep secure)",
       "add": "Add",
-      "set": "Set",
-      "configured": "Configured",
-      "uploaded": "Uploaded",
       "view": "View",
       "modal": {
         "title": {
@@ -128,7 +105,7 @@
       }
     },
     "service": {
-      "title": "Service Identifier",
+      "title": "Palvelun tunniste",
       "instanceId": "Instance ID",
       "memberClass": "Member Class",
       "memberCode": "Member Code",
@@ -136,18 +113,17 @@
       "serviceCode": "Service Code",
       "serviceVersion": "Service Version",
       "clear": "Clear",
+      "providersAvailable": "{count} palveluntarjoajaa saatavilla",
       "servicesAvailable": "{count} palvelua saatavilla",
       "fetchError": "Palveluiden lataus epäonnistui"
     },
     "request": {
-      "title": "Request Details",
+      "title": "Pyynnön tiedot",
       "method": "HTTP Method",
       "path": "Path",
       "body": "Request Body",
       "bodyPlaceholder": "Optional JSON, XML, or text payload",
       "contentType": "Content-Type",
-      "contentTypePlaceholder": "e.g., application/json, application/xml, text/plain",
-      "contentTypeHelp": "Optional: Specify the Content-Type header for the request body",
       "clear": "Clear",
       "submit": "Lähetä pyyntö",
       "sending": "Lähetetään...",
@@ -157,10 +133,8 @@
       "serviceNotFound": "Palvelua ei löytynyt"
     },
     "advanced": {
-      "title": "Advanced Configuration",
-      "queryParams": "Query Parameters",
-      "customHeaders": "Custom HTTP Headers",
-      "add": "Add",
+      "queryParams": "Kyselyparametrit",
+      "customHeaders": "Mukautetut HTTP-otsikot",
       "key": "Key",
       "value": "Value",
       "headerName": "Otsikon nimi",
@@ -169,10 +143,6 @@
       "noCustomHeaders": "Ei mukautettuja otsikoita. Napsauta Lisää lisätäksesi HTTP-otsikoita."
     },
     "response": {
-      "title": "Vastaus",
-      "status": "Tila",
-      "headers": "Otsikot",
-      "body": "Sisältö",
       "noResponse": "Ei vastausta vielä. Lähetä pyyntö nähdäksesi vastauksen täällä.",
       "responseStatus": "Vastauksen tila",
       "error": "Virhe",
@@ -186,7 +156,6 @@
       "xroadErrorDetail": "Yksityiskohta",
       "xroadErrorFaultCode": "Virhekoodi",
       "xroadErrorFaultString": "Virheilmoitus",
-      "allHeaders": "Kaikki otsikot",
       "httpHeaders": "HTTP-otsikot",
       "noHeaders": "Ei otsikoita",
       "responseBody": "Vastauksen sisältö",
@@ -205,7 +174,6 @@
       "memberCode": "e.g., 1234567-8",
       "subsystemCode": "e.g., TestClient",
       "securityServerUrl": "e.g., https://localhost:8443 or http://ss.example.com:8080",
-      "pemCertificates": "Paste PEM certificate(s) here",
       "serviceMemberCode": "e.g., 9876543-2",
       "serviceSubsystemCode": "e.g., DataService",
       "serviceCode": "e.g., getInfo, list_users, get-data",
@@ -239,8 +207,6 @@
       "deleted": "Historiamerkintä poistettu",
       "indicator": "Tämä pyyntö on historiasta",
       "entry": {
-        "status": "Tila",
-        "timestamp": "Aika",
         "client": "Asiakas",
         "method": "Metodi"
       }

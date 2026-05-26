@@ -1,6 +1,22 @@
 import type { SubsystemId, ServiceId } from '@/types';
 
 /**
+ * Is `url` a fetchable HTTP(S) URL? Returns false for empty, malformed,
+ * or non-HTTP schemes. Used by service-discovery loaders to skip
+ * fetches that would otherwise produce a misleading "could not fetch"
+ * chip for an obviously-bad input like "asdasd".
+ */
+export function isValidHttpUrl(url: string | undefined | null): boolean {
+  if (!url) return false;
+  try {
+    const parsed = new URL(url);
+    return parsed.protocol === 'http:' || parsed.protocol === 'https:';
+  } catch {
+    return false;
+  }
+}
+
+/**
  * Formats a subsystem identifier as X-Road-Client header value
  * Format: {instanceId}/{memberClass}/{memberCode}/{subsystemCode}
  */
@@ -39,23 +55,3 @@ export function buildServiceUrl(securityServerUrl: string, service: ServiceId, p
   return `${baseUrl}${servicePath}`;
 }
 
-/**
- * Builds service URL from individual components (for cases where ServiceId is not available)
- */
-export function buildServiceUrlFromParts(
-  securityServerUrl: string,
-  instanceId: string,
-  memberClass: string,
-  memberCode: string,
-  subsystemCode: string,
-  serviceCode: string,
-  serviceVersion: string | undefined,
-  path: string
-): string {
-  const service: ServiceId = {
-    subsystem: { instanceId, memberClass, memberCode, subsystemCode },
-    serviceCode,
-    serviceVersion,
-  };
-  return buildServiceUrl(securityServerUrl, service, path);
-}

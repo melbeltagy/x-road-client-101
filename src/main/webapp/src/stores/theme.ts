@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
 import { ref, computed, watch } from 'vue';
 import { useTheme } from 'vuetify';
+import { safeLocalStorage } from '@/utils/safe-local-storage';
 
 export type ThemeMode = 'light' | 'dark' | 'system';
 
@@ -58,7 +59,7 @@ export const useThemeStore = defineStore(
   {
     persist: {
       key: 'xroad-theme-preference',
-      storage: localStorage,
+      storage: safeLocalStorage,
       pick: ['themeMode'],
     },
   }
