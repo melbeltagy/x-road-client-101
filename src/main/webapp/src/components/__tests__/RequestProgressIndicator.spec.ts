@@ -61,13 +61,14 @@ describe('RequestProgressIndicator', () => {
   describe('next-step marker', () => {
     it('points at securityServer first when form is empty', () => {
       const wrapper = mountIndicator(emptyFormData());
-      // The "Next" marker appears only on the next required step.
-      const nextMarkers = wrapper.findAll('.next-marker');
-      expect(nextMarkers).toHaveLength(1);
+      // The "next" state lives as a class on the step itself; only one
+      // step should ever be in `step-next` at a time.
+      const nextChips = wrapper.findAll('.step-next');
+      expect(nextChips).toHaveLength(1);
 
       // Verify it's on the securityServer chip.
       const ssStep = wrapper.findAll('.step').find((s) => s.text().includes('SS'));
-      expect(ssStep?.find('.next-marker').exists()).toBe(true);
+      expect(ssStep?.classes()).toContain('step-next');
     });
 
     it('advances to clientIdentifier when securityServer is filled', () => {
@@ -76,18 +77,18 @@ describe('RequestProgressIndicator', () => {
       });
 
       const clientStep = wrapper.findAll('.step').find((s) => s.text().includes('Client'));
-      expect(clientStep?.find('.next-marker').exists()).toBe(true);
+      expect(clientStep?.classes()).toContain('step-next');
     });
 
     it('disappears when all required steps are complete', () => {
       const wrapper = mountIndicator(fullFormData());
-      expect(wrapper.findAll('.next-marker')).toHaveLength(0);
+      expect(wrapper.findAll('.step-next')).toHaveLength(0);
     });
 
     it('does not point at optional steps even when they are unfilled', () => {
       // Required steps all complete; optional ones (query params, headers, certs) are empty.
       const wrapper = mountIndicator(fullFormData());
-      expect(wrapper.findAll('.next-marker')).toHaveLength(0);
+      expect(wrapper.findAll('.step-next')).toHaveLength(0);
     });
   });
 
@@ -100,10 +101,10 @@ describe('RequestProgressIndicator', () => {
       expect(ssStep?.html()).toContain('check_circle');
     });
 
-    it('uses warning for the next required step', () => {
+    it('uses play_arrow icon for the next required step', () => {
       const wrapper = mountIndicator(emptyFormData());
       const ssStep = wrapper.findAll('.step').find((s) => s.text().includes('SS'));
-      expect(ssStep?.html()).toContain('warning');
+      expect(ssStep?.html()).toContain('play_arrow');
     });
 
     it('uses radio_button_unchecked for optional steps that are not complete', () => {

@@ -26,6 +26,9 @@
     }
   },
   "xroad": {
+    "flow": {
+      "nextLabel": "Seuraava"
+    },
     "progress": {
       "securityServer": "Turvapalvelin *",
       "clientIdentifier": "Asiakkaan tunniste *",

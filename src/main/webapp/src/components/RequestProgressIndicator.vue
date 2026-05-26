@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { XRoadRequest, MTlsCertificates } from '@/types';
-import { useFormCompleteness, type StepKey } from '@/composables';
+import { useFormFlow, REQUIRED_STEPS, OPTIONAL_STEPS, type StepKey, type StepState } from '@/composables';
 
 const props = defineProps<{
   formData: Partial<XRoadRequest>;
@@ -15,62 +14,34 @@ const emit = defineEmits<{
 
 const { t } = useI18n();
 
-const {
-  securityServerComplete,
-  clientComplete,
-  serviceSubsystemComplete,
-  serviceCodeComplete,
-  endpointComplete,
-  queryParametersComplete,
-  customHeadersComplete,
-  certificatesComplete,
-} = useFormCompleteness(() => ({ ...props.formData, certificates: props.certificates }));
-
-const serviceIdComplete = computed(() => serviceSubsystemComplete.value && serviceCodeComplete.value);
-
-// Required sequence. Optional steps are excluded from the "Next" pointer.
-const requiredSteps: StepKey[] = ['securityServer', 'clientIdentifier', 'serviceIdentifier', 'endpoint'];
-
-const isComplete = (key: StepKey): boolean => {
-  switch (key) {
-    case 'securityServer': return securityServerComplete.value;
-    case 'clientIdentifier': return clientComplete.value;
-    case 'serviceIdentifier': return serviceIdComplete.value;
-    case 'endpoint': return endpointComplete.value;
-    case 'queryParameters': return queryParametersComplete.value;
-    case 'customHeaders': return customHeadersComplete.value;
-    case 'certificates': return certificatesComplete.value;
-  }
-};
-
-const nextStep = computed<StepKey | null>(() => {
-  for (const step of requiredSteps) {
-    if (!isComplete(step)) return step;
-  }
-  return null;
-});
+const { stateFor } = useFormFlow(() => ({ ...props.formData, certificates: props.certificates }));
 
 interface Step {
   key: StepKey;
   labelKey: string;
-  optional?: boolean;
+  /** 1-based position in the required sequence; undefined for optional steps. */
+  number?: number;
 }
 
 const steps: Step[] = [
-  { key: 'securityServer', labelKey: 'xroad.progress.securityServer' },
-  { key: 'clientIdentifier', labelKey: 'xroad.progress.clientIdentifier' },
-  { key: 'serviceIdentifier', labelKey: 'xroad.progress.serviceIdentifier' },
-  { key: 'endpoint', labelKey: 'xroad.progress.endpoint' },
-  { key: 'queryParameters', labelKey: 'xroad.progress.queryParameters', optional: true },
-  { key: 'customHeaders', labelKey: 'xroad.progress.customHeaders', optional: true },
-  { key: 'certificates', labelKey: 'xroad.progress.certificates', optional: true },
+  ...REQUIRED_STEPS.map((key, i) => ({
+    key,
+    labelKey: `xroad.progress.${key}`,
+    number: i + 1,
+  })),
+  ...OPTIONAL_STEPS.map((key) => ({
+    key,
+    labelKey: `xroad.progress.${key}`,
+  })),
 ];
 
-function iconFor(step: Step): { name: string; color: string } {
-  if (isComplete(step.key)) return { name: 'check_circle', color: 'success' };
-  if (step.optional) return { name: 'radio_button_unchecked', color: 'grey-lighten-1' };
-  if (nextStep.value === step.key) return { name: 'warning', color: 'warning' };
-  return { name: 'radio_button_unchecked', color: 'grey' };
+function iconFor(state: StepState): { name: string; color: string } {
+  switch (state) {
+    case 'done': return { name: 'check_circle', color: 'success' };
+    case 'next': return { name: 'play_arrow', color: 'warning' };
+    case 'pending': return { name: 'radio_button_unchecked', color: 'grey' };
+    case 'optional': return { name: 'radio_button_unchecked', color: 'grey-lighten-1' };
+  }
 }
 </script>
 
@@ -80,22 +51,14 @@ function iconFor(step: Step): { name: string; color: string } {
       v-for="step in steps"
       :key="step.key"
       type="button"
-      :class="[
-        'step d-flex align-center',
-        step.optional && !isComplete(step.key) ? 'text-medium-emphasis' : '',
-      ]"
+      :class="['step d-flex align-center', `step-${stateFor(step.key)}`]"
       @click="emit('navigate', step.key)"
     >
-      <v-icon :color="iconFor(step).color" size="small" class="mr-1">
-        {{ iconFor(step).name }}
+      <v-icon :color="iconFor(stateFor(step.key)).color" size="small" class="mr-1">
+        {{ iconFor(stateFor(step.key)).name }}
       </v-icon>
+      <span v-if="step.number" class="step-number mr-1">{{ step.number }}.</span>
       <span class="text-body-2">{{ t(step.labelKey) }}</span>
-      <span
-        v-if="nextStep === step.key"
-        class="next-marker text-caption text-warning ml-1"
-      >
-        ← {{ t('xroad.progress.next') }}
-      </span>
     </button>
   </div>
 </template>
@@ -106,14 +69,11 @@ function iconFor(step: Step): { name: string; color: string } {
   border: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
   border-radius: 4px;
   min-height: 36px;
-  /* row-gap separates wrapped lines; column-gap separates chips on the same line. */
   row-gap: 6px;
   column-gap: 10px;
 }
 
-/* Each step is a self-contained chip: subtle outline at rest, soft fill
-   on hover. No separators between items — the chip border gives each
-   one its own visual boundary. */
+/* Base chip — outlined, neutral. Per-state classes override below. */
 .step {
   white-space: nowrap;
   background: transparent;
@@ -136,7 +96,44 @@ function iconFor(step: Step): { name: string; color: string } {
   outline-offset: 2px;
 }
 
-.next-marker {
+.step-number {
+  font-weight: 600;
+  opacity: 0.7;
+}
+
+/* Done — green tinted background, slightly stronger text, full opacity. */
+.step-done {
+  background-color: rgba(var(--v-theme-success), 0.12);
+  border-color: rgba(var(--v-theme-success), 0.4);
   font-weight: 500;
+}
+.step-done:hover {
+  background-color: rgba(var(--v-theme-success), 0.18);
+  border-color: rgba(var(--v-theme-success), 0.55);
+}
+
+/* Next — amber tinted background, bold, the visual focal point. */
+.step-next {
+  background-color: rgba(var(--v-theme-warning), 0.18);
+  border-color: rgba(var(--v-theme-warning), 0.6);
+  font-weight: 700;
+}
+.step-next:hover {
+  background-color: rgba(var(--v-theme-warning), 0.26);
+  border-color: rgba(var(--v-theme-warning), 0.75);
+}
+
+/* Pending — neutral outline. */
+.step-pending {
+  /* base styles only */
+}
+
+/* Optional — muted. Visually grouped as "extras". */
+.step-optional {
+  opacity: 0.6;
+  font-size: 0.92em;
+}
+.step-optional:hover {
+  opacity: 0.85;
 }
 </style>

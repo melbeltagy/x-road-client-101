@@ -10,6 +10,7 @@ import {
   useServicesLoader,
   useFormStepNavigation,
   useFormCompleteness,
+  useFormFlow,
   type StepKey,
 } from '@/composables';
 import ClientSection from './sections/ClientSection.vue';
@@ -92,6 +93,9 @@ const selectedServiceEndpoints = computed<ServiceEndpoint[]>(() => {
   return availableServices.value.find((s) => s.serviceCode === code)?.endpoints ?? [];
 });
 
+// Per-section state for accordion visual treatment (done / next / pending / optional).
+const { stateFor } = useFormFlow(() => ({ ...formData, certificates: certificates.value }));
+
 // The Service section's title chip shows two different counts depending
 // on which step the user is on. Before the service subsystem is fully
 // picked, the actionable list is "subsystems available to call as a
@@ -165,7 +169,7 @@ defineExpose({
 
       <v-card-text>
         <v-expansion-panels v-model="openPanels" multiple>
-          <SectionPanel value="client" icon="person" :title="t('xroad.client.title')">
+          <SectionPanel value="client" icon="person" :title="t('xroad.client.title')" :state="stateFor('clientIdentifier')">
             <template #chip>
               <SectionStatusChip
                 :loading="isLoadingSuggestions"
@@ -186,7 +190,7 @@ defineExpose({
             />
           </SectionPanel>
 
-          <SectionPanel value="service" icon="dns" :title="t('xroad.service.title')">
+          <SectionPanel value="service" icon="dns" :title="t('xroad.service.title')" :state="stateFor('serviceIdentifier')">
             <template #chip>
               <SectionStatusChip
                 :loading="isLoadingServices"
@@ -210,7 +214,7 @@ defineExpose({
             />
           </SectionPanel>
 
-          <SectionPanel value="endpoint" icon="send" :title="t('xroad.request.title')">
+          <SectionPanel value="endpoint" icon="send" :title="t('xroad.request.title')" :state="stateFor('endpoint')">
             <template #chip>
               <SectionStatusChip
                 :loading="isLoadingServices"
@@ -235,7 +239,7 @@ defineExpose({
             />
           </SectionPanel>
 
-          <SectionPanel value="queryParams" icon="tune" :title="t('xroad.advanced.queryParams')">
+          <SectionPanel value="queryParams" icon="tune" :title="t('xroad.advanced.queryParams')" :state="stateFor('queryParameters')">
             <KeyValueEditor
               :items="queryParams"
               key-placeholder-key="xroad.advanced.key"
@@ -249,7 +253,7 @@ defineExpose({
             />
           </SectionPanel>
 
-          <SectionPanel value="customHeaders" icon="list_alt" :title="t('xroad.advanced.customHeaders')">
+          <SectionPanel value="customHeaders" icon="list_alt" :title="t('xroad.advanced.customHeaders')" :state="stateFor('customHeaders')">
             <KeyValueEditor
               :items="customHeaders"
               key-placeholder-key="xroad.advanced.headerName"
@@ -263,7 +267,7 @@ defineExpose({
             />
           </SectionPanel>
 
-          <SectionPanel value="certificates" icon="lock" :title="t('xroad.certificates.title')">
+          <SectionPanel value="certificates" icon="lock" :title="t('xroad.certificates.title')" :state="stateFor('certificates')">
             <CertificateSection
               :certificates="certificates"
               @update:certificates="certificates = $event"

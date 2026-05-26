@@ -26,6 +26,9 @@
     }
   },
   "xroad": {
+    "flow": {
+      "nextLabel": "Järgmine"
+    },
     "progress": {
       "securityServer": "Turvaserver *",
       "clientIdentifier": "Kliendi identifikaator *",

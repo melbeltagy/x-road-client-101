@@ -26,6 +26,9 @@
     }
   },
   "xroad": {
+    "flow": {
+      "nextLabel": "Weiter"
+    },
     "progress": {
       "securityServer": "Security Server *",
       "clientIdentifier": "Client-Identifikator *",

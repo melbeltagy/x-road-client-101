@@ -12,7 +12,14 @@ import RequestProgressIndicator from '@/components/RequestProgressIndicator.vue'
 import { XRoadResponseViewer } from '@/components/response';
 import { HistoryList } from '@/components/history';
 import RequestActionBar from '@/components/action-bar/RequestActionBar.vue';
-import { useNotifications, useRequestExecutor, useCurlImport } from '@/composables';
+import NextStepBreadcrumb from '@/components/NextStepBreadcrumb.vue';
+import {
+  useNotifications,
+  useRequestExecutor,
+  useCurlImport,
+  useFormFlow,
+  type StepKey,
+} from '@/composables';
 
 const { t } = useI18n();
 const historyStore = useXRoadHistoryStore();
@@ -105,6 +112,14 @@ function handleRequestModified(): void {
   }
 }
 
+// What is the next required step the user should fill? Used by the
+// sticky breadcrumb under the chip row.
+const { nextStep } = useFormFlow(() => ({ ...formData.value, certificates: certificates.value }));
+
+function handleNavigate(stepKey: StepKey): void {
+  formRef.value?.navigateToStep(stepKey);
+}
+
 // formData mirrors the output of useXRoadForm.buildRequest(), so once
 // the user has typed enough to fill the client subsystem, formData IS
 // the request. The only piece tracked separately is `certificates`,
@@ -147,7 +162,11 @@ const currentRequestForPanel = computed<XRoadRequest | null>(() => {
           :form-data="formData"
           :certificates="certificates"
           class="mb-3"
-          @navigate="(stepKey) => formRef?.navigateToStep(stepKey)"
+          @navigate="handleNavigate"
+        />
+        <NextStepBreadcrumb
+          :next-step-key="nextStep"
+          @navigate="handleNavigate"
         />
         <XRoadRequestForm
           ref="formRef"
