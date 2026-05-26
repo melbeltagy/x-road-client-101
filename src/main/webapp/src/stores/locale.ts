@@ -52,37 +52,44 @@ export function detectInitialLocale(): SupportedLocale {
   return 'en';
 }
 
+function persistLocale(locale: SupportedLocale): void {
+  try {
+    localStorage.setItem(LOCALE_STORAGE_KEY, locale);
+  } catch {
+    // localStorage might not be available
+  }
+}
+
+async function applyDayjsLocale(locale: SupportedLocale): Promise<void> {
+  try {
+    if (locale !== 'en') {
+      await import(/* @vite-ignore */ `dayjs/locale/${locale}.js`);
+    }
+    dayjs.locale(locale);
+  } catch {
+    // Fallback to English if locale not available
+    dayjs.locale('en');
+  }
+}
+
 export const useLocaleStore = defineStore('locale', () => {
   // Detect initial locale when store is first created
   const currentLocale = ref<SupportedLocale>(detectInitialLocale());
   const loadedLocales = ref<SupportedLocale[]>(['en']);
 
-  async function setLocale(locale: SupportedLocale): Promise<void> {
+  async function ensureLocaleLoaded(locale: SupportedLocale): Promise<void> {
     if (!loadedLocales.value.includes(locale)) {
       await loadLocaleMessages(locale);
       loadedLocales.value.push(locale);
     }
+  }
 
+  async function setLocale(locale: SupportedLocale): Promise<void> {
+    await ensureLocaleLoaded(locale);
     currentLocale.value = locale;
     setI18nLanguage(locale);
-
-    // Persist to localStorage
-    try {
-      localStorage.setItem(LOCALE_STORAGE_KEY, locale);
-    } catch {
-      // localStorage might not be available
-    }
-
-    // Update dayjs locale
-    try {
-      if (locale !== 'en') {
-        await import(/* @vite-ignore */ `dayjs/locale/${locale}.js`);
-      }
-      dayjs.locale(locale);
-    } catch {
-      // Fallback to English if locale not available
-      dayjs.locale('en');
-    }
+    persistLocale(locale);
+    await applyDayjsLocale(locale);
   }
 
   async function initializeLocale(): Promise<void> {

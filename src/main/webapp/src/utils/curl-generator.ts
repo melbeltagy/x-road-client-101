@@ -1,5 +1,7 @@
 import type { XRoadRequest } from '@/types';
 import { buildServiceUrl, formatXRoadClient } from './xroad-url';
+import { methodAllowsBody } from './http-methods';
+import { shellSingleQuote } from './shell-quote';
 
 export function generateCurlCommand(request: XRoadRequest): string {
   const { client, service, request: reqDetails } = request;
@@ -20,30 +22,29 @@ export function generateCurlCommand(request: XRoadRequest): string {
     parts.push(`-X ${reqDetails.method}`);
   }
 
-  // URL (quoted)
-  parts.push(`'${url}'`);
+  // URL
+  parts.push(shellSingleQuote(url));
 
   // X-Road-Client header using shared utility
-  parts.push(`-H 'X-Road-Client: ${formatXRoadClient(client.subsystem)}'`);
+  parts.push(`-H ${shellSingleQuote(`X-Road-Client: ${formatXRoadClient(client.subsystem)}`)}`);
 
   // Content-Type header
   if (reqDetails.contentType) {
-    parts.push(`-H 'Content-Type: ${reqDetails.contentType}'`);
+    parts.push(`-H ${shellSingleQuote(`Content-Type: ${reqDetails.contentType}`)}`);
   }
 
   // Custom headers
   if (reqDetails.headers) {
     for (const [key, value] of Object.entries(reqDetails.headers)) {
       if (key.toLowerCase() !== 'content-type') {
-        parts.push(`-H '${key}: ${value}'`);
+        parts.push(`-H ${shellSingleQuote(`${key}: ${value}`)}`);
       }
     }
   }
 
   // Body
-  if (reqDetails.body && ['POST', 'PUT', 'PATCH'].includes(reqDetails.method)) {
-    const escapedBody = reqDetails.body.replace(/'/g, "'\\''");
-    parts.push(`-d '${escapedBody}'`);
+  if (reqDetails.body && methodAllowsBody(reqDetails.method)) {
+    parts.push(`-d ${shellSingleQuote(reqDetails.body)}`);
   }
 
   // mTLS certificates

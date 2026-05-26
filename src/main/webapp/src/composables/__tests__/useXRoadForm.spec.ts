@@ -328,14 +328,6 @@ describe('useXRoadForm', () => {
       });
     });
 
-    it('should clear security server URL', () => {
-      form.formData.client.securityServerUrl = 'https://ss.example.com';
-
-      form.clearSecurityServerUrl();
-
-      expect(form.formData.client.securityServerUrl).toBe('');
-    });
-
     it('should clear service section', () => {
       form.formData.service.subsystem = {
         instanceId: 'TEST',
@@ -472,44 +464,7 @@ describe('useXRoadForm', () => {
     });
   });
 
-  describe('available services', () => {
-    it('should set available services', () => {
-      const services = [
-        { serviceCode: 'api1', serviceType: 'REST', endpoints: [{ method: 'GET', path: '/data' }] },
-        { serviceCode: 'api2', serviceType: 'REST', endpoints: [] },
-      ];
-
-      form.setAvailableServices(services);
-
-      expect(form.availableServices.value).toEqual(services);
-    });
-
-    it('should compute endpoints for selected service', () => {
-      form.availableServices.value = [
-        { serviceCode: 'api1', serviceType: 'REST', endpoints: [{ method: 'GET', path: '/data' }] },
-        { serviceCode: 'api2', serviceType: 'REST', endpoints: [{ method: 'POST', path: '/submit' }] },
-      ];
-      form.formData.service.serviceCode = 'api2';
-
-      expect(form.selectedServiceEndpoints.value).toEqual([{ method: 'POST', path: '/submit' }]);
-    });
-
-    it('should return empty endpoints when no service selected', () => {
-      form.availableServices.value = [
-        { serviceCode: 'api1', serviceType: 'REST', endpoints: [{ method: 'GET', path: '/data' }] },
-      ];
-      form.formData.service.serviceCode = '';
-
-      expect(form.selectedServiceEndpoints.value).toEqual([]);
-    });
-
-    it('should return empty endpoints when service not found', () => {
-      form.availableServices.value = [
-        { serviceCode: 'api1', serviceType: 'REST', endpoints: [{ method: 'GET', path: '/data' }] },
-      ];
-      form.formData.service.serviceCode = 'nonexistent';
-
-      expect(form.selectedServiceEndpoints.value).toEqual([]);
-    });
-  });
+  // Note: availableServices + selectedServiceEndpoints used to live here.
+  // They moved out to the consumer (XRoadRequestForm derives them locally
+  // from useServicesLoader), so useXRoadForm no longer carries that state.
 });

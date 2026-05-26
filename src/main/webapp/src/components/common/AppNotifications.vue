@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { AlertType } from '@/composables/useNotifications';
+import type { AlertType } from '@/composables';
 
 interface AlertState {
   show: boolean;

@@ -1,13 +1,12 @@
-import { ref, reactive, computed, watch, onMounted } from 'vue';
-import type { XRoadRequest, MTlsCertificates, SubsystemId, ServiceInfo, ServiceEndpoint } from '@/types';
+import { reactive, ref, watch, onMounted, getCurrentInstance } from 'vue';
+import type { XRoadRequest, MTlsCertificates, SubsystemId } from '@/types';
+import type { HttpMethod } from '@/utils/http-methods';
+import { emptySubsystem } from '@/utils/subsystem';
+import { useKeyValueList, type KeyValuePair } from './useKeyValueList';
 
-export interface KeyValuePair {
-  id: string;
-  key: string;
-  value: string;
-}
+export type { SubsystemId };
 
-export type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+export type { HttpMethod, KeyValuePair };
 
 export interface XRoadFormState {
   client: {
@@ -28,31 +27,19 @@ export interface XRoadFormState {
 }
 
 export interface UseXRoadFormOptions {
-  initialRequest?: XRoadRequest | null;
-  isFromHistory?: boolean;
+  /** Reactive source for the request to populate from (e.g., history reload). */
+  initialRequestGetter?: () => XRoadRequest | null | undefined;
+  /** Set when populate is from a history reload — gates the "loaded from history" UI. */
+  isFromHistoryGetter?: () => boolean;
+  /** Validity check: returns the current validation errors map. */
+  errorsGetter?: () => Record<string, string>;
+  /** Fires on every form mutation after the initial load settles. */
   onFormChange?: (data: XRoadRequest, isValid: boolean, certificates: MTlsCertificates) => void;
+  /** Fires when the user edits a request that was just loaded from history. */
   onRequestModified?: () => void;
 }
 
-function emptySubsystem(): SubsystemId {
-  return {
-    instanceId: '',
-    memberClass: '',
-    memberCode: '',
-    subsystemCode: '',
-  };
-}
-
 export function useXRoadForm(options: UseXRoadFormOptions = {}) {
-  const { onFormChange: optionsOnFormChange, onRequestModified: optionsOnRequestModified } = options;
-
-  // Store callbacks that can be set later via setupFormChangeWatcher
-  let formChangeCallback: ((data: XRoadRequest, isValid: boolean, certs: MTlsCertificates) => void) | undefined = optionsOnFormChange;
-  let requestModifiedCallback: (() => void) | undefined = optionsOnRequestModified;
-
-  // Store pending form change notification if callback not yet registered
-  let pendingFormChange: { data: XRoadRequest; isValid: boolean; certs: MTlsCertificates } | null = null;
-
   // Form state
   const formData = reactive<XRoadFormState>({
     client: {
@@ -75,38 +62,23 @@ export function useXRoadForm(options: UseXRoadFormOptions = {}) {
   // Certificates (managed separately, not persisted in history)
   const certificates = ref<MTlsCertificates>({});
 
-  // Key-value lists
-  const queryParams = ref<KeyValuePair[]>([]);
-  const customHeaders = ref<KeyValuePair[]>([]);
+  // Key-value lists (queryParams, customHeaders)
+  const queryParamsList = useKeyValueList('qp');
+  const customHeadersList = useKeyValueList('ch');
+  const queryParams = queryParamsList.items;
+  const customHeaders = customHeadersList.items;
 
-  // UI state
-  // Single accordion state covering all six sections. Collapsed by
-  // default — matches the "Security Server is Next" state shown by the
-  // progress chips on a fresh form. The user expands a section by
-  // clicking the corresponding chip (or the accordion header).
-  // Possible values: 'client', 'service', 'endpoint', 'queryParams',
-  // 'customHeaders', 'certificates'.
+  // UI state: single accordion across all six sections. Collapsed by
+  // default — the SS URL field sits above the accordion; the user
+  // expands a section by clicking its progress chip (or the header).
   const openPanels = ref<string[]>([]);
 
-  // Track initial load state
+  // Initial-load gate: suppresses onFormChange while populateFromRequest
+  // is writing fields, so a programmatic populate doesn't get reported
+  // back as a user edit.
   const isInitialLoad = ref(true);
-  const isFromHistory = ref(options.isFromHistory ?? false);
+  const isFromHistory = ref(false);
 
-  // Available services from selected service provider
-  const availableServices = ref<ServiceInfo[]>([]);
-
-  // Computed endpoints for selected service
-  const selectedServiceEndpoints = computed<ServiceEndpoint[]>(() => {
-    if (!formData.service.serviceCode || availableServices.value.length === 0) {
-      return [];
-    }
-    const selectedService = availableServices.value.find(
-      (s) => s.serviceCode === formData.service.serviceCode
-    );
-    return selectedService?.endpoints ?? [];
-  });
-
-  // Build XRoadRequest from form data
   function buildRequest(): XRoadRequest {
     const request: XRoadRequest = {
       client: {
@@ -126,7 +98,6 @@ export function useXRoadForm(options: UseXRoadFormOptions = {}) {
       },
     };
 
-    // Add mTLS certificates if any are provided
     const hasAnyCertificate =
       certificates.value.securityServerCert?.trim() ||
       certificates.value.clientCert?.trim() ||
@@ -140,98 +111,47 @@ export function useXRoadForm(options: UseXRoadFormOptions = {}) {
       };
     }
 
-    // Convert queryParams array to object
-    if (queryParams.value.length > 0) {
-      const params: Record<string, string> = {};
-      queryParams.value.forEach((param) => {
-        if (param.key && param.value) {
-          params[param.key] = param.value;
-        }
-      });
-      if (Object.keys(params).length > 0) {
-        request.request.queryParams = params;
-      }
-    }
+    const qp = queryParamsList.toRecord();
+    if (qp) request.request.queryParams = qp;
 
-    // Convert customHeaders array to object
-    if (customHeaders.value.length > 0) {
-      const headers: Record<string, string> = {};
-      customHeaders.value.forEach((header) => {
-        if (header.key && header.value) {
-          headers[header.key] = header.value;
-        }
-      });
-      if (Object.keys(headers).length > 0) {
-        request.request.headers = headers;
-      }
-    }
+    const ch = customHeadersList.toRecord();
+    if (ch) request.request.headers = ch;
 
     return request;
   }
 
-  // Populate form from request
   function populateFromRequest(request: XRoadRequest): void {
     isInitialLoad.value = true;
 
-    // Client
     formData.client.subsystem = { ...request.client.subsystem };
     formData.client.securityServerUrl = request.client.securityServerUrl;
 
-    // Service
     formData.service.subsystem = { ...request.service.subsystem };
     formData.service.serviceCode = request.service.serviceCode;
     formData.service.serviceVersion = request.service.serviceVersion ?? '';
 
-    // Request
     formData.request.method = request.request.method as HttpMethod;
     formData.request.path = request.request.path;
     formData.request.body = request.request.body ?? '';
     formData.request.contentType = request.request.contentType ?? '';
 
-    // Query params
-    if (request.request.queryParams) {
-      queryParams.value = Object.entries(request.request.queryParams).map(([key, value], index) => ({
-        id: `qp-${Date.now()}-${index}`,
-        key,
-        value,
-      }));
-    } else {
-      queryParams.value = [];
-    }
-
-    // Custom headers
-    if (request.request.headers) {
-      customHeaders.value = Object.entries(request.request.headers).map(([key, value], index) => ({
-        id: `ch-${Date.now()}-${index}`,
-        key,
-        value,
-      }));
-    } else {
-      customHeaders.value = [];
-    }
+    queryParamsList.setFromRecord(request.request.queryParams);
+    customHeadersList.setFromRecord(request.request.headers);
 
     // Certificates are NOT populated from history for security
     certificates.value = {};
 
+    // Defer the change notification past the synchronous reactive flush
+    // so consumers see the fully-populated form, not an intermediate state.
     setTimeout(() => {
       isInitialLoad.value = false;
-      const request = buildRequest();
-      if (formChangeCallback) {
-        formChangeCallback(request, true, certificates.value);
-      } else {
-        // Store pending notification for when callback is registered
-        pendingFormChange = { data: request, isValid: true, certs: { ...certificates.value } };
-      }
+      options.onFormChange?.(buildRequest(), true, certificates.value);
     }, 0);
   }
 
   // Clear handlers
   function clearClient(): void {
     formData.client.subsystem = emptySubsystem();
-  }
-
-  function clearSecurityServerUrl(): void {
-    formData.client.securityServerUrl = '';
   }
 
   function clearService(): void {
@@ -245,84 +165,43 @@ export function useXRoadForm(options: UseXRoadFormOptions = {}) {
     formData.request.path = '';
     formData.request.body = '';
     formData.request.contentType = '';
-    queryParams.value = [];
-    customHeaders.value = [];
+    queryParamsList.clear();
+    customHeadersList.clear();
   }
 
-  // Query param handlers
-  function addQueryParam(): void {
-    queryParams.value.push({ id: `qp-${Date.now()}-${Math.random()}`, key: '', value: '' });
-  }
+  const { add: addQueryParam, remove: removeQueryParam, update: updateQueryParam, clear: clearQueryParams } = queryParamsList;
+  const { add: addCustomHeader, remove: removeCustomHeader, update: updateCustomHeader, clear: clearCustomHeaders } = customHeadersList;
 
-  function removeQueryParam(index: number): void {
-    queryParams.value.splice(index, 1);
-  }
-
-  function updateQueryParam(index: number, field: 'key' | 'value', value: string): void {
-    queryParams.value[index][field] = value;
-  }
-
-  function clearQueryParams(): void {
-    queryParams.value = [];
-  }
-
-  // Custom header handlers
-  function addCustomHeader(): void {
-    customHeaders.value.push({ id: `ch-${Date.now()}-${Math.random()}`, key: '', value: '' });
-  }
-
-  function removeCustomHeader(index: number): void {
-    customHeaders.value.splice(index, 1);
-  }
-
-  function updateCustomHeader(index: number, field: 'key' | 'value', value: string): void {
-    customHeaders.value[index][field] = value;
-  }
-
-  function clearCustomHeaders(): void {
-    customHeaders.value = [];
-  }
-
-  // Set available services
-  function setAvailableServices(services: ServiceInfo[]): void {
-    availableServices.value = services;
-  }
-
-  // Computed snapshot for watching changes
-  const formDataSnapshot = computed(() => ({
-    clientInstanceId: formData.client.subsystem.instanceId,
-    clientMemberClass: formData.client.subsystem.memberClass,
-    clientMemberCode: formData.client.subsystem.memberCode,
-    clientSubsystemCode: formData.client.subsystem.subsystemCode,
-    securityServerUrl: formData.client.securityServerUrl,
-    serviceInstanceId: formData.service.subsystem.instanceId,
-    serviceMemberClass: formData.service.subsystem.memberClass,
-    serviceMemberCode: formData.service.subsystem.memberCode,
-    serviceSubsystemCode: formData.service.subsystem.subsystemCode,
-    serviceCode: formData.service.serviceCode,
-    serviceVersion: formData.service.serviceVersion,
-    method: formData.request.method,
-    path: formData.request.path,
-    body: formData.request.body,
-    contentType: formData.request.contentType,
-    queryParamsCount: queryParams.value.length,
-    customHeadersCount: customHeaders.value.length,
-    certificatesCount: Object.keys(certificates.value).length,
-  }));
-
-  // Watch for initial request prop changes. Populate the form whenever
-  // a request is provided (history reload, cURL import, future sources).
-  // The isFromHistory flag is propagated separately and gates the
-  // "loaded from history" UI affordances, not the population itself.
-  function watchInitialRequest(
-    requestGetter: () => XRoadRequest | null | undefined,
-    isFromHistoryGetter: () => boolean
-  ): void {
+  // Form change watcher — callbacks captured at construction, so no
+  // pending-queue needed. The isInitialLoad gate prevents programmatic
+  // populates from being reported back as edits.
+  //
+  // Deep watch covers every field of formData + certificates + the two
+  // key-value lists without us having to enumerate them — adding a
+  // field to formData won't silently bypass the notifier.
+  if (options.onFormChange || options.onRequestModified) {
     watch(
-      requestGetter,
+      [() => formData, certificates, queryParams, customHeaders],
+      () => {
+        if (isInitialLoad.value) return;
+        const errors = options.errorsGetter?.() ?? {};
+        options.onFormChange?.(buildRequest(), Object.keys(errors).length === 0, certificates.value);
+        if (isFromHistory.value) {
+          options.onRequestModified?.();
+        }
+      },
+      { deep: true }
+    );
+  }
+
+  // Initial-request watcher: populate whenever a request is provided
+  // (history reload, cURL import, future sources).
+  if (options.initialRequestGetter) {
+    watch(
+      options.initialRequestGetter,
       (newRequest) => {
         if (newRequest) {
-          isFromHistory.value = isFromHistoryGetter();
+          isFromHistory.value = options.isFromHistoryGetter?.() ?? false;
           populateFromRequest(newRequest);
         }
       },
@@ -330,43 +209,9 @@ export function useXRoadForm(options: UseXRoadFormOptions = {}) {
     );
   }
 
-  // Setup form change watcher
-  function setupFormChangeWatcher(
-    errorsGetter: () => Record<string, string>,
-    onChange?: (data: XRoadRequest, isValid: boolean, certs: MTlsCertificates) => void,
-    onModified?: () => void
-  ): void {
-    // Store callbacks for use by populateFromRequest
-    if (onChange) {
-      formChangeCallback = onChange;
-    }
-    if (onModified) {
-      requestModifiedCallback = onModified;
-    }
-
-    // Process any pending form change notification
-    if (pendingFormChange && formChangeCallback) {
-      formChangeCallback(pendingFormChange.data, pendingFormChange.isValid, pendingFormChange.certs);
-      pendingFormChange = null;
-    }
-
-    watch(
-      formDataSnapshot,
-      () => {
-        if (!isInitialLoad.value) {
-          const errors = errorsGetter();
-          formChangeCallback?.(buildRequest(), Object.keys(errors).length === 0, certificates.value);
-          if (isFromHistory.value) {
-            requestModifiedCallback?.();
-          }
-        }
-      },
-      { deep: true }
-    );
-  }
-
-  // Initialize after mount
-  function initializeAfterMount(): void {
+  // After mount, clear the initial-load gate so subsequent edits report
+  // through onFormChange. Skipped outside a component (e.g. unit tests).
+  if (getCurrentInstance()) {
     onMounted(() => {
       setTimeout(() => {
         if (isInitialLoad.value) {
@@ -383,17 +228,11 @@ export function useXRoadForm(options: UseXRoadFormOptions = {}) {
     queryParams,
     customHeaders,
     openPanels,
-    isInitialLoad,
-    isFromHistory,
-    availableServices,
-    selectedServiceEndpoints,
-    formDataSnapshot,
 
     // Actions
     buildRequest,
     populateFromRequest,
     clearClient,
-    clearSecurityServerUrl,
     clearService,
     clearRequest,
     addQueryParam,
@@ -404,11 +243,5 @@ export function useXRoadForm(options: UseXRoadFormOptions = {}) {
     removeCustomHeader,
     updateCustomHeader,
     clearCustomHeaders,
-    setAvailableServices,
-
-    // Setup helpers
-    watchInitialRequest,
-    setupFormChangeWatcher,
-    initializeAfterMount,
   };
 }

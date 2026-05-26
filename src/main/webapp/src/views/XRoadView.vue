@@ -1,16 +1,18 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useXRoadHistoryStore, type RequestHistoryEntry } from '@/stores/xroad-history';
-import type { XRoadRequest, MTlsCertificates, SubsystemId, RequestDetails } from '@/types';
-import { XRoadRequestForm, CurlImportFlow } from '@/components/xroad/form';
+import type { XRoadRequest, MTlsCertificates } from '@/types';
+import { emptySubsystem } from '@/utils/subsystem';
+import { XRoadRequestForm } from '@/components/form';
+import { CurlImportDialog } from '@/components/curl-import';
 import AppNotifications from '@/components/common/AppNotifications.vue';
-import RequestProgressIndicator from '@/components/xroad/RequestProgressIndicator.vue';
-import { XRoadResponseViewer } from '@/components/xroad/response';
-import { HistoryList, RequestStatusPanel } from '@/components/xroad/history';
-import { useNotifications } from '@/composables/useNotifications';
-import { useRequestExecutor } from '@/composables/useRequestExecutor';
-import { useCurlImport } from '@/composables/useCurlImport';
+import ConfirmDialog from '@/components/common/ConfirmDialog.vue';
+import RequestProgressIndicator from '@/components/RequestProgressIndicator.vue';
+import { XRoadResponseViewer } from '@/components/response';
+import { HistoryList } from '@/components/history';
+import RequestActionBar from '@/components/action-bar/RequestActionBar.vue';
+import { useNotifications, useRequestExecutor, useCurlImport } from '@/composables';
 
 const { t } = useI18n();
 const historyStore = useXRoadHistoryStore();
@@ -103,30 +105,17 @@ function handleRequestModified(): void {
   }
 }
 
-// Build the request payload for the status panel from current form state.
-function buildCurrentRequest(): XRoadRequest | null {
+// formData mirrors the output of useXRoadForm.buildRequest(), so once
+// the user has typed enough to fill the client subsystem, formData IS
+// the request. The only piece tracked separately is `certificates`,
+// which we merge in here so Export cURL can include the mTLS placeholders.
+const currentRequestForPanel = computed<XRoadRequest | null>(() => {
   if (!formData.value.client?.subsystem?.instanceId) return null;
-  return {
-    client: {
-      subsystem: formData.value.client.subsystem as SubsystemId,
-      securityServerUrl: formData.value.client.securityServerUrl || '',
-      mtlsCertificates: Object.keys(certificates.value).length > 0 ? certificates.value : undefined,
-    },
-    service: {
-      subsystem: formData.value.service?.subsystem as SubsystemId,
-      serviceCode: formData.value.service?.serviceCode || '',
-      serviceVersion: formData.value.service?.serviceVersion,
-    },
-    request: {
-      method: (formData.value.request?.method as RequestDetails['method']) || 'GET',
-      path: formData.value.request?.path || '/',
-      queryParams: formData.value.request?.queryParams,
-      headers: formData.value.request?.headers,
-      body: formData.value.request?.body,
-      contentType: formData.value.request?.contentType,
-    },
-  };
-}
+  const base = formData.value as XRoadRequest;
+  if (Object.keys(certificates.value).length === 0) return base;
+  return { ...base, client: { ...base.client, mtlsCertificates: certificates.value } };
+});
+
 </script>
 
 <template>
@@ -181,45 +170,31 @@ function buildCurrentRequest(): XRoadRequest | null {
       @history-warning="showHistoryWarning"
     />
 
-    <RequestStatusPanel
-      :client="{
-        subsystem: {
-          instanceId: formData.client?.subsystem?.instanceId,
-          memberClass: formData.client?.subsystem?.memberClass,
-          memberCode: formData.client?.subsystem?.memberCode,
-          subsystemCode: formData.client?.subsystem?.subsystemCode,
-        },
-        securityServerUrl: formData.client?.securityServerUrl,
-      }"
-      :service="{
-        subsystem: {
-          instanceId: formData.service?.subsystem?.instanceId,
-          memberClass: formData.service?.subsystem?.memberClass,
-          memberCode: formData.service?.subsystem?.memberCode,
-          subsystemCode: formData.service?.subsystem?.subsystemCode,
-        },
-        serviceCode: formData.service?.serviceCode,
-        serviceVersion: formData.service?.serviceVersion,
-      }"
+    <RequestActionBar
+      :client="formData.client ?? { subsystem: emptySubsystem() }"
+      :service="formData.service ?? { subsystem: emptySubsystem(), serviceCode: '' }"
       :request-path="formData.request?.path"
       :certificates="certificates"
       :last-request-success="lastRequestSuccess"
       :loading="loading"
       :is-form-valid="formValid"
-      :request="buildCurrentRequest()"
+      :request="currentRequestForPanel"
       @submit="formRef?.submit()"
       @show-alert="showAlert"
       @request-import="openCurlImport"
     />
 
-    <CurlImportFlow
-      :import-open="curlImportOpen"
-      :replace-confirm-open="curlReplaceConfirmOpen"
-      @update:import-open="curlImportOpen = $event"
-      @update:replace-confirm-open="curlReplaceConfirmOpen = $event"
+    <!-- cURL import dialog + replace-confirmation. -->
+    <CurlImportDialog
+      v-model="curlImportOpen"
       @import="handleCurlImport"
-      @confirm-replace="confirmCurlReplaceAndApply"
-      @cancel-replace="cancelCurlReplace"
+    />
+    <ConfirmDialog
+      v-model="curlReplaceConfirmOpen"
+      :message="t('xroad.curlImport.confirmReplace')"
+      color="warning"
+      @confirm="confirmCurlReplaceAndApply"
+      @cancel="cancelCurlReplace"
     />
   </v-container>
 </template>
