@@ -110,6 +110,7 @@
       "serviceCode": "Service Code",
       "serviceVersion": "Service Version",
       "clear": "Clear",
+      "providersAvailable": "{count} service providers available",
       "servicesAvailable": "{count} services available",
       "fetchError": "Could not fetch services"
     },

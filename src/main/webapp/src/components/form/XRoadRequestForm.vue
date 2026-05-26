@@ -9,6 +9,7 @@ import {
   useSubsystemSuggestions,
   useServicesLoader,
   useFormStepNavigation,
+  useFormCompleteness,
   type StepKey,
 } from '@/composables';
 import ClientSection from './sections/ClientSection.vue';
@@ -91,6 +92,37 @@ const selectedServiceEndpoints = computed<ServiceEndpoint[]>(() => {
   return availableServices.value.find((s) => s.serviceCode === code)?.endpoints ?? [];
 });
 
+// The Service section's title chip shows two different counts depending
+// on which step the user is on. Before the service subsystem is fully
+// picked, the actionable list is "subsystems available to call as a
+// service provider" — i.e., the same suggestion list the client picker
+// uses. Once the service subsystem is locked in and `useServicesLoader`
+// has populated `availableServices`, the chip switches to "services
+// available on this provider."
+const { serviceSubsystemComplete } = useFormCompleteness(() => ({
+  service: { subsystem: formData.service.subsystem },
+}));
+const serviceSectionChipCount = computed(() =>
+  serviceSubsystemComplete.value ? availableServices.value.length : subsystemSuggestions.value.length
+);
+const serviceSectionChipText = computed(() =>
+  serviceSubsystemComplete.value
+    ? t('xroad.service.servicesAvailable', { count: availableServices.value.length })
+    : t('xroad.service.providersAvailable', { count: subsystemSuggestions.value.length })
+);
+
+// When the service subsystem is complete but the upstream returned zero
+// services, the success chip (gated on count > 0) would silently
+// disappear and make it look like nothing happened. Surface "0 services
+// available" via the info chip so the user knows the call ran.
+const serviceSectionChipInfoText = computed(() => {
+  if (!serviceSubsystemComplete.value) return null;
+  if (isLoadingServices.value) return null;
+  if (servicesError.value) return null;
+  if (availableServices.value.length > 0) return null;
+  return t('xroad.service.servicesAvailable', { count: 0 });
+});
+
 // Watch security server URL for subsystem suggestions
 watchSecurityServerUrl(() => formData.client.securityServerUrl);
 
@@ -158,9 +190,10 @@ defineExpose({
             <template #chip>
               <SectionStatusChip
                 :loading="isLoadingServices"
-                :success-count="availableServices.length"
-                :success-text="t('xroad.service.servicesAvailable', { count: availableServices.length })"
+                :success-count="serviceSectionChipCount"
+                :success-text="serviceSectionChipText"
                 :error="servicesError"
+                :info-text="serviceSectionChipInfoText"
               />
             </template>
             <ServiceSection

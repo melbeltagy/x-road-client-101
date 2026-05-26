@@ -110,6 +110,7 @@
       "serviceCode": "Service Code",
       "serviceVersion": "Service Version",
       "clear": "Clear",
+      "providersAvailable": "{count} teenusepakkujat saadaval",
       "servicesAvailable": "{count} teenust saadaval",
       "fetchError": "Teenuste laadimine ebaõnnestus"
     },

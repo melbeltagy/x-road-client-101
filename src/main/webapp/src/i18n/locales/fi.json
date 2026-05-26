@@ -110,6 +110,7 @@
       "serviceCode": "Service Code",
       "serviceVersion": "Service Version",
       "clear": "Clear",
+      "providersAvailable": "{count} palveluntarjoajaa saatavilla",
       "servicesAvailable": "{count} palvelua saatavilla",
       "fetchError": "Palveluiden lataus epäonnistui"
     },
