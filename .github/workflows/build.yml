@@ -6,8 +6,12 @@ env:
 
 on:
   workflow_dispatch:
+  # push only runs on main: triggers the docker job on merge.
+  # Feature branches go through pull_request (which includes synchronize, so every
+  # push to a PR branch still runs CI). Avoids duplicate runs and ensures
+  # dependency-review fires on every PR update.
   push:
-    branches: ['*']
+    branches: [main]
     paths-ignore:
       - 'images/**'
       - '.github/dependabot.yml'
