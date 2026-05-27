@@ -2,9 +2,10 @@ import { describe, it, expect } from "vitest";
 import { mount } from "@vue/test-utils";
 import AppNotifications from "../AppNotifications.vue";
 import { createTestI18n } from "@/test/i18n";
+import type { AlertType } from "@/composables";
 
 const defaults = {
-  alert: { show: false, type: "success" as const, message: "Hello" },
+  alert: { show: false, type: "success" as AlertType, message: "Hello" },
   historyAlert: { show: false, message: "Warn" },
 };
 

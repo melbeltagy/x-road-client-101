@@ -41,7 +41,7 @@ function handleDelete(event: Event): void {
 </script>
 
 <template>
-  <v-list-item :active="isSelected" :value="entry.id" @click="handleView" class="history-entry">
+  <v-list-item :active="isSelected" :value="entry.id" class="history-entry" @click="handleView">
     <template #prepend>
       <v-chip v-if="entry.response" :color="statusColorFor(entry.response.statusCode)" size="small" class="mr-2">
         {{ entry.response.statusCode }}
@@ -68,7 +68,7 @@ function handleDelete(event: Event): void {
     </v-list-item-subtitle>
 
     <template #append>
-      <v-btn icon size="small" variant="text" color="error" @click="handleDelete" :title="t('xroad.history.delete')">
+      <v-btn icon size="small" variant="text" color="error" :title="t('xroad.history.delete')" @click="handleDelete">
         <v-icon>delete</v-icon>
       </v-btn>
     </template>

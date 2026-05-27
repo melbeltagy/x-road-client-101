@@ -50,13 +50,13 @@ const highlightSegments = computed(() => {
   <div class="highlight-wrapper">
     <v-textarea
       :model-value="modelValue"
-      @update:model-value="$emit('update:modelValue', $event)"
       :rows="rows"
       variant="outlined"
       :placeholder="placeholder"
       class="font-monospace highlight-textarea"
       hide-details
       :autofocus="autofocus"
+      @update:model-value="$emit('update:modelValue', $event)"
     />
     <div v-if="highlightSegments" class="font-monospace highlight-overlay" aria-hidden="true">
       <span class="overlay-invisible">{{ highlightSegments.before }}</span

@@ -60,14 +60,6 @@ function openModal(type: CertificateType): void {
   };
 }
 
-function closeModal(): void {
-  modalState.value = {
-    isOpen: false,
-    certificateType: null,
-    currentValue: "",
-  };
-}
-
 function handleCertificateSave(value: string): void {
   if (modalState.value.certificateType) {
     emit("update:certificates", {
@@ -87,10 +79,6 @@ function handleCertificateDelete(type: CertificateType): void {
 function handleClearAll(): void {
   emit("update:certificates", {});
 }
-
-const hasAnyCertificate = computed(() => {
-  return Object.values(props.certificates).some((v) => v && v.trim() !== "");
-});
 </script>
 
 <template>
@@ -113,7 +101,7 @@ const hasAnyCertificate = computed(() => {
         <template #append>
           <div class="d-flex ga-1">
             <template v-if="isConfigured(cert.type)">
-              <v-btn icon size="small" variant="text" color="info" @click="openModal(cert.type)" :title="t('xroad.certificates.view')">
+              <v-btn icon size="small" variant="text" color="info" :title="t('xroad.certificates.view')" @click="openModal(cert.type)">
                 <v-icon>visibility</v-icon>
               </v-btn>
               <v-btn
@@ -121,8 +109,8 @@ const hasAnyCertificate = computed(() => {
                 size="small"
                 variant="text"
                 color="error"
-                @click="handleCertificateDelete(cert.type)"
                 :title="t('entity.action.delete')"
+                @click="handleCertificateDelete(cert.type)"
               >
                 <v-icon>delete</v-icon>
               </v-btn>
@@ -133,8 +121,8 @@ const hasAnyCertificate = computed(() => {
               size="small"
               variant="text"
               color="primary"
-              @click="openModal(cert.type)"
               :title="t('xroad.certificates.add')"
+              @click="openModal(cert.type)"
             >
               <v-icon>add</v-icon>
             </v-btn>

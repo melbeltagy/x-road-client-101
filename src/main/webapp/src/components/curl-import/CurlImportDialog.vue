@@ -72,7 +72,7 @@ function handleImport(): void {
 </script>
 
 <template>
-  <v-dialog :model-value="modelValue" @update:model-value="emit('update:modelValue', $event)" max-width="900" persistent>
+  <v-dialog :model-value="modelValue" max-width="900" persistent @update:model-value="emit('update:modelValue', $event)">
     <v-card>
       <v-card-title class="d-flex justify-space-between align-center">
         <span>{{ t("xroad.curlImport.title") }}</span>

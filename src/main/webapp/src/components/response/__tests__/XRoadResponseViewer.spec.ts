@@ -30,7 +30,7 @@ function mountViewer(response: XRoadResponse | null) {
         },
         ResponseXRoadErrorSection: {
           props: ["xroadError"],
-          template: '<div class="err-stub" :data-has-error="xroadError ? \'yes\' : \'no\'" />',
+          template: "<div class=\"err-stub\" :data-has-error=\"xroadError ? 'yes' : 'no'\" />",
         },
         VExpansionPanels: { template: '<div class="vep"><slot /></div>' },
       },

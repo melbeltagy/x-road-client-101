@@ -122,8 +122,25 @@ tasks.withType<com.github.spotbugs.snom.SpotBugsTask>().configureEach {
 
 // OWASP Dependency-Check: fail the build when a dependency has a CVSS score >= 7 (HIGH or CRITICAL).
 // Standalone task (NOT wired into `check`); run explicitly via `./gradlew dependencyCheckAnalyze`.
+//
+// NVD API key: the NVD strongly recommends an API key — without one, the unauthenticated rate
+// limit (5 requests / 30s rolling window) causes HTTP 429 responses and the update fails.
+// CI must set the `NVD_API_KEY` repository secret (request a key at
+// https://nvd.nist.gov/developers/request-an-api-key). When the env var is absent the plugin
+// falls back to unauthenticated calls with a larger inter-request delay so a local run still
+// completes (slower, ~10-15 min on first run).
 dependencyCheck {
     failBuildOnCVSS = 7.0f
+    val nvdApiKey = System.getenv("NVD_API_KEY")
+    nvd {
+        if (!nvdApiKey.isNullOrBlank()) {
+            apiKey = nvdApiKey
+        } else {
+            // 8s between requests when no API key (NVD allows ~5/30s unauthenticated → 6s minimum, 8s for safety).
+            // With an API key the plugin defaults are fine.
+            delay = 8000
+        }
+    }
 }
 
 // CycloneDX SBOM: use plugin defaults (binds to build/assemble, outputs to build/reports/bom.json).

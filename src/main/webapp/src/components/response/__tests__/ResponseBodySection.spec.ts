@@ -12,9 +12,9 @@ function mountSection(props: Record<string, unknown> = {}) {
     global: {
       plugins: [createTestI18n()],
       stubs: {
-        VExpansionPanel: { template: '<div><slot /></div>' },
-        VExpansionPanelTitle: { template: '<div><slot /></div>' },
-        VExpansionPanelText: { template: '<div><slot /></div>' },
+        VExpansionPanel: { template: "<div><slot /></div>" },
+        VExpansionPanelTitle: { template: "<div><slot /></div>" },
+        VExpansionPanelText: { template: "<div><slot /></div>" },
       },
     },
   });

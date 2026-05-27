@@ -155,7 +155,7 @@ async function copyAsCurl(): Promise<void> {
     const curlCommand = generateCurlCommand(props.request);
     await navigator.clipboard.writeText(curlCommand);
     emit("showAlert", "success", t("xroad.toast.curlCopied"));
-  } catch (error) {
+  } catch {
     emit("showAlert", "error", t("xroad.toast.curlCopyFailed"));
   }
 }

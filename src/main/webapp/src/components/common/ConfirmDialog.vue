@@ -38,7 +38,7 @@ function handleConfirm(): void {
 </script>
 
 <template>
-  <v-dialog :model-value="modelValue" @update:model-value="emit('update:modelValue', $event)" max-width="500" persistent>
+  <v-dialog :model-value="modelValue" max-width="500" persistent @update:model-value="emit('update:modelValue', $event)">
     <v-card>
       <v-card-title v-if="title">{{ title }}</v-card-title>
       <v-card-text>{{ message }}</v-card-text>

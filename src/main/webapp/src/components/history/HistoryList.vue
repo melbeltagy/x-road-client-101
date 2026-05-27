@@ -59,10 +59,10 @@ function handleClose(): void {
 <template>
   <v-navigation-drawer
     :model-value="historyStore.sidebarOpen"
-    @update:model-value="!$event && handleClose()"
     location="right"
     temporary
     width="400"
+    @update:model-value="!$event && handleClose()"
   >
     <template #prepend>
       <v-toolbar color="surface" density="compact">

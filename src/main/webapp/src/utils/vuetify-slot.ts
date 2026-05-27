@@ -1,4 +1,4 @@
-3; /**
+/**
  * Vuetify wraps items as `ListItem<T>` in the autocomplete/combobox
  * `#item` slot, exposing the original under `.raw`. Vuetify's TS types
  * don't reach the slot scope cleanly, so we narrow via unknown.

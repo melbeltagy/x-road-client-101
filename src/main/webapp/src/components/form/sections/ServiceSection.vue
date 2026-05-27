@@ -93,7 +93,6 @@ function handleSubsystemSelect(subsystem: SubsystemId): void {
           v-if="serviceCodeOptions.length > 0"
           id="serviceCode"
           :model-value="serviceCode"
-          @update:model-value="handleServiceCodeUpdate"
           :items="serviceCodeOptions"
           item-title="title"
           item-value="value"
@@ -104,6 +103,7 @@ function handleSubsystemSelect(subsystem: SubsystemId): void {
           density="comfortable"
           clearable
           :menu-props="{ maxHeight: 200 }"
+          @update:model-value="handleServiceCodeUpdate"
         >
           <template #item="{ props: itemProps, item }">
             <v-list-item v-bind="itemProps">
@@ -117,24 +117,24 @@ function handleSubsystemSelect(subsystem: SubsystemId): void {
           v-else
           id="serviceCode"
           :model-value="serviceCode"
-          @update:model-value="emit('update:serviceCode', $event)"
           :label="`${t('xroad.service.serviceCode')} *`"
           :placeholder="t('xroad.placeholders.serviceCode')"
           :error-messages="errors['service.serviceCode']"
           variant="outlined"
           density="comfortable"
+          @update:model-value="emit('update:serviceCode', $event)"
         />
       </v-col>
       <v-col cols="12" md="6">
         <v-text-field
           id="serviceVersion"
           :model-value="serviceVersion"
-          @update:model-value="emit('update:serviceVersion', $event)"
           :label="t('xroad.service.serviceVersion')"
           :placeholder="t('xroad.placeholders.serviceVersion')"
           :error-messages="errors['service.serviceVersion']"
           variant="outlined"
           density="comfortable"
+          @update:model-value="emit('update:serviceVersion', $event)"
         />
       </v-col>
     </v-row>

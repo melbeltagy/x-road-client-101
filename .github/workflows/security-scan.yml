@@ -1,0 +1,38 @@
+name: Security Scan
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+on:
+  schedule:
+    - cron: '0 6 * * 1'  # Mondays 06:00 UTC
+  workflow_dispatch:
+
+jobs:
+  audit-backend:
+    name: OWASP Dependency-Check (Backend)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/setup-backend
+      - name: Cache OWASP NVD database
+        uses: actions/cache@v5
+        with:
+          path: ~/.gradle/dependency-check-data
+          key: dependency-check-${{ runner.os }}
+      - name: Run OWASP dependency check
+        env:
+          # NVD throttles unauthenticated requests (HTTP 429). Request a key at
+          # https://nvd.nist.gov/developers/request-an-api-key and add it as a repo secret
+          # named NVD_API_KEY. Without it the scan still runs but takes much longer.
+          NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
+        run: ./gradlew dependencyCheckAnalyze
+      - name: Upload report on failure
+        if: failure()
+        uses: actions/upload-artifact@v5
+        with:
+          name: dependency-check-report
+          path: build/reports/dependency-check-report.*
+          retention-days: 30

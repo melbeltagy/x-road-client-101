@@ -16,8 +16,8 @@ function mountSection(props: Record<string, unknown> = {}) {
       // Render expansion content eagerly.
       stubs: {
         VExpansionPanel: { template: '<div class="v-ep-stub" :data-value="value"><slot /></div>', props: ["value"] },
-        VExpansionPanelTitle: { template: '<div><slot /></div>' },
-        VExpansionPanelText: { template: '<div><slot /></div>' },
+        VExpansionPanelTitle: { template: "<div><slot /></div>" },
+        VExpansionPanelText: { template: "<div><slot /></div>" },
       },
     },
   });

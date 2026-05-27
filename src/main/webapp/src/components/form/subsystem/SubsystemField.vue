@@ -23,7 +23,6 @@ const isCombobox = computed(() => (props.items?.length ?? 0) > 0);
     v-if="isCombobox"
     :id="id"
     :model-value="modelValue"
-    @update:model-value="emit('update:modelValue', $event ?? '')"
     :items="items"
     :label="label"
     :placeholder="placeholder"
@@ -32,16 +31,17 @@ const isCombobox = computed(() => (props.items?.length ?? 0) > 0);
     density="comfortable"
     clearable
     :menu-props="{ maxHeight: 200 }"
+    @update:model-value="emit('update:modelValue', $event ?? '')"
   />
   <v-text-field
     v-else
     :id="id"
     :model-value="modelValue"
-    @update:model-value="emit('update:modelValue', $event)"
     :label="label"
     :placeholder="placeholder"
     :error-messages="errorMessage"
     variant="outlined"
     density="comfortable"
+    @update:model-value="emit('update:modelValue', $event)"
   />
 </template>

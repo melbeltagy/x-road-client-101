@@ -16,6 +16,7 @@ function mountSection(certificates: Record<string, string> = {}) {
           emits: ["click"],
         },
         CertificateUploadModal: {
+          name: "CertificateUploadModalStub",
           props: ["modelValue", "certificateType", "currentValue"],
           emits: ["update:modelValue", "save"],
           template: '<div class="modal-stub" :data-open="modelValue" :data-type="certificateType" :data-value="currentValue" />',
@@ -97,7 +98,8 @@ describe("CertificateSection", () => {
     // dispatch the 'save' event on the underlying component instance.
     const modalEl = wrapper.find(".modal-stub");
     expect(modalEl.exists()).toBe(true);
-    const modalComp = wrapper.getComponent(".modal-stub");
+    const modalComp = wrapper.findComponent({ name: "CertificateUploadModalStub" });
+    expect(modalComp.exists()).toBe(true);
     modalComp.vm.$emit("save", "NEW_PEM");
     await nextTick();
 

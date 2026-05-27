@@ -2,7 +2,7 @@
 import { useI18n } from "vue-i18n";
 import type { XRoadError } from "@/types";
 
-const props = defineProps<{
+defineProps<{
   xroadError?: XRoadError;
 }>();
 

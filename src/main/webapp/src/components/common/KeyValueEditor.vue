@@ -2,7 +2,7 @@
 import { useI18n } from "vue-i18n";
 import type { KeyValuePair } from "@/composables";
 
-const props = withDefaults(
+withDefaults(
   defineProps<{
     titleKey?: string;
     items: KeyValuePair[];
@@ -52,21 +52,21 @@ const { t } = useI18n();
       <v-col cols="5">
         <v-text-field
           :model-value="item.key"
-          @update:model-value="emit('update', index, 'key', $event)"
           :placeholder="t(keyPlaceholderKey)"
           variant="outlined"
           density="compact"
           hide-details
+          @update:model-value="emit('update', index, 'key', $event)"
         />
       </v-col>
       <v-col cols="5" class="px-2">
         <v-text-field
           :model-value="item.value"
-          @update:model-value="emit('update', index, 'value', $event)"
           :placeholder="t(valuePlaceholderKey)"
           variant="outlined"
           density="compact"
           hide-details
+          @update:model-value="emit('update', index, 'value', $event)"
         />
       </v-col>
       <v-col cols="2">

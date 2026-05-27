@@ -17,7 +17,7 @@ function toggleHistorySidebar(): void {
 
 <template>
   <v-app-bar color="primary" density="default" elevation="2">
-    <v-app-bar-nav-icon class="d-md-none" @click="mobileNav = !mobileNav" aria-label="Menu" />
+    <v-app-bar-nav-icon class="d-md-none" aria-label="Menu" @click="mobileNav = !mobileNav" />
 
     <Brand />
 
@@ -35,7 +35,7 @@ function toggleHistorySidebar(): void {
     </div>
 
     <!-- Mobile navigation menu -->
-    <template #extension v-if="mobileNav">
+    <template v-if="mobileNav" #extension>
       <v-sheet class="d-md-none w-100 pa-2" color="primary">
         <v-btn block variant="text" class="justify-start mb-2" @click="toggleHistorySidebar">
           <v-icon start>history</v-icon>

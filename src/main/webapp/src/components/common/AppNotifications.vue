@@ -27,10 +27,10 @@ const emit = defineEmits<{
   <!-- Primary toast: request results (success/error/warning/info). -->
   <v-snackbar
     :model-value="alert.show"
-    @update:model-value="emit('update:alertShow', $event)"
     :color="alert.type"
     :timeout="5000"
     location="top"
+    @update:model-value="emit('update:alertShow', $event)"
   >
     {{ alert.message }}
     <template #actions>
@@ -44,10 +44,10 @@ const emit = defineEmits<{
        so it doesn't overwrite the primary toast when both fire. -->
   <v-snackbar
     :model-value="historyAlert.show"
-    @update:model-value="emit('update:historyAlertShow', $event)"
     color="warning"
     :timeout="5000"
     location="top right"
+    @update:model-value="emit('update:historyAlertShow', $event)"
   >
     <v-icon start>history</v-icon>
     {{ historyAlert.message }}
