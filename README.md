@@ -119,14 +119,14 @@ cd src/main/webapp && pnpm type-check
 
 ## Screenshots
 
-**Client and service identifiers with auto-complete dropdowns**
+**Client and service identifiers**
 
-![Identifiers Tab](images/IDs-tab.png)
+![Identifiers Tab](images/IDs.png)
 
-**Request configuration, response viewer, and request history**
+**Request configuration and response viewer**
 
-![Request Tab](images/Request-tab.png)
+![Request Tab](images/Request.png)
 
-**Dark theme**
+**Dark theme and request history**
 
 ![Dark Theme](images/dark-theme.png)
