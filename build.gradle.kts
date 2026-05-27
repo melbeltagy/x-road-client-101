@@ -1,12 +1,17 @@
 import com.github.gradle.node.pnpm.task.PnpmTask
+import com.github.gradle.node.npm.task.NpxTask
 
 plugins {
     java
     idea
     eclipse
+    checkstyle
+    jacoco
     alias(libs.plugins.spring.boot)
-    id("xroad.java-conventions")
-    id("node-conventions")
+    alias(libs.plugins.node.gradle)
+    alias(libs.plugins.spotbugs)
+    alias(libs.plugins.owasp.dependencycheck)
+    alias(libs.plugins.cyclonedx.bom)
 }
 
 group = "com.nortal.xroad.restapi.client"
@@ -28,6 +33,102 @@ repositories {
 apply(plugin = "io.spring.dependency-management")
 
 val isProd = project.hasProperty("prod")
+
+checkstyle {
+    toolVersion = libs.versions.checkstyle.get()
+    configDirectory.set(file("${project.rootDir}/config/checkstyle"))
+    isIgnoreFailures = false
+    isShowViolations = true
+}
+
+tasks.named<Checkstyle>("checkstyleMain") {
+    source = fileTree("src/main/java")
+    configFile = file("${project.rootDir}/config/checkstyle/checkstyle.xml")
+    classpath = files()
+}
+
+tasks.named<Checkstyle>("checkstyleTest") {
+    source = fileTree("src/test/java")
+    configFile = file("${project.rootDir}/config/checkstyle/checkstyle.xml")
+    classpath = files()
+}
+
+jacoco {
+    toolVersion = libs.versions.jacoco.get()
+}
+
+// Classes to exclude from coverage (DTOs, config, main app, etc.)
+val jacocoExcludes = listOf(
+    "**/dto/**",
+    "**/config/**",
+    "**/*App.class",
+    "**/*Application.class",
+    "**/web/filter/**",
+    "**/validation/**"
+)
+
+tasks.withType<JacocoReport>().configureEach {
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
+    }
+}
+
+tasks.withType<JacocoCoverageVerification>().configureEach {
+    dependsOn(tasks.named("test"))
+    dependsOn(tasks.named("jacocoTestReport"))
+
+    violationRules {
+        rule {
+            limit {
+                minimum = "0.80".toBigDecimal()
+            }
+        }
+    }
+}
+
+afterEvaluate {
+    tasks.withType<JacocoReport>().configureEach {
+        classDirectories.setFrom(files(classDirectories.files.map {
+            fileTree(it) { exclude(jacocoExcludes) }
+        }))
+    }
+    tasks.withType<JacocoCoverageVerification>().configureEach {
+        classDirectories.setFrom(files(classDirectories.files.map {
+            fileTree(it) { exclude(jacocoExcludes) }
+        }))
+    }
+}
+
+tasks.named("check") {
+    dependsOn(tasks.withType<JacocoCoverageVerification>())
+}
+
+// SpotBugs: static analysis. spotbugsMain/spotbugsTest are auto-wired into `check` by the plugin.
+// HTML reports are enabled for humans; XML disabled (no tooling consumes it yet).
+tasks.withType<com.github.spotbugs.snom.SpotBugsTask>().configureEach {
+    reports.create("html") {
+        required.set(true)
+    }
+    reports.create("xml") {
+        required.set(false)
+    }
+}
+
+// OWASP Dependency-Check: fail the build when a dependency has a CVSS score >= 7 (HIGH or CRITICAL).
+// Standalone task (NOT wired into `check`); run explicitly via `./gradlew dependencyCheckAnalyze`.
+dependencyCheck {
+    failBuildOnCVSS = 7.0f
+}
+
+// CycloneDX SBOM: use plugin defaults (binds to build/assemble, outputs to build/reports/bom.json).
+
+node {
+    nodeProjectDir.set(file("${project.projectDir}/src/main/webapp"))
+    version.set("24.16.0")  // LTS version
+    pnpmVersion.set("11.2.2")
+    download.set(true)
+}
 
 idea {
     module {
@@ -137,6 +238,29 @@ tasks.register<PnpmTask>("webapp") {
     dependsOn("pnpmInstall")
     pnpmCommand.set(listOf("run", "build"))
     environment.set(mapOf("VITE_APP_VERSION" to project.version.toString()))
+}
+
+tasks.register<NpxTask>("webapp_test") {
+    workingDir.set(file("${project.projectDir}/src/main/webapp"))
+    inputs.property("appVersion", project.version)
+    inputs.files(
+        "src/main/webapp/package.json",
+        "src/main/webapp/pnpm-lock.yaml",
+        "src/main/webapp/tsconfig.json",
+        "src/main/webapp/vitest.config.ts"
+    )
+        .withPropertyName("vue-config")
+        .withPathSensitivity(PathSensitivity.RELATIVE)
+    inputs.dir("src/main/webapp/src/")
+        .withPropertyName("vue-source")
+        .withPathSensitivity(PathSensitivity.RELATIVE)
+
+    outputs.dir("build/test-results/vitest/")
+        .withPropertyName("vitest-result-dir")
+
+    dependsOn(tasks.compileTestJava)
+    command.set("pnpm")
+    args.set(listOf("test", "--run"))
 }
 
 tasks.processResources {

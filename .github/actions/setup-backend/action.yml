@@ -1,0 +1,10 @@
+name: 'Setup Backend'
+description: 'Set up Java 25 + Gradle for backend jobs'
+runs:
+  using: 'composite'
+  steps:
+    - uses: actions/setup-java@v5
+      with:
+        java-version: '25'
+        distribution: 'temurin'
+    - uses: gradle/actions/setup-gradle@v6

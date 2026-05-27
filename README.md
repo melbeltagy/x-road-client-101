@@ -98,7 +98,7 @@ pnpm test
 # Run tests once
 pnpm test:run
 
-# Run tests with coverage report
+# Run tests with coverage
 pnpm test:coverage
 ```
 
@@ -107,14 +107,24 @@ pnpm test:coverage
 ### Code Quality
 
 ```bash
-# Backend: Checkstyle
-./gradlew checkstyleMain -x webapp
+# Backend: Checkstyle + SpotBugs (part of `./gradlew check`)
+./gradlew check
 
-# Frontend: ESLint
-cd src/main/webapp && pnpm lint
+# Frontend (in src/main/webapp):
+pnpm lint            # ESLint check
+pnpm lint:fix        # ESLint auto-fix
+pnpm format:check    # Prettier check
+pnpm format          # Prettier auto-format
+pnpm type-check      # TypeScript
+```
 
-# Frontend: TypeScript check
-cd src/main/webapp && pnpm type-check
+### Pre-commit hooks
+
+A [lefthook](https://lefthook.dev) config runs lint/format checks on changed files before each commit. To enable:
+
+```bash
+brew install lefthook   # or your preferred installer
+lefthook install
 ```
 
 ## Screenshots

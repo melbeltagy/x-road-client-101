@@ -1,6 +1,0 @@
-[versions]
-
-[libraries]
-node-gradle = { module = "com.github.node-gradle:gradle-node-plugin", version = "7.1.0" }
-
-[plugins]
