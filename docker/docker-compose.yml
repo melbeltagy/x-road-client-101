@@ -4,8 +4,14 @@ services:
     image: ghcr.io/melbeltagy/x-road-client-101:latest
     ports:
       - '8080:8080'
+    networks:
+      - xrd-client-101
     healthcheck:
       test: ['CMD', 'curl', '-f', 'http://localhost:8080/actuator/health']
       interval: 5s
       timeout: 5s
       retries: 40
+
+networks:
+  xrd-client-101:
+    name: xrd-client-101

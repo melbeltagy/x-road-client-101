@@ -6,7 +6,8 @@ A web-based tool for testing X-Road REST services.
 
 ```bash
 docker pull ghcr.io/melbeltagy/x-road-client-101:latest
-docker run -p 8080:8080 ghcr.io/melbeltagy/x-road-client-101:latest
+docker network create xrd-client-101   # one-time; skip if it already exists
+docker run -p 8080:8080 --network xrd-client-101 ghcr.io/melbeltagy/x-road-client-101:latest
 ```
 
 Open http://localhost:8080
@@ -23,27 +24,22 @@ Open http://localhost:8080
 
 ## Connecting to a Local Security Server
 
-If your Security Server is running in Docker, you have two options:
+The client and the Security Server need to share a Docker network so they can reach each other by container name.
+Both the `docker run` command above and the compose file place the client on a network named `xrd-client-101`.
 
-**Option 1: Same network + container name**
-
-Add the client to the Security Server's network and use the container name as the URL:
-
-```bash
-docker run -p 8080:8080 --network <ss-network> ghcr.io/melbeltagy/x-road-client-101:latest
-```
-
-Then use `http://<ss-container-name>:8080/` as the Security Server URL in the UI.
-
-**Option 2: Use the Security Server's IP address**
-
-Find the Security Server container's IP:
+To be able to communicate to the Security Server, attach its container to the same network (this will not affect your existing setup):
 
 ```bash
-docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' <ss-container-name>
+docker network connect xrd-client-101 <ss-container-name>
 ```
 
-Then use `http://<ip-address>:8080/` as the Security Server URL in the UI.
+Then use `http://<ss-container-name>:<ss-port>/` as the Security Server URL in the UI.
+
+To detach later:
+
+```bash
+docker network disconnect xrd-client-101 <ss-container-name>
+```
 
 ## Configuration
 
