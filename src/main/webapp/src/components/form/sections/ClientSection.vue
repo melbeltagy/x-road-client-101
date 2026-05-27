@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { useI18n } from 'vue-i18n';
-import SubsystemIdFields from '../subsystem/SubsystemIdFields.vue';
-import ClearButton from '@/components/common/ClearButton.vue';
-import type { SubsystemId } from '@/types';
+import { useI18n } from "vue-i18n";
+import SubsystemIdFields from "../subsystem/SubsystemIdFields.vue";
+import ClearButton from "@/components/common/ClearButton.vue";
+import type { SubsystemId } from "@/types";
 
 const props = defineProps<{
   subsystem: SubsystemId;
@@ -14,21 +14,21 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-  'update:subsystem': [value: SubsystemId];
+  "update:subsystem": [value: SubsystemId];
   clear: [];
 }>();
 
 const { t } = useI18n();
 
 function updateSubsystemField(field: keyof SubsystemId, value: string): void {
-  emit('update:subsystem', {
+  emit("update:subsystem", {
     ...props.subsystem,
     [field]: value,
   });
 }
 
 function handleSubsystemSelect(subsystem: SubsystemId): void {
-  emit('update:subsystem', { ...subsystem });
+  emit("update:subsystem", { ...subsystem });
 }
 </script>
 

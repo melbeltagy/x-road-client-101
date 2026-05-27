@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useI18n } from 'vue-i18n';
+import { useI18n } from "vue-i18n";
 
 const { t } = useI18n();
 </script>
@@ -7,7 +7,7 @@ const { t } = useI18n();
 <template>
   <router-link to="/" class="brand-link text-decoration-none ml-4">
     <v-toolbar-title class="font-weight-bold">
-      {{ t('global.title') }}
+      {{ t("global.title") }}
     </v-toolbar-title>
   </router-link>
 </template>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { AlertType } from '@/composables';
+import type { AlertType } from "@/composables";
 
 interface AlertState {
   show: boolean;
@@ -18,8 +18,8 @@ defineProps<{
 }>();
 
 const emit = defineEmits<{
-  'update:alertShow': [value: boolean];
-  'update:historyAlertShow': [value: boolean];
+  "update:alertShow": [value: boolean];
+  "update:historyAlertShow": [value: boolean];
 }>();
 </script>
 

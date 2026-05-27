@@ -1,4 +1,4 @@
-import { ref } from 'vue';
+import { ref } from "vue";
 
 /**
  * Drag-and-drop + file-input plumbing for "paste a text file into a

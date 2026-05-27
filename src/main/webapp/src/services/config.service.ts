@@ -1,7 +1,7 @@
-import axios from '@/plugins/axios';
-import type { FrontendConfig } from '@/types';
+import axios from "@/plugins/axios";
+import type { FrontendConfig } from "@/types";
 
-const CONFIG_URL = '/api/config';
+const CONFIG_URL = "/api/config";
 
 export async function fetchConfig(): Promise<FrontendConfig> {
   const response = await axios.get<FrontendConfig>(CONFIG_URL);

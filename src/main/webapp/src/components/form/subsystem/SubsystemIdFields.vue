@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-import { useI18n } from 'vue-i18n';
-import type { SubsystemId } from '@/types';
-import SubsystemField from './SubsystemField.vue';
+import { computed } from "vue";
+import { useI18n } from "vue-i18n";
+import type { SubsystemId } from "@/types";
+import SubsystemField from "./SubsystemField.vue";
 
 const props = defineProps<{
-  prefix: 'client' | 'service';
+  prefix: "client" | "service";
   idPrefix?: string;
   instanceId: string;
   memberClass: string;
@@ -16,11 +16,11 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-  'update:instanceId': [value: string];
-  'update:memberClass': [value: string];
-  'update:memberCode': [value: string];
-  'update:subsystemCode': [value: string];
-  'select': [subsystem: SubsystemId];
+  "update:instanceId": [value: string];
+  "update:memberClass": [value: string];
+  "update:memberCode": [value: string];
+  "update:subsystemCode": [value: string];
+  select: [subsystem: SubsystemId];
 }>();
 
 const { t } = useI18n();
@@ -28,8 +28,7 @@ const { t } = useI18n();
 // Cascading suggestion filters: each level narrows by the levels above it.
 function filterSuggestions(filters: Partial<SubsystemId>): SubsystemId[] {
   return (props.suggestions ?? []).filter((s) =>
-    (Object.entries(filters) as [keyof SubsystemId, string | undefined][])
-      .every(([key, value]) => !value || s[key] === value)
+    (Object.entries(filters) as [keyof SubsystemId, string | undefined][]).every(([key, value]) => !value || s[key] === value),
   );
 }
 
@@ -37,19 +36,12 @@ function uniqueField(filtered: SubsystemId[], key: keyof SubsystemId): string[] 
   return [...new Set(filtered.map((s) => s[key]))];
 }
 
-const instanceIdOptions = computed(() =>
-  uniqueField(filterSuggestions({}), 'instanceId')
-);
+const instanceIdOptions = computed(() => uniqueField(filterSuggestions({}), "instanceId"));
 
-const memberClassOptions = computed(() =>
-  uniqueField(filterSuggestions({ instanceId: props.instanceId }), 'memberClass')
-);
+const memberClassOptions = computed(() => uniqueField(filterSuggestions({ instanceId: props.instanceId }), "memberClass"));
 
 const memberCodeOptions = computed(() =>
-  uniqueField(
-    filterSuggestions({ instanceId: props.instanceId, memberClass: props.memberClass }),
-    'memberCode'
-  )
+  uniqueField(filterSuggestions({ instanceId: props.instanceId, memberClass: props.memberClass }), "memberCode"),
 );
 
 const subsystemCodeOptions = computed(() =>
@@ -59,13 +51,13 @@ const subsystemCodeOptions = computed(() =>
       memberClass: props.memberClass,
       memberCode: props.memberCode,
     }),
-    'subsystemCode'
-  )
+    "subsystemCode",
+  ),
 );
 
 // Handle selection - when subsystem code is selected, auto-fill all fields
 function handleSubsystemCodeUpdate(subsystemCode: string): void {
-  emit('update:subsystemCode', subsystemCode);
+  emit("update:subsystemCode", subsystemCode);
 
   // Find matching subsystem and emit select event
   const matching = props.suggestions?.find(
@@ -73,23 +65,23 @@ function handleSubsystemCodeUpdate(subsystemCode: string): void {
       s.subsystemCode === subsystemCode &&
       (!props.instanceId || s.instanceId === props.instanceId) &&
       (!props.memberClass || s.memberClass === props.memberClass) &&
-      (!props.memberCode || s.memberCode === props.memberCode)
+      (!props.memberCode || s.memberCode === props.memberCode),
   );
 
   if (matching) {
-    emit('select', matching);
+    emit("select", matching);
   }
 }
 
 // Placeholder differs per prefix for memberCode and subsystemCode.
 const memberCodePlaceholder = computed(() =>
-  props.prefix === 'service' ? t('xroad.placeholders.serviceMemberCode') : t('xroad.placeholders.memberCode')
+  props.prefix === "service" ? t("xroad.placeholders.serviceMemberCode") : t("xroad.placeholders.memberCode"),
 );
 const subsystemCodePlaceholder = computed(() =>
-  props.prefix === 'service' ? t('xroad.placeholders.serviceSubsystemCode') : t('xroad.placeholders.subsystemCode')
+  props.prefix === "service" ? t("xroad.placeholders.serviceSubsystemCode") : t("xroad.placeholders.subsystemCode"),
 );
 
-const idFor = (field: string): string => `${props.idPrefix ?? ''}${field}`;
+const idFor = (field: string): string => `${props.idPrefix ?? ""}${field}`;
 </script>
 
 <template>

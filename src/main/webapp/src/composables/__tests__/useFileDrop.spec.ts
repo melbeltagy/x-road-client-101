@@ -1,13 +1,13 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { useFileDrop } from '../useFileDrop';
+import { describe, it, expect, beforeEach, vi } from "vitest";
+import { useFileDrop } from "../useFileDrop";
 
-function makeTextFile(content: string, name = 'test.pem'): File {
-  return new File([content], name, { type: 'text/plain' });
+function makeTextFile(content: string, name = "test.pem"): File {
+  return new File([content], name, { type: "text/plain" });
 }
 
 function makeDragEvent(file?: File): DragEvent {
-  const event = new Event('drop', { bubbles: true, cancelable: true }) as DragEvent;
-  Object.defineProperty(event, 'dataTransfer', {
+  const event = new Event("drop", { bubbles: true, cancelable: true }) as DragEvent;
+  Object.defineProperty(event, "dataTransfer", {
     value: {
       files: file ? [file] : [],
     },
@@ -29,7 +29,7 @@ class StubFileReader {
   }
 }
 
-describe('useFileDrop', () => {
+describe("useFileDrop", () => {
   let originalFileReader: typeof FileReader;
 
   beforeEach(() => {
@@ -43,17 +43,17 @@ describe('useFileDrop', () => {
     (global as unknown as { FileReader: typeof FileReader }).FileReader = originalFileReader;
   });
 
-  it('starts not dragging', () => {
+  it("starts not dragging", () => {
     const { isDragging } = useFileDrop(() => undefined);
     expect(isDragging.value).toBe(false);
   });
 
-  describe('drag events', () => {
-    it('onDragEnter sets isDragging=true and prevents default', () => {
+  describe("drag events", () => {
+    it("onDragEnter sets isDragging=true and prevents default", () => {
       const { isDragging, onDragEnter } = useFileDrop(() => undefined);
-      const event = new Event('dragenter') as DragEvent;
-      const prevent = vi.spyOn(event, 'preventDefault');
-      const stop = vi.spyOn(event, 'stopPropagation');
+      const event = new Event("dragenter") as DragEvent;
+      const prevent = vi.spyOn(event, "preventDefault");
+      const stop = vi.spyOn(event, "stopPropagation");
 
       onDragEnter(event);
 
@@ -62,19 +62,19 @@ describe('useFileDrop', () => {
       expect(stop).toHaveBeenCalled();
     });
 
-    it('onDragLeave sets isDragging=false', () => {
+    it("onDragLeave sets isDragging=false", () => {
       const { isDragging, onDragEnter, onDragLeave } = useFileDrop(() => undefined);
-      onDragEnter(new Event('dragenter') as DragEvent);
+      onDragEnter(new Event("dragenter") as DragEvent);
       expect(isDragging.value).toBe(true);
 
-      onDragLeave(new Event('dragleave') as DragEvent);
+      onDragLeave(new Event("dragleave") as DragEvent);
       expect(isDragging.value).toBe(false);
     });
 
-    it('onDragOver prevents default (required for drop to fire)', () => {
+    it("onDragOver prevents default (required for drop to fire)", () => {
       const { onDragOver } = useFileDrop(() => undefined);
-      const event = new Event('dragover') as DragEvent;
-      const prevent = vi.spyOn(event, 'preventDefault');
+      const event = new Event("dragover") as DragEvent;
+      const prevent = vi.spyOn(event, "preventDefault");
 
       onDragOver(event);
 
@@ -82,29 +82,29 @@ describe('useFileDrop', () => {
     });
   });
 
-  describe('onDrop', () => {
-    it('reads the dropped file and calls onContent with its text', async () => {
+  describe("onDrop", () => {
+    it("reads the dropped file and calls onContent with its text", async () => {
       const onContent = vi.fn();
       const { onDrop } = useFileDrop(onContent);
 
-      const file = makeTextFile('-----BEGIN CERTIFICATE-----');
-      Object.defineProperty(file, 'content', { value: '-----BEGIN CERTIFICATE-----' });
+      const file = makeTextFile("-----BEGIN CERTIFICATE-----");
+      Object.defineProperty(file, "content", { value: "-----BEGIN CERTIFICATE-----" });
 
       onDrop(makeDragEvent(file));
       await Promise.resolve();
       await Promise.resolve();
 
-      expect(onContent).toHaveBeenCalledWith('-----BEGIN CERTIFICATE-----');
+      expect(onContent).toHaveBeenCalledWith("-----BEGIN CERTIFICATE-----");
     });
 
-    it('clears isDragging after drop', () => {
+    it("clears isDragging after drop", () => {
       const { isDragging, onDragEnter, onDrop } = useFileDrop(() => undefined);
-      onDragEnter(new Event('dragenter') as DragEvent);
+      onDragEnter(new Event("dragenter") as DragEvent);
       onDrop(makeDragEvent());
       expect(isDragging.value).toBe(false);
     });
 
-    it('does nothing when the drop has no files', () => {
+    it("does nothing when the drop has no files", () => {
       const onContent = vi.fn();
       const { onDrop } = useFileDrop(onContent);
       onDrop(makeDragEvent());
@@ -112,13 +112,13 @@ describe('useFileDrop', () => {
     });
   });
 
-  describe('onFileInputChange', () => {
-    it('reads the selected file', async () => {
+  describe("onFileInputChange", () => {
+    it("reads the selected file", async () => {
       const onContent = vi.fn();
       const { onFileInputChange } = useFileDrop(onContent);
 
-      const file = makeTextFile('hello');
-      Object.defineProperty(file, 'content', { value: 'hello' });
+      const file = makeTextFile("hello");
+      Object.defineProperty(file, "content", { value: "hello" });
 
       const event = {
         target: { files: [file] },
@@ -128,10 +128,10 @@ describe('useFileDrop', () => {
       await Promise.resolve();
       await Promise.resolve();
 
-      expect(onContent).toHaveBeenCalledWith('hello');
+      expect(onContent).toHaveBeenCalledWith("hello");
     });
 
-    it('does nothing when no file selected', () => {
+    it("does nothing when no file selected", () => {
       const onContent = vi.fn();
       const { onFileInputChange } = useFileDrop(onContent);
 
@@ -142,8 +142,8 @@ describe('useFileDrop', () => {
     });
   });
 
-  describe('openPicker', () => {
-    it('clicks the file input ref', () => {
+  describe("openPicker", () => {
+    it("clicks the file input ref", () => {
       const { fileInputRef, openPicker } = useFileDrop(() => undefined);
       const click = vi.fn();
       fileInputRef.value = { click } as unknown as HTMLInputElement;
@@ -152,7 +152,7 @@ describe('useFileDrop', () => {
       expect(click).toHaveBeenCalled();
     });
 
-    it('is a no-op when the ref is null', () => {
+    it("is a no-op when the ref is null", () => {
       const { openPicker } = useFileDrop(() => undefined);
       expect(() => openPicker()).not.toThrow();
     });
@@ -160,4 +160,4 @@ describe('useFileDrop', () => {
 });
 
 // `afterEach` import — keep import-order at the bottom to avoid shadowing inside the test body.
-import { afterEach } from 'vitest';
+import { afterEach } from "vitest";

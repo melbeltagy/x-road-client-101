@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-import { useI18n } from 'vue-i18n';
-import type { XRoadRequest, MTlsCertificates, ServiceEndpoint } from '@/types';
-import type { HttpMethod } from '@/utils/http-methods';
+import { computed } from "vue";
+import { useI18n } from "vue-i18n";
+import type { XRoadRequest, MTlsCertificates, ServiceEndpoint } from "@/types";
+import type { HttpMethod } from "@/utils/http-methods";
 import {
   useXRoadForm,
   useXRoadValidation,
@@ -12,14 +12,14 @@ import {
   useFormCompleteness,
   useFormFlow,
   type StepKey,
-} from '@/composables';
-import ClientSection from './sections/ClientSection.vue';
-import ServiceSection from './sections/ServiceSection.vue';
-import CertificateSection from './sections/CertificateSection.vue';
-import RequestSection from './sections/RequestSection.vue';
-import KeyValueEditor from '@/components/common/KeyValueEditor.vue';
-import SectionPanel from './sections/shell/SectionPanel.vue';
-import SectionStatusChip from './sections/shell/SectionStatusChip.vue';
+} from "@/composables";
+import ClientSection from "./sections/ClientSection.vue";
+import ServiceSection from "./sections/ServiceSection.vue";
+import CertificateSection from "./sections/CertificateSection.vue";
+import RequestSection from "./sections/RequestSection.vue";
+import KeyValueEditor from "@/components/common/KeyValueEditor.vue";
+import SectionPanel from "./sections/shell/SectionPanel.vue";
+import SectionStatusChip from "./sections/shell/SectionStatusChip.vue";
 
 const props = defineProps<{
   initialRequest?: XRoadRequest | null;
@@ -62,16 +62,11 @@ const {
   initialRequestGetter: () => props.initialRequest,
   isFromHistoryGetter: () => props.isFromHistory ?? false,
   errorsGetter: () => errors.value,
-  onFormChange: (data, valid, certs) => emit('formChange', data, valid, certs),
-  onRequestModified: () => emit('requestModified'),
+  onFormChange: (data, valid, certs) => emit("formChange", data, valid, certs),
+  onRequestModified: () => emit("requestModified"),
 });
 
-const {
-  subsystemSuggestions,
-  isLoadingSuggestions,
-  suggestionsError,
-  watchSecurityServerUrl,
-} = useSubsystemSuggestions();
+const { subsystemSuggestions, isLoadingSuggestions, suggestionsError, watchSecurityServerUrl } = useSubsystemSuggestions();
 
 // Single source of truth for the available services on the current
 // (security server, client subsystem, service subsystem) triple.
@@ -107,12 +102,12 @@ const { serviceSubsystemComplete } = useFormCompleteness(() => ({
   service: { subsystem: formData.service.subsystem },
 }));
 const serviceSectionChipCount = computed(() =>
-  serviceSubsystemComplete.value ? availableServices.value.length : subsystemSuggestions.value.length
+  serviceSubsystemComplete.value ? availableServices.value.length : subsystemSuggestions.value.length,
 );
 const serviceSectionChipText = computed(() =>
   serviceSubsystemComplete.value
-    ? t('xroad.service.servicesAvailable', { count: availableServices.value.length })
-    : t('xroad.service.providersAvailable', { count: subsystemSuggestions.value.length })
+    ? t("xroad.service.servicesAvailable", { count: availableServices.value.length })
+    : t("xroad.service.providersAvailable", { count: subsystemSuggestions.value.length }),
 );
 
 // When the service subsystem is complete but the upstream returned zero
@@ -124,7 +119,7 @@ const serviceSectionChipInfoText = computed(() => {
   if (isLoadingServices.value) return null;
   if (servicesError.value) return null;
   if (availableServices.value.length > 0) return null;
-  return t('xroad.service.servicesAvailable', { count: 0 });
+  return t("xroad.service.servicesAvailable", { count: 0 });
 });
 
 // Watch security server URL for subsystem suggestions
@@ -135,7 +130,7 @@ const { navigateToStep } = useFormStepNavigation(openPanels);
 
 function handleSubmit(): void {
   if (validateForm(formData)) {
-    emit('submit', buildRequest());
+    emit("submit", buildRequest());
   }
 }
 
@@ -268,10 +263,7 @@ defineExpose({
           </SectionPanel>
 
           <SectionPanel value="certificates" icon="lock" :title="t('xroad.certificates.title')" :state="stateFor('certificates')">
-            <CertificateSection
-              :certificates="certificates"
-              @update:certificates="certificates = $event"
-            />
+            <CertificateSection :certificates="certificates" @update:certificates="certificates = $event" />
           </SectionPanel>
         </v-expansion-panels>
       </v-card-text>

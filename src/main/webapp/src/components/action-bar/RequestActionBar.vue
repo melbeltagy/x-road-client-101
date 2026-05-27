@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-import { useI18n } from 'vue-i18n';
-import type { MTlsCertificates, XRoadRequest } from '@/types';
-import { generateCurlCommand } from '@/utils/curl-generator';
-import { buildServiceUrl } from '@/utils/xroad-url';
-import { useFormCompleteness } from '@/composables';
-import StatusIndicator from './StatusIndicator.vue';
-import SummaryRow from './SummaryRow.vue';
+import { computed } from "vue";
+import { useI18n } from "vue-i18n";
+import type { MTlsCertificates, XRoadRequest } from "@/types";
+import { generateCurlCommand } from "@/utils/curl-generator";
+import { buildServiceUrl } from "@/utils/xroad-url";
+import { useFormCompleteness } from "@/composables";
+import StatusIndicator from "./StatusIndicator.vue";
+import SummaryRow from "./SummaryRow.vue";
 
 const props = defineProps<{
   client: {
@@ -38,7 +38,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   submit: [];
-  showAlert: [type: 'success' | 'error' | 'warning', message: string];
+  showAlert: [type: "success" | "error" | "warning", message: string];
   requestImport: [];
 }>();
 
@@ -48,11 +48,11 @@ const clientHeader = computed(() => {
   const { instanceId, memberClass, memberCode, subsystemCode } = props.client.subsystem;
   // Show partial client identifier as user types
   const parts = [instanceId, memberClass, memberCode, subsystemCode];
-  const hasAnyValue = parts.some(p => p);
+  const hasAnyValue = parts.some((p) => p);
   if (!hasAnyValue) {
     return null;
   }
-  return parts.map(p => p || '').join('/');
+  return parts.map((p) => p || "").join("/");
 });
 
 const serviceUrl = computed(() => {
@@ -68,18 +68,18 @@ const serviceUrl = computed(() => {
   }
 
   return buildServiceUrl(
-    securityServerUrl || '',
+    securityServerUrl || "",
     {
       subsystem: {
-        instanceId: instanceId || '',
-        memberClass: memberClass || '',
-        memberCode: memberCode || '',
-        subsystemCode: subsystemCode || '',
+        instanceId: instanceId || "",
+        memberClass: memberClass || "",
+        memberCode: memberCode || "",
+        subsystemCode: subsystemCode || "",
       },
-      serviceCode: serviceCode || '',
+      serviceCode: serviceCode || "",
       serviceVersion: serviceVersion || undefined,
     },
-    path || ''
+    path || "",
   );
 });
 
@@ -92,7 +92,7 @@ const hasMtls = computed(() => {
 });
 
 const hasHttpsNoAuth = computed(() => {
-  return !!(props.certificates.securityServerCert?.trim());
+  return !!props.certificates.securityServerCert?.trim();
 });
 
 const {
@@ -109,11 +109,8 @@ const {
 
 // Service URL ready: security server + service subsystem + service code + path.
 // (Client subsystem is checked separately as isClientComplete.)
-const isServiceComplete = computed(() =>
-  securityServerComplete.value &&
-  serviceSubsystemComplete.value &&
-  serviceCodeComplete.value &&
-  pathComplete.value
+const isServiceComplete = computed(
+  () => securityServerComplete.value && serviceSubsystemComplete.value && serviceCodeComplete.value && pathComplete.value,
 );
 
 interface TileSpec {
@@ -129,25 +126,25 @@ interface TileSpec {
 const tiles = computed<TileSpec[]>(() => [
   {
     ok: hasMtls.value,
-    okLabelKey: 'xroad.status.mtlsEnabled',
-    failLabelKey: 'xroad.status.mtlsDisabled',
+    okLabelKey: "xroad.status.mtlsEnabled",
+    failLabelKey: "xroad.status.mtlsDisabled",
   },
   {
     ok: hasHttpsNoAuth.value,
-    okLabelKey: 'xroad.status.httpsNoAuth',
-    failLabelKey: 'xroad.status.noHttpsCert',
+    okLabelKey: "xroad.status.httpsNoAuth",
+    failLabelKey: "xroad.status.noHttpsCert",
   },
   // Request status is tri-state; encoded as ok=true|false|null elsewhere
 ]);
 
 const requestStatusIndicator = computed(() => {
   if (props.lastRequestSuccess === null) {
-    return { icon: 'radio_button_unchecked', color: 'grey', label: t('xroad.status.notSent') };
+    return { icon: "radio_button_unchecked", color: "grey", label: t("xroad.status.notSent") };
   }
   if (props.lastRequestSuccess) {
-    return { icon: 'check_circle', color: 'success', label: t('xroad.status.success') };
+    return { icon: "check_circle", color: "success", label: t("xroad.status.success") };
   }
-  return { icon: 'cancel', color: 'error', label: t('xroad.status.error') };
+  return { icon: "cancel", color: "error", label: t("xroad.status.error") };
 });
 
 // Copy request as cURL command
@@ -157,9 +154,9 @@ async function copyAsCurl(): Promise<void> {
   try {
     const curlCommand = generateCurlCommand(props.request);
     await navigator.clipboard.writeText(curlCommand);
-    emit('showAlert', 'success', t('xroad.toast.curlCopied'));
+    emit("showAlert", "success", t("xroad.toast.curlCopied"));
   } catch (error) {
-    emit('showAlert', 'error', t('xroad.toast.curlCopyFailed'));
+    emit("showAlert", "error", t("xroad.toast.curlCopyFailed"));
   }
 }
 </script>
@@ -167,17 +164,9 @@ async function copyAsCurl(): Promise<void> {
 <template>
   <v-footer app class="status-panel elevation-4">
     <v-container fluid class="pa-4">
-      <SummaryRow
-        :label="t('xroad.status.client')"
-        :value="clientHeader"
-        :incomplete="!isClientComplete"
-      />
+      <SummaryRow :label="t('xroad.status.client')" :value="clientHeader" :incomplete="!isClientComplete" />
 
-      <SummaryRow
-        :label="t('xroad.status.serviceUrl')"
-        :value="serviceUrl"
-        :incomplete="!isServiceComplete"
-      />
+      <SummaryRow :label="t('xroad.status.serviceUrl')" :value="serviceUrl" :incomplete="!isServiceComplete" />
 
       <!-- Indicators and Send Button -->
       <v-row align="center">
@@ -199,24 +188,13 @@ async function copyAsCurl(): Promise<void> {
 
         <!-- cURL action group (Import + Export clustered together) -->
         <v-col cols="12" md="4" class="d-flex justify-end align-center ga-2">
-          <v-btn
-            variant="outlined"
-            color="primary"
-            size="default"
-            @click="emit('requestImport')"
-          >
+          <v-btn variant="outlined" color="primary" size="default" @click="emit('requestImport')">
             <v-icon start>download</v-icon>
-            {{ t('xroad.action.importCurl') }}
+            {{ t("xroad.action.importCurl") }}
           </v-btn>
-          <v-btn
-            variant="outlined"
-            color="primary"
-            size="default"
-            :disabled="!request || !isServiceComplete"
-            @click="copyAsCurl"
-          >
+          <v-btn variant="outlined" color="primary" size="default" :disabled="!request || !isServiceComplete" @click="copyAsCurl">
             <v-icon start>content_copy</v-icon>
-            {{ t('xroad.action.exportCurl') }}
+            {{ t("xroad.action.exportCurl") }}
           </v-btn>
         </v-col>
 
@@ -231,7 +209,7 @@ async function copyAsCurl(): Promise<void> {
             @click="emit('submit')"
           >
             <v-icon v-if="!loading" start>send</v-icon>
-            {{ loading ? t('xroad.request.sending') : t('xroad.request.submit') }}
+            {{ loading ? t("xroad.request.sending") : t("xroad.request.submit") }}
           </v-btn>
         </v-col>
       </v-row>

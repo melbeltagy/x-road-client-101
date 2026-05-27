@@ -1,7 +1,7 @@
-import type { XRoadRequest } from '@/types';
-import { buildServiceUrl, formatXRoadClient } from './xroad-url';
-import { methodAllowsBody } from './http-methods';
-import { shellSingleQuote } from './shell-quote';
+import type { XRoadRequest } from "@/types";
+import { buildServiceUrl, formatXRoadClient } from "./xroad-url";
+import { methodAllowsBody } from "./http-methods";
+import { shellSingleQuote } from "./shell-quote";
 
 export function generateCurlCommand(request: XRoadRequest): string {
   const { client, service, request: reqDetails } = request;
@@ -15,10 +15,10 @@ export function generateCurlCommand(request: XRoadRequest): string {
     url += `?${params}`;
   }
 
-  const parts: string[] = ['curl', '-v'];
+  const parts: string[] = ["curl", "-v"];
 
   // Method
-  if (reqDetails.method !== 'GET') {
+  if (reqDetails.method !== "GET") {
     parts.push(`-X ${reqDetails.method}`);
   }
 
@@ -36,7 +36,7 @@ export function generateCurlCommand(request: XRoadRequest): string {
   // Custom headers
   if (reqDetails.headers) {
     for (const [key, value] of Object.entries(reqDetails.headers)) {
-      if (key.toLowerCase() !== 'content-type') {
+      if (key.toLowerCase() !== "content-type") {
         parts.push(`-H ${shellSingleQuote(`${key}: ${value}`)}`);
       }
     }
@@ -51,15 +51,15 @@ export function generateCurlCommand(request: XRoadRequest): string {
   if (client.mtlsCertificates) {
     const { clientCert, clientPrivateKey, securityServerCert } = client.mtlsCertificates;
     if (clientCert) {
-      parts.push('--cert <client-cert.pem>');
+      parts.push("--cert <client-cert.pem>");
     }
     if (clientPrivateKey) {
-      parts.push('--key <client-key.pem>');
+      parts.push("--key <client-key.pem>");
     }
     if (securityServerCert) {
-      parts.push('--cacert <server-cert.pem>');
+      parts.push("--cacert <server-cert.pem>");
     }
   }
 
-  return parts.join(' \\\n  ');
+  return parts.join(" \\\n  ");
 }

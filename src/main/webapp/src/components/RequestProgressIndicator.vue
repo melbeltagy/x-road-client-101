@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { useI18n } from 'vue-i18n';
-import type { XRoadRequest, MTlsCertificates } from '@/types';
-import { useFormFlow, REQUIRED_STEPS, OPTIONAL_STEPS, type StepKey, type StepState } from '@/composables';
+import { useI18n } from "vue-i18n";
+import type { XRoadRequest, MTlsCertificates } from "@/types";
+import { useFormFlow, REQUIRED_STEPS, OPTIONAL_STEPS, type StepKey, type StepState } from "@/composables";
 
 const props = defineProps<{
   formData: Partial<XRoadRequest>;
@@ -37,10 +37,14 @@ const steps: Step[] = [
 
 function iconFor(state: StepState): { name: string; color: string } {
   switch (state) {
-    case 'done': return { name: 'check_circle', color: 'success' };
-    case 'next': return { name: 'play_arrow', color: 'warning' };
-    case 'pending': return { name: 'radio_button_unchecked', color: 'grey' };
-    case 'optional': return { name: 'radio_button_unchecked', color: 'grey-lighten-1' };
+    case "done":
+      return { name: "check_circle", color: "success" };
+    case "next":
+      return { name: "play_arrow", color: "warning" };
+    case "pending":
+      return { name: "radio_button_unchecked", color: "grey" };
+    case "optional":
+      return { name: "radio_button_unchecked", color: "grey-lighten-1" };
   }
 }
 </script>
@@ -83,7 +87,9 @@ function iconFor(state: StepState): { name: string; color: string } {
   cursor: pointer;
   color: inherit;
   font: inherit;
-  transition: background-color 0.15s ease, border-color 0.15s ease;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease;
 }
 
 .step:hover {

@@ -10,7 +10,7 @@ docker network create xrd-client-101   # one-time; skip if it already exists
 docker run -p 8080:8080 --network xrd-client-101 ghcr.io/melbeltagy/x-road-client-101:latest
 ```
 
-Open http://localhost:8080
+Open <http://localhost:8080>
 
 ## Docker Compose
 
@@ -20,7 +20,7 @@ See [docker-compose.yml](docker-compose.yml) for the full configuration.
 docker compose -f docker/docker-compose.yml up -d
 ```
 
-Open http://localhost:8080
+Open <http://localhost:8080>
 
 ## Connecting to a Local Security Server
 

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { useI18n } from 'vue-i18n';
-import type { StepKey } from '@/composables';
+import { useI18n } from "vue-i18n";
+import type { StepKey } from "@/composables";
 
 defineProps<{
   /** Null when nothing is required — the breadcrumb hides itself. */
@@ -17,7 +17,7 @@ const { t } = useI18n();
 <template>
   <div v-if="nextStepKey" class="next-step-breadcrumb">
     <v-icon size="small" color="warning" class="mr-2">play_arrow</v-icon>
-    <strong class="mr-2">{{ t('xroad.flow.nextLabel') }}:</strong>
+    <strong class="mr-2">{{ t("xroad.flow.nextLabel") }}:</strong>
     <button type="button" class="next-link" @click="emit('navigate', nextStepKey)">
       {{ t(`xroad.progress.${nextStepKey}`) }}
     </button>

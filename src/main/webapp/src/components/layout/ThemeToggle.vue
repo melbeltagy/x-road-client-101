@@ -1,20 +1,20 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-import { useI18n } from 'vue-i18n';
-import { useThemeStore, type ThemeMode } from '@/stores/theme';
+import { computed } from "vue";
+import { useI18n } from "vue-i18n";
+import { useThemeStore, type ThemeMode } from "@/stores/theme";
 
 const { t } = useI18n();
 const themeStore = useThemeStore();
 
 const themeOptions: { value: ThemeMode; icon: string; labelKey: string }[] = [
-  { value: 'light', icon: 'light_mode', labelKey: 'global.menu.theme.light' },
-  { value: 'dark', icon: 'dark_mode', labelKey: 'global.menu.theme.dark' },
-  { value: 'system', icon: 'computer', labelKey: 'global.menu.theme.system' },
+  { value: "light", icon: "light_mode", labelKey: "global.menu.theme.light" },
+  { value: "dark", icon: "dark_mode", labelKey: "global.menu.theme.dark" },
+  { value: "system", icon: "computer", labelKey: "global.menu.theme.system" },
 ];
 
 const currentIcon = computed(() => {
   const option = themeOptions.find((o) => o.value === themeStore.themeMode);
-  return option?.icon ?? 'computer';
+  return option?.icon ?? "computer";
 });
 
 function selectTheme(mode: ThemeMode): void {

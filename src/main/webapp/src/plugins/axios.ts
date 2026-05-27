@@ -1,10 +1,10 @@
-import axios, { type AxiosError, type AxiosResponse } from 'axios';
+import axios, { type AxiosError, type AxiosResponse } from "axios";
 
 const TIMEOUT = 60000;
 
 const axiosInstance = axios.create({
   timeout: TIMEOUT,
-  baseURL: '',
+  baseURL: "",
 });
 
 axiosInstance.interceptors.request.use(
@@ -13,7 +13,7 @@ axiosInstance.interceptors.request.use(
   },
   (error: AxiosError) => {
     return Promise.reject(error);
-  }
+  },
 );
 
 axiosInstance.interceptors.response.use(
@@ -22,7 +22,7 @@ axiosInstance.interceptors.response.use(
   },
   (error: AxiosError) => {
     return Promise.reject(error);
-  }
+  },
 );
 
 export default axiosInstance;

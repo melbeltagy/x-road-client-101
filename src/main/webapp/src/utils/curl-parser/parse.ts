@@ -1,7 +1,7 @@
-import type { XRoadRequest } from '@/types';
-import { HTTP_METHODS, methodAllowsBody, type HttpMethod } from '../http-methods';
-import { normalizeAndMap, mapSpan, type ErrorSpan } from './normalize';
-import { tokenize, type Token, type TokenizeError } from './tokenize';
+import type { XRoadRequest } from "@/types";
+import { HTTP_METHODS, methodAllowsBody, type HttpMethod } from "../http-methods";
+import { normalizeAndMap, mapSpan, type ErrorSpan } from "./normalize";
+import { tokenize, type Token, type TokenizeError } from "./tokenize";
 
 // Error/warning messages are intentionally English-only: actionable content is literal code (-X, /r1/, --cert, X-Road-Client) that doesn't translate, and the dialog's underline overlay already shows the user where the problem is.
 export interface ParseCurlResult {
@@ -13,7 +13,7 @@ export interface ParseCurlResult {
 
 // Flags accepted with no further effect. -v is exported by curl-generator,
 // so we always allow it; rejecting it would break our own round-trip.
-const ACCEPTED_NOOP_FLAGS = new Set(['-v', '--verbose']);
+const ACCEPTED_NOOP_FLAGS = new Set(["-v", "--verbose"]);
 
 // Heuristic: treat segment after serviceCode as serviceVersion when it
 // looks like a version identifier (v1, v2, 1.0, etc).
@@ -31,7 +31,7 @@ export function parseCurlCommand(input: string): ParseCurlResult {
 
   const trimmed = input.trim();
   if (!trimmed) {
-    return { request: null, warnings, error: 'Empty input' };
+    return { request: null, warnings, error: "Empty input" };
   }
 
   const { normalized, mapToOriginal } = normalizeAndMap(input);
@@ -50,15 +50,15 @@ export function parseCurlCommand(input: string): ParseCurlResult {
   }
 
   if (tokens.length === 0) {
-    return { request: null, warnings, error: 'No tokens found' };
+    return { request: null, warnings, error: "No tokens found" };
   }
 
   const first = tokens[0].value.toLowerCase();
-  if (!first.endsWith('curl') && first !== 'curl') {
+  if (!first.endsWith("curl") && first !== "curl") {
     return {
       request: null,
       warnings,
-      error: 'Not a valid cURL command',
+      error: "Not a valid cURL command",
       errorSpan: mapSpan({ start: tokens[0].start, end: tokens[0].end }, mapToOriginal),
     };
   }
@@ -74,9 +74,9 @@ export function parseCurlCommand(input: string): ParseCurlResult {
     const tok = tokens[i];
     const v = tok.value;
 
-    if (v === '-X' || v === '--request') {
+    if (v === "-X" || v === "--request") {
       const arg = tokens[++i];
-      if (!arg) return errAt('Missing argument for ' + v, tok, mapToOriginal);
+      if (!arg) return errAt("Missing argument for " + v, tok, mapToOriginal);
       const up = arg.value.toUpperCase() as HttpMethod;
       if (!(HTTP_METHODS as readonly string[]).includes(up)) {
         return errAt(`Unsupported HTTP method: ${arg.value}`, arg, mapToOriginal);
@@ -86,10 +86,10 @@ export function parseCurlCommand(input: string): ParseCurlResult {
       continue;
     }
 
-    if (v === '-H' || v === '--header') {
+    if (v === "-H" || v === "--header") {
       const arg = tokens[++i];
-      if (!arg) return errAt('Missing argument for ' + v, tok, mapToOriginal);
-      const idx = arg.value.indexOf(':');
+      if (!arg) return errAt("Missing argument for " + v, tok, mapToOriginal);
+      const idx = arg.value.indexOf(":");
       if (idx < 0) {
         warnings.push(`Ignored malformed header: ${arg.value}`);
         continue;
@@ -100,14 +100,14 @@ export function parseCurlCommand(input: string): ParseCurlResult {
       continue;
     }
 
-    if (v === '-d' || v === '--data' || v === '--data-raw' || v === '--data-binary' || v === '--data-ascii') {
+    if (v === "-d" || v === "--data" || v === "--data-raw" || v === "--data-binary" || v === "--data-ascii") {
       const arg = tokens[++i];
-      if (arg === undefined) return errAt('Missing argument for ' + v, tok, mapToOriginal);
+      if (arg === undefined) return errAt("Missing argument for " + v, tok, mapToOriginal);
       body = arg.value;
       continue;
     }
 
-    if (v === '--cert' || v === '--key' || v === '--cacert' || v === '-E') {
+    if (v === "--cert" || v === "--key" || v === "--cacert" || v === "-E") {
       mtlsDetected = true;
       i++; // consume the file argument
       continue;
@@ -117,11 +117,11 @@ export function parseCurlCommand(input: string): ParseCurlResult {
       continue;
     }
 
-    if (v.startsWith('-')) {
+    if (v.startsWith("-")) {
       return errAt(
         `Unsupported flag '${v}'. This importer only accepts flags used in X-Road cURL commands (-X, -H, -d/--data, --cert, --key, --cacert, -v).`,
         tok,
-        mapToOriginal
+        mapToOriginal,
       );
     }
 
@@ -134,7 +134,7 @@ export function parseCurlCommand(input: string): ParseCurlResult {
   }
 
   if (!urlToken) {
-    return { request: null, warnings, error: 'No URL found in cURL command' };
+    return { request: null, warnings, error: "No URL found in cURL command" };
   }
 
   let parsedUrl: URL;
@@ -152,11 +152,11 @@ export function parseCurlCommand(input: string): ParseCurlResult {
     warnings.push(urlInfo.warning);
   }
 
-  const xRoadClientValue = findHeader(headers, 'x-road-client');
+  const xRoadClientValue = findHeader(headers, "x-road-client");
   if (!xRoadClientValue) {
-    return { request: null, warnings, error: 'Missing required X-Road-Client header' };
+    return { request: null, warnings, error: "Missing required X-Road-Client header" };
   }
-  const clientParts = xRoadClientValue.split('/');
+  const clientParts = xRoadClientValue.split("/");
   if (clientParts.length !== 4 || clientParts.some((p) => !p.trim())) {
     return {
       request: null,
@@ -166,17 +166,17 @@ export function parseCurlCommand(input: string): ParseCurlResult {
   }
 
   if (!method) {
-    method = body !== undefined ? 'POST' : 'GET';
-  } else if (!bodyExplicitMethod && body !== undefined && method === 'GET') {
-    method = 'POST';
+    method = body !== undefined ? "POST" : "GET";
+  } else if (!bodyExplicitMethod && body !== undefined && method === "GET") {
+    method = "POST";
   }
 
   const remainingHeaders: Record<string, string> = {};
   let contentType: string | undefined;
   for (const [k, val] of Object.entries(headers)) {
     const lower = k.toLowerCase();
-    if (lower === 'x-road-client') continue;
-    if (lower === 'content-type') {
+    if (lower === "x-road-client") continue;
+    if (lower === "content-type") {
       contentType = val;
       continue;
     }
@@ -190,7 +190,7 @@ export function parseCurlCommand(input: string): ParseCurlResult {
 
   if (mtlsDetected) {
     warnings.push(
-      'mTLS flags detected (--cert/--key/--cacert) but certificate contents cannot be imported. Please add them via the Security tab.'
+      "mTLS flags detected (--cert/--key/--cacert) but certificate contents cannot be imported. Please add them via the Security tab.",
     );
   }
 
@@ -249,12 +249,12 @@ interface XRoadUrlInfo {
 }
 
 function parseXRoadUrl(url: URL): XRoadUrlInfo {
-  const segments = url.pathname.split('/').filter((s) => s.length > 0);
-  if (segments.length === 0 || segments[0] !== 'r1') {
-    return { error: 'URL is not an X-Road REST endpoint (expected /r1/... path)' };
+  const segments = url.pathname.split("/").filter((s) => s.length > 0);
+  if (segments.length === 0 || segments[0] !== "r1") {
+    return { error: "URL is not an X-Road REST endpoint (expected /r1/... path)" };
   }
   if (segments.length < 6) {
-    return { error: 'X-Road URL is incomplete (missing service identifier segments)' };
+    return { error: "X-Road URL is incomplete (missing service identifier segments)" };
   }
 
   const [, instanceId, memberClass, memberCode, subsystemCode, serviceCode, ...rest] = segments;
@@ -267,7 +267,7 @@ function parseXRoadUrl(url: URL): XRoadUrlInfo {
     pathSegments = rest.slice(1);
   }
 
-  const path = '/' + pathSegments.join('/');
+  const path = "/" + pathSegments.join("/");
 
   return {
     instanceId,
@@ -276,7 +276,7 @@ function parseXRoadUrl(url: URL): XRoadUrlInfo {
     subsystemCode,
     serviceCode,
     serviceVersion,
-    path: path === '/' ? '/' : path,
+    path: path === "/" ? "/" : path,
   };
 }
 

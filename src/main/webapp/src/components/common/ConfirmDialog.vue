@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useI18n } from 'vue-i18n';
+import { useI18n } from "vue-i18n";
 
 withDefaults(
   defineProps<{
@@ -14,12 +14,12 @@ withDefaults(
     title: undefined,
     confirmLabel: undefined,
     cancelLabel: undefined,
-    color: 'primary',
-  }
+    color: "primary",
+  },
 );
 
 const emit = defineEmits<{
-  'update:modelValue': [value: boolean];
+  "update:modelValue": [value: boolean];
   confirm: [];
   cancel: [];
 }>();
@@ -27,33 +27,28 @@ const emit = defineEmits<{
 const { t } = useI18n();
 
 function handleCancel(): void {
-  emit('cancel');
-  emit('update:modelValue', false);
+  emit("cancel");
+  emit("update:modelValue", false);
 }
 
 function handleConfirm(): void {
-  emit('confirm');
-  emit('update:modelValue', false);
+  emit("confirm");
+  emit("update:modelValue", false);
 }
 </script>
 
 <template>
-  <v-dialog
-    :model-value="modelValue"
-    @update:model-value="emit('update:modelValue', $event)"
-    max-width="500"
-    persistent
-  >
+  <v-dialog :model-value="modelValue" @update:model-value="emit('update:modelValue', $event)" max-width="500" persistent>
     <v-card>
       <v-card-title v-if="title">{{ title }}</v-card-title>
       <v-card-text>{{ message }}</v-card-text>
       <v-card-actions>
         <v-spacer />
         <v-btn variant="text" @click="handleCancel">
-          {{ cancelLabel ?? t('entity.action.cancel') }}
+          {{ cancelLabel ?? t("entity.action.cancel") }}
         </v-btn>
         <v-btn :color="color" variant="flat" @click="handleConfirm">
-          {{ confirmLabel ?? t('entity.action.confirm') }}
+          {{ confirmLabel ?? t("entity.action.confirm") }}
         </v-btn>
       </v-card-actions>
     </v-card>

@@ -106,6 +106,11 @@ tasks.named("check") {
 
 // SpotBugs: static analysis. spotbugsMain/spotbugsTest are auto-wired into `check` by the plugin.
 // HTML reports are enabled for humans; XML disabled (no tooling consumes it yet).
+// Filter file suppresses EI_EXPOSE_REP/EI_EXPOSE_REP2 for DTO classes (immutable view objects).
+spotbugs {
+    excludeFilter.set(file("${project.rootDir}/config/spotbugs/exclude.xml"))
+}
+
 tasks.withType<com.github.spotbugs.snom.SpotBugsTask>().configureEach {
     reports.create("html") {
         required.set(true)

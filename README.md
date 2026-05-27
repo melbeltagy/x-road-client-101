@@ -5,20 +5,23 @@ A learning tool for developers new to X-Road. See how client and service identif
 ## Quick Start
 
 **Docker:**
+
 ```bash
 docker run -p 8080:8080 ghcr.io/melbeltagy/x-road-client-101:latest
 ```
 
 **From source:**
+
 ```bash
 ./gradlew
 ```
 
-Open http://localhost:8080
+Open <http://localhost:8080>
 
 ## Docker
 
 See [docker/README.md](docker/README.md) for full Docker documentation including:
+
 - Docker Compose setup
 - Connecting to a local Security Server
 - Configuration options
@@ -42,7 +45,7 @@ See [docker/README.md](docker/README.md) for full Docker documentation including
 cd src/main/webapp && pnpm dev
 ```
 
-Open http://localhost:9000 (note: frontend runs on port 9000 in hot reload mode)
+Open <http://localhost:9000> (note: frontend runs on port 9000 in hot reload mode)
 
 ### Production build
 
@@ -129,14 +132,14 @@ lefthook install
 
 ## Screenshots
 
-**Client and service identifiers**
+### Client and service identifiers
 
 ![Identifiers Tab](images/IDs.png)
 
-**Request configuration and response viewer**
+### Request configuration and response viewer
 
 ![Request Tab](images/Request.png)
 
-**Dark theme and request history**
+### Dark theme and request history
 
 ![Dark Theme](images/dark-theme.png)

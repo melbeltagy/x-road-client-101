@@ -19,39 +19,14 @@ defineProps<{
 </script>
 
 <template>
-  <v-progress-circular
-    v-if="loading"
-    indeterminate
-    size="16"
-    width="2"
-    color="primary"
-    class="ml-2"
-  />
-  <v-chip
-    v-else-if="successCount && successCount > 0 && successText"
-    size="small"
-    color="success"
-    variant="tonal"
-    class="ml-2"
-  >
+  <v-progress-circular v-if="loading" indeterminate size="16" width="2" color="primary" class="ml-2" />
+  <v-chip v-else-if="successCount && successCount > 0 && successText" size="small" color="success" variant="tonal" class="ml-2">
     {{ successText }}
   </v-chip>
-  <v-chip
-    v-else-if="error"
-    size="small"
-    color="warning"
-    variant="tonal"
-    class="ml-2"
-  >
+  <v-chip v-else-if="error" size="small" color="warning" variant="tonal" class="ml-2">
     {{ error }}
   </v-chip>
-  <v-chip
-    v-else-if="infoText"
-    size="small"
-    color="info"
-    variant="tonal"
-    class="ml-2"
-  >
+  <v-chip v-else-if="infoText" size="small" color="info" variant="tonal" class="ml-2">
     {{ infoText }}
   </v-chip>
 </template>

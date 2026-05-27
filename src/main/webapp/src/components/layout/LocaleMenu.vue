@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useLocaleStore, SUPPORTED_LOCALES, type SupportedLocale } from '@/stores/locale';
+import { useLocaleStore, SUPPORTED_LOCALES, type SupportedLocale } from "@/stores/locale";
 
 const localeStore = useLocaleStore();
 

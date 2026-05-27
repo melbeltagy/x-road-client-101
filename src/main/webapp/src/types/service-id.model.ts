@@ -1,4 +1,4 @@
-import type { SubsystemId } from './subsystem-id.model';
+import type { SubsystemId } from "./subsystem-id.model";
 
 export interface ServiceId {
   subsystem: SubsystemId;

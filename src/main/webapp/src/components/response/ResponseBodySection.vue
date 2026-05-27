@@ -1,31 +1,27 @@
 <script setup lang="ts">
-import { useI18n } from 'vue-i18n';
-import { toHumanReadableSize } from '@/utils/format';
-import { useResponseBodyView } from '@/composables';
+import { useI18n } from "vue-i18n";
+import { toHumanReadableSize } from "@/utils/format";
+import { useResponseBodyView } from "@/composables";
 
 const props = defineProps<{
   body?: string;
   contentType?: string;
-  effectiveTheme: 'light' | 'dark';
+  effectiveTheme: "light" | "dark";
 }>();
 
 const { t } = useI18n();
 
-const {
-  viewMode,
-  bodySize,
-  bodyTooLarge,
-  isValidJson,
-  formattedJson,
-  downloadResponse,
-} = useResponseBodyView(() => props.body, () => props.contentType);
+const { viewMode, bodySize, bodyTooLarge, isValidJson, formattedJson, downloadResponse } = useResponseBodyView(
+  () => props.body,
+  () => props.contentType,
+);
 </script>
 
 <template>
   <v-expansion-panel value="body">
     <v-expansion-panel-title>
       <div class="d-flex justify-space-between align-center w-100 pe-2">
-        <strong>{{ t('xroad.response.responseBody') }}</strong>
+        <strong>{{ t("xroad.response.responseBody") }}</strong>
         <div class="d-flex align-center ga-2">
           <!-- Format toggle buttons -->
           <v-btn-toggle
@@ -36,14 +32,14 @@ const {
             variant="outlined"
             @click.stop
           >
-            <v-btn value="raw" size="small">{{ t('xroad.response.raw') }}</v-btn>
-            <v-btn value="json" size="small">{{ t('xroad.response.jsonFormat') }}</v-btn>
+            <v-btn value="raw" size="small">{{ t("xroad.response.raw") }}</v-btn>
+            <v-btn value="json" size="small">{{ t("xroad.response.jsonFormat") }}</v-btn>
           </v-btn-toggle>
 
           <span v-if="body" class="text-caption text-medium-emphasis">
-            {{ t('xroad.response.size') }}: {{ toHumanReadableSize(bodySize) }}
+            {{ t("xroad.response.size") }}: {{ toHumanReadableSize(bodySize) }}
             <v-chip v-if="bodyTooLarge" color="warning" size="x-small" class="ml-1">
-              {{ t('xroad.response.tooLarge') }}
+              {{ t("xroad.response.tooLarge") }}
             </v-chip>
           </span>
         </div>
@@ -52,16 +48,16 @@ const {
     <v-expansion-panel-text>
       <!-- No body -->
       <div v-if="!body" class="text-medium-emphasis font-italic">
-        {{ t('xroad.response.noBody') }}
+        {{ t("xroad.response.noBody") }}
       </div>
 
       <!-- Body too large -->
       <div v-else-if="bodyTooLarge">
         <v-alert type="warning" variant="tonal" class="mb-3">
-          {{ t('xroad.response.bodyTooLargeMessage') }}
+          {{ t("xroad.response.bodyTooLargeMessage") }}
         </v-alert>
         <v-btn color="primary" size="small" @click="downloadResponse">
-          {{ t('xroad.response.downloadResponse') }}
+          {{ t("xroad.response.downloadResponse") }}
         </v-btn>
       </div>
 
@@ -73,7 +69,7 @@ const {
       <!-- Invalid JSON fallback -->
       <div v-else-if="viewMode === 'json' && !isValidJson">
         <v-alert type="warning" variant="tonal" class="mb-3">
-          {{ t('xroad.response.invalidJson') }}
+          {{ t("xroad.response.invalidJson") }}
         </v-alert>
         <pre class="response-body-pre" :class="{ 'dark-theme': effectiveTheme === 'dark' }">{{ body }}</pre>
       </div>

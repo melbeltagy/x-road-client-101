@@ -1,4 +1,4 @@
-import { onUnmounted, getCurrentInstance } from 'vue';
+import { onUnmounted, getCurrentInstance } from "vue";
 
 /**
  * Wrap a function so that successive calls within `ms` are coalesced

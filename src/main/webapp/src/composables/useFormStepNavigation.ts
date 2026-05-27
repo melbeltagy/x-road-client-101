@@ -1,13 +1,13 @@
-import type { Ref } from 'vue';
+import type { Ref } from "vue";
 
 export type StepKey =
-  | 'securityServer'
-  | 'clientIdentifier'
-  | 'serviceIdentifier'
-  | 'endpoint'
-  | 'queryParameters'
-  | 'customHeaders'
-  | 'certificates';
+  | "securityServer"
+  | "clientIdentifier"
+  | "serviceIdentifier"
+  | "endpoint"
+  | "queryParameters"
+  | "customHeaders"
+  | "certificates";
 
 // Focus an input by id and select its content so the user can type
 // immediately after clicking a step chip. preventScroll: true keeps
@@ -31,29 +31,29 @@ interface StepDestination {
 const STEP_DESTINATIONS: Record<StepKey, StepDestination> = {
   securityServer: {
     openPanels: [], // SS URL is above the accordions
-    focusId: 'securityServerUrl',
+    focusId: "securityServerUrl",
   },
   clientIdentifier: {
-    openPanels: ['client'],
-    focusId: 'instanceId',
+    openPanels: ["client"],
+    focusId: "instanceId",
   },
   serviceIdentifier: {
-    openPanels: ['service'],
-    focusId: 'serviceinstanceId',
+    openPanels: ["service"],
+    focusId: "serviceinstanceId",
   },
   endpoint: {
-    openPanels: ['endpoint'],
-    focusId: 'path',
+    openPanels: ["endpoint"],
+    focusId: "path",
   },
   queryParameters: {
-    openPanels: ['queryParams'],
+    openPanels: ["queryParams"],
     // no focus — list may be empty
   },
   customHeaders: {
-    openPanels: ['customHeaders'],
+    openPanels: ["customHeaders"],
   },
   certificates: {
-    openPanels: ['certificates'],
+    openPanels: ["certificates"],
     // no auto-focus — cert textareas are large and easy to overwrite
   },
 };

@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
-import { useI18n } from 'vue-i18n';
-import { useThemeStore } from '@/stores/theme';
-import type { XRoadResponse } from '@/types';
-import ResponseStatusSection from './ResponseStatusSection.vue';
-import CollapsibleHeadersSection from './CollapsibleHeadersSection.vue';
-import ResponseXRoadErrorSection from './ResponseXRoadErrorSection.vue';
-import ResponseBodySection from './ResponseBodySection.vue';
+import { ref, computed } from "vue";
+import { useI18n } from "vue-i18n";
+import { useThemeStore } from "@/stores/theme";
+import type { XRoadResponse } from "@/types";
+import ResponseStatusSection from "./ResponseStatusSection.vue";
+import CollapsibleHeadersSection from "./CollapsibleHeadersSection.vue";
+import ResponseXRoadErrorSection from "./ResponseXRoadErrorSection.vue";
+import ResponseBodySection from "./ResponseBodySection.vue";
 
 const props = defineProps<{
   response: XRoadResponse | null;
@@ -16,7 +16,7 @@ const { t } = useI18n();
 const themeStore = useThemeStore();
 
 // Default open panels
-const openPanels = ref(['status', 'xroad-headers', 'body']);
+const openPanels = ref(["status", "xroad-headers", "body"]);
 
 // Helper function to expand multi-value HTTP headers into multiple key-value pairs
 function expandHeaders(headers: Record<string, string[]>): Record<string, string> {
@@ -43,10 +43,13 @@ function expandHeaders(headers: Record<string, string[]>): Record<string, string
 function sortByKeys(obj: Record<string, string>): Record<string, string> {
   return Object.keys(obj)
     .sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()))
-    .reduce((sorted, key) => {
-      sorted[key] = obj[key];
-      return sorted;
-    }, {} as Record<string, string>);
+    .reduce(
+      (sorted, key) => {
+        sorted[key] = obj[key];
+        return sorted;
+      },
+      {} as Record<string, string>,
+    );
 }
 
 const xroadHeaders = computed((): Record<string, string> => {
@@ -54,7 +57,7 @@ const xroadHeaders = computed((): Record<string, string> => {
 
   const result: Record<string, string> = {};
   Object.entries(props.response.headers).forEach(([key, values]) => {
-    if (key.toLowerCase().startsWith('x-road')) {
+    if (key.toLowerCase().startsWith("x-road")) {
       if (values.length === 1) {
         result[key] = values[0];
       } else if (values.length > 1) {
@@ -73,7 +76,7 @@ const httpHeaders = computed(() => {
   // Filter out X-Road headers
   const filtered: Record<string, string[]> = {};
   Object.entries(props.response.headers).forEach(([key, values]) => {
-    if (!key.toLowerCase().startsWith('x-road')) {
+    if (!key.toLowerCase().startsWith("x-road")) {
       filtered[key] = values;
     }
   });
@@ -86,7 +89,7 @@ const httpHeaders = computed(() => {
   <div class="xroad-response-viewer">
     <!-- No response state -->
     <v-alert v-if="!response" type="info" variant="tonal">
-      {{ t('xroad.response.noResponse') }}
+      {{ t("xroad.response.noResponse") }}
     </v-alert>
 
     <!-- Response viewer -->
@@ -105,11 +108,7 @@ const httpHeaders = computed(() => {
         />
 
         <!-- Response Body -->
-        <ResponseBodySection
-          :body="response.body"
-          :content-type="response.contentType"
-          :effective-theme="themeStore.effectiveTheme"
-        />
+        <ResponseBodySection :body="response.body" :content-type="response.contentType" :effective-theme="themeStore.effectiveTheme" />
 
         <!-- X-Road Headers -->
         <CollapsibleHeadersSection

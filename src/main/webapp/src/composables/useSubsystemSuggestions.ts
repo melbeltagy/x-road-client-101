@@ -1,9 +1,9 @@
-import { ref, watch } from 'vue';
-import { useI18n } from 'vue-i18n';
-import { fetchRegisteredClients } from '@/services/security-server.service';
-import type { SubsystemId } from '@/types';
-import { isValidHttpUrl } from '@/utils/xroad-url';
-import { useDebounce } from './useDebounce';
+import { ref, watch } from "vue";
+import { useI18n } from "vue-i18n";
+import { fetchRegisteredClients } from "@/services/security-server.service";
+import type { SubsystemId } from "@/types";
+import { isValidHttpUrl } from "@/utils/xroad-url";
+import { useDebounce } from "./useDebounce";
 
 export interface UseSubsystemSuggestionsOptions {
   debounceMs?: number;
@@ -42,18 +42,17 @@ export function useSubsystemSuggestions(options: UseSubsystemSuggestionsOptions 
     try {
       subsystemSuggestions.value = await fetchRegisteredClients(url);
     } catch (error) {
-      console.error('Failed to fetch subsystem suggestions:', error);
-      suggestionsError.value = t('xroad.client.fetchError');
+      console.error("Failed to fetch subsystem suggestions:", error);
+      suggestionsError.value = t("xroad.client.fetchError");
       subsystemSuggestions.value = [];
     } finally {
       isLoadingSuggestions.value = false;
     }
   }
 
-  const { debounced: loadSubsystemSuggestionsDebounced } = useDebounce(
-    (url: string) => { void loadSubsystemSuggestions(url); },
-    debounceMs
-  );
+  const { debounced: loadSubsystemSuggestionsDebounced } = useDebounce((url: string) => {
+    void loadSubsystemSuggestions(url);
+  }, debounceMs);
 
   /**
    * Creates a watcher for security server URL changes
@@ -65,7 +64,7 @@ export function useSubsystemSuggestions(options: UseSubsystemSuggestionsOptions 
       (newUrl) => {
         loadSubsystemSuggestionsDebounced(newUrl);
       },
-      { immediate: true }
+      { immediate: true },
     );
   }
 

@@ -1,12 +1,12 @@
-import type { SubsystemId } from '@/types';
+import type { SubsystemId } from "@/types";
 
 /** A SubsystemId with all four fields empty. */
 export function emptySubsystem(): SubsystemId {
   return {
-    instanceId: '',
-    memberClass: '',
-    memberCode: '',
-    subsystemCode: '',
+    instanceId: "",
+    memberClass: "",
+    memberCode: "",
+    subsystemCode: "",
   };
 }
 

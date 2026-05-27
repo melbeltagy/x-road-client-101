@@ -1,4 +1,4 @@
-import type { XRoadError } from './xroad-error.model';
+import type { XRoadError } from "./xroad-error.model";
 
 export interface XRoadResponse {
   statusCode: number;
