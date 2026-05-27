@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-import { useI18n } from 'vue-i18n';
+import { computed } from "vue";
+import { useI18n } from "vue-i18n";
 
 const props = defineProps<{
   titleKey: string;
@@ -14,7 +14,7 @@ const { t } = useI18n();
 
 // Filter out empty values
 const validHeaders = computed(() => {
-  return Object.entries(props.headers).filter(([, value]) => value && value.trim() !== '');
+  return Object.entries(props.headers).filter(([, value]) => value && value.trim() !== "");
 });
 
 const hasHeaders = computed(() => validHeaders.value.length > 0);

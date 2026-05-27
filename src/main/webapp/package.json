@@ -12,8 +12,10 @@
     "test:run": "vitest --run",
     "test:coverage": "vitest --coverage",
     "type-check": "vue-tsc --noEmit",
-    "lint": "eslint . --fix",
-    "format": "prettier --write src/"
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write src/",
+    "format:check": "prettier --check src/"
   },
   "dependencies": {
     "@fontsource-variable/material-symbols-rounded": "^5.2.40",
@@ -42,6 +44,7 @@
     "@vue/test-utils": "^2.4.6",
     "@vue/tsconfig": "^0.9.1",
     "eslint": "^10.4.0",
+    "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-vue": "^10.1.0",
     "happy-dom": "^20.9.0",
     "jsdom": "^29.1.1",

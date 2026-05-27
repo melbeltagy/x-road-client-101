@@ -1,6 +1,6 @@
-import { computed } from 'vue';
-import { useFormCompleteness, type FormCompletenessInput } from './useFormCompleteness';
-import type { StepKey } from './useFormStepNavigation';
+import { computed } from "vue";
+import { useFormCompleteness, type FormCompletenessInput } from "./useFormCompleteness";
+import type { StepKey } from "./useFormStepNavigation";
 
 /**
  * Per-step state:
@@ -9,20 +9,11 @@ import type { StepKey } from './useFormStepNavigation';
  *   - 'pending'  — required, not yet complete, not the current next
  *   - 'optional' — optional and not filled
  */
-export type StepState = 'done' | 'next' | 'pending' | 'optional';
+export type StepState = "done" | "next" | "pending" | "optional";
 
-export const REQUIRED_STEPS: readonly StepKey[] = [
-  'securityServer',
-  'clientIdentifier',
-  'serviceIdentifier',
-  'endpoint',
-];
+export const REQUIRED_STEPS: readonly StepKey[] = ["securityServer", "clientIdentifier", "serviceIdentifier", "endpoint"];
 
-export const OPTIONAL_STEPS: readonly StepKey[] = [
-  'queryParameters',
-  'customHeaders',
-  'certificates',
-];
+export const OPTIONAL_STEPS: readonly StepKey[] = ["queryParameters", "customHeaders", "certificates"];
 
 const REQUIRED_SET = new Set<StepKey>(REQUIRED_STEPS);
 
@@ -38,13 +29,20 @@ export function useFormFlow(input: () => FormCompletenessInput) {
 
   function isStepComplete(step: StepKey): boolean {
     switch (step) {
-      case 'securityServer': return c.securityServerComplete.value;
-      case 'clientIdentifier': return c.clientComplete.value;
-      case 'serviceIdentifier': return c.serviceSubsystemComplete.value && c.serviceCodeComplete.value;
-      case 'endpoint': return c.endpointComplete.value;
-      case 'queryParameters': return c.queryParametersComplete.value;
-      case 'customHeaders': return c.customHeadersComplete.value;
-      case 'certificates': return c.certificatesComplete.value;
+      case "securityServer":
+        return c.securityServerComplete.value;
+      case "clientIdentifier":
+        return c.clientComplete.value;
+      case "serviceIdentifier":
+        return c.serviceSubsystemComplete.value && c.serviceCodeComplete.value;
+      case "endpoint":
+        return c.endpointComplete.value;
+      case "queryParameters":
+        return c.queryParametersComplete.value;
+      case "customHeaders":
+        return c.customHeadersComplete.value;
+      case "certificates":
+        return c.certificatesComplete.value;
     }
   }
 
@@ -57,10 +55,10 @@ export function useFormFlow(input: () => FormCompletenessInput) {
   });
 
   function stateFor(step: StepKey): StepState {
-    if (isStepComplete(step)) return 'done';
-    if (nextStep.value === step) return 'next';
-    if (REQUIRED_SET.has(step)) return 'pending';
-    return 'optional';
+    if (isStepComplete(step)) return "done";
+    if (nextStep.value === step) return "next";
+    if (REQUIRED_SET.has(step)) return "pending";
+    return "optional";
   }
 
   return {

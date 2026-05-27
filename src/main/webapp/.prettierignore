@@ -1,0 +1,13 @@
+# Prettier's HTML/Vue pre-parser misinterprets TypeScript generic syntax
+# (e.g. `rawOf<EndpointOption>(item)`) inside `{{ }}` mustaches as opening
+# HTML tags, causing spurious "Unexpected closing tag" parse errors.
+#
+# The templates render correctly at runtime (Vue's template compiler parses
+# mustache contents as JS, not HTML), and the same `rawOf<T>(...)` expression
+# is accepted by Prettier when used inside attribute bindings on the same
+# file. Rewriting around this limitation would either lose template-side
+# type safety or require structural changes that hurt readability.
+#
+# Re-evaluate when Prettier improves Vue template generic handling.
+src/components/form/sections/RequestSection.vue
+src/components/form/sections/ServiceSection.vue

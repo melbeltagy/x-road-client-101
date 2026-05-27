@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-import type { StepState } from '@/composables';
+import { computed } from "vue";
+import type { StepState } from "@/composables";
 
 const props = withDefaults(
   defineProps<{
@@ -10,15 +10,19 @@ const props = withDefaults(
     /** Drives the per-state visual treatment: amber for 'next', muted for 'optional', etc. */
     state?: StepState;
   }>(),
-  { state: 'pending' }
+  { state: "pending" },
 );
 
 const iconColor = computed(() => {
   switch (props.state) {
-    case 'done': return 'success';
-    case 'next': return 'warning';
-    case 'optional': return 'grey-lighten-1';
-    default: return 'primary';
+    case "done":
+      return "success";
+    case "next":
+      return "warning";
+    case "optional":
+      return "grey-lighten-1";
+    default:
+      return "primary";
   }
 });
 </script>
@@ -30,13 +34,7 @@ const iconColor = computed(() => {
         <v-icon start :color="iconColor">{{ icon }}</v-icon>
         <strong :class="['section-title', state === 'next' ? 'font-weight-bold' : '']">{{ title }}</strong>
         <slot name="chip" />
-        <v-icon
-          v-if="state === 'done'"
-          color="success"
-          size="small"
-          class="ml-auto mr-2"
-          aria-label="completed"
-        >check_circle</v-icon>
+        <v-icon v-if="state === 'done'" color="success" size="small" class="ml-auto mr-2" aria-label="completed">check_circle</v-icon>
       </div>
     </v-expansion-panel-title>
     <v-expansion-panel-text eager>

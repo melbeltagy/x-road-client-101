@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-import { useI18n } from 'vue-i18n';
-import { useXRoadHistoryStore, type RequestHistoryEntry } from '@/stores/xroad-history';
-import HistoryEntry from './HistoryEntry.vue';
-import ConfirmDialog from '@/components/common/ConfirmDialog.vue';
+import { ref } from "vue";
+import { useI18n } from "vue-i18n";
+import { useXRoadHistoryStore, type RequestHistoryEntry } from "@/stores/xroad-history";
+import HistoryEntry from "./HistoryEntry.vue";
+import ConfirmDialog from "@/components/common/ConfirmDialog.vue";
 
 const emit = defineEmits<{
   view: [entry: RequestHistoryEntry];
-  showAlert: [color: 'success' | 'error' | 'warning', message: string];
+  showAlert: [color: "success" | "error" | "warning", message: string];
   historyWarning: [message: string];
 }>();
 
@@ -23,17 +23,13 @@ function handleClearAll(): void {
 // Run a store mutation and surface either a success toast (primary
 // channel) or a history-warning toast (secondary channel) so the
 // primary channel stays free for request results.
-function runHistoryMutation(
-  mutate: () => boolean,
-  successMessageKey: string,
-  onSuccess?: () => void
-): void {
+function runHistoryMutation(mutate: () => boolean, successMessageKey: string, onSuccess?: () => void): void {
   const ok = mutate();
   if (ok && !historyStore.lastError) {
-    emit('showAlert', 'success', t(successMessageKey));
+    emit("showAlert", "success", t(successMessageKey));
     onSuccess?.();
   } else {
-    emit('historyWarning', t('xroad.toast.historyError'));
+    emit("historyWarning", t("xroad.toast.historyError"));
     historyStore.clearError();
   }
 }
@@ -41,21 +37,18 @@ function runHistoryMutation(
 function confirmClearAll(): void {
   runHistoryMutation(
     () => historyStore.clearHistory(),
-    'xroad.history.cleared',
-    () => historyStore.closeHistorySidebar()
+    "xroad.history.cleared",
+    () => historyStore.closeHistorySidebar(),
   );
 }
 
 function handleView(entry: RequestHistoryEntry): void {
   historyStore.selectHistoryEntry(entry.id);
-  emit('view', entry);
+  emit("view", entry);
 }
 
 function handleDelete(entryId: string): void {
-  runHistoryMutation(
-    () => historyStore.deleteHistoryEntry(entryId),
-    'xroad.history.deleted'
-  );
+  runHistoryMutation(() => historyStore.deleteHistoryEntry(entryId), "xroad.history.deleted");
 }
 
 function handleClose(): void {
@@ -66,14 +59,14 @@ function handleClose(): void {
 <template>
   <v-navigation-drawer
     :model-value="historyStore.sidebarOpen"
-    @update:model-value="!$event && handleClose()"
     location="right"
     temporary
     width="400"
+    @update:model-value="!$event && handleClose()"
   >
     <template #prepend>
       <v-toolbar color="surface" density="compact">
-        <v-toolbar-title>{{ t('xroad.history.title') }}</v-toolbar-title>
+        <v-toolbar-title>{{ t("xroad.history.title") }}</v-toolbar-title>
         <v-btn icon @click="handleClose">
           <v-icon>close</v-icon>
         </v-btn>
@@ -83,21 +76,16 @@ function handleClose(): void {
     <!-- Empty state -->
     <v-container v-if="historyStore.entries.length === 0" class="text-center py-8">
       <v-icon size="64" color="grey-lighten-1" class="mb-4">history</v-icon>
-      <h3 class="text-h6 mb-2">{{ t('xroad.history.empty') }}</h3>
-      <p class="text-medium-emphasis">{{ t('xroad.history.emptyDescription') }}</p>
+      <h3 class="text-h6 mb-2">{{ t("xroad.history.empty") }}</h3>
+      <p class="text-medium-emphasis">{{ t("xroad.history.emptyDescription") }}</p>
     </v-container>
 
     <!-- History list -->
     <template v-else>
       <v-container class="pa-3">
-        <v-btn
-          color="error"
-          variant="outlined"
-          size="small"
-          @click="handleClearAll"
-        >
+        <v-btn color="error" variant="outlined" size="small" @click="handleClearAll">
           <v-icon start>delete_sweep</v-icon>
-          {{ t('xroad.history.clearAll') }}
+          {{ t("xroad.history.clearAll") }}
         </v-btn>
       </v-container>
 
@@ -117,12 +105,7 @@ function handleClose(): void {
   </v-navigation-drawer>
 
   <!-- Confirm: wipe all history -->
-  <ConfirmDialog
-    v-model="clearConfirmOpen"
-    :message="t('xroad.history.confirmClear')"
-    color="error"
-    @confirm="confirmClearAll"
-  />
+  <ConfirmDialog v-model="clearConfirmOpen" :message="t('xroad.history.confirmClear')" color="error" @confirm="confirmClearAll" />
 </template>
 
 <style scoped>

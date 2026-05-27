@@ -1,9 +1,9 @@
-import type { ErrorSpan } from './normalize';
+import type { ErrorSpan } from "./normalize";
 
 export interface Token {
   value: string;
   start: number; // inclusive index into normalized input
-  end: number;   // exclusive index into normalized input
+  end: number; // exclusive index into normalized input
 }
 
 export interface TokenizeError extends Error {
@@ -18,7 +18,7 @@ export interface TokenizeError extends Error {
  */
 export function tokenize(input: string): Token[] {
   const tokens: Token[] = [];
-  let current = '';
+  let current = "";
   let inSingle = false;
   let inDouble = false;
   let hasCurrent = false;
@@ -28,7 +28,7 @@ export function tokenize(input: string): Token[] {
   const flushToken = (endIdx: number): void => {
     if (hasCurrent) {
       tokens.push({ value: current, start: tokenStart, end: endIdx });
-      current = '';
+      current = "";
       hasCurrent = false;
     }
   };
@@ -53,9 +53,9 @@ export function tokenize(input: string): Token[] {
     }
 
     if (inDouble) {
-      if (ch === '\\' && i + 1 < input.length) {
+      if (ch === "\\" && i + 1 < input.length) {
         const next = input[i + 1];
-        if (next === '"' || next === '\\' || next === '$' || next === '`') {
+        if (next === '"' || next === "\\" || next === "$" || next === "`") {
           current += next;
           hasCurrent = true;
           i++;
@@ -88,7 +88,7 @@ export function tokenize(input: string): Token[] {
       quoteOpenIdx = i;
       continue;
     }
-    if (ch === '\\' && i + 1 < input.length) {
+    if (ch === "\\" && i + 1 < input.length) {
       if (!hasCurrent) tokenStart = i;
       current += input[i + 1];
       hasCurrent = true;
@@ -105,7 +105,7 @@ export function tokenize(input: string): Token[] {
   }
 
   if (inSingle || inDouble) {
-    const err = new Error('Unterminated quote in cURL command') as TokenizeError;
+    const err = new Error("Unterminated quote in cURL command") as TokenizeError;
     err.span = { start: quoteOpenIdx, end: input.length };
     throw err;
   }

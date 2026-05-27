@@ -5,9 +5,9 @@ export interface MTlsCertificates {
 }
 
 export enum CertificateType {
-  SECURITY_SERVER = 'securityServerCert',
-  CLIENT_CERT = 'clientCert',
-  CLIENT_KEY = 'clientPrivateKey',
+  SECURITY_SERVER = "securityServerCert",
+  CLIENT_CERT = "clientCert",
+  CLIENT_KEY = "clientPrivateKey",
 }
 
 export interface CertificateMetadata {

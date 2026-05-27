@@ -4,7 +4,7 @@
  */
 
 .msr {
-  font-family: 'Material Symbols Rounded Variable';
+  font-family: "Material Symbols Rounded Variable";
   font-weight: 400;
   font-style: normal;
   text-transform: none;
@@ -18,9 +18,17 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
-  font-variation-settings: 'GRAD' 0, 'FILL' 0, 'opsz' 24, 'wght' 400;
+  font-variation-settings:
+    "GRAD" 0,
+    "FILL" 0,
+    "opsz" 24,
+    "wght" 400;
 }
 
 .msr.filled {
-  font-variation-settings: 'GRAD' 0, 'FILL' 1, 'opsz' 24, 'wght' 400;
+  font-variation-settings:
+    "GRAD" 0,
+    "FILL" 1,
+    "opsz" 24,
+    "wght" 400;
 }

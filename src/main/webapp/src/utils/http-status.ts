@@ -9,9 +9,9 @@
  * - 5xx (and everything else) → error
  */
 export function statusColorFor(statusCode: number): string {
-  if (statusCode === 0) return 'error';
-  if (statusCode >= 200 && statusCode < 300) return 'success';
-  if (statusCode >= 300 && statusCode < 400) return 'info';
-  if (statusCode >= 400 && statusCode < 500) return 'warning';
-  return 'error';
+  if (statusCode === 0) return "error";
+  if (statusCode >= 200 && statusCode < 300) return "success";
+  if (statusCode >= 300 && statusCode < 400) return "info";
+  if (statusCode >= 400 && statusCode < 500) return "warning";
+  return "error";
 }

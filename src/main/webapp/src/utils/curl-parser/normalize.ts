@@ -15,26 +15,26 @@ export interface ErrorSpan {
  */
 export function normalizeAndMap(input: string): { normalized: string; mapToOriginal: number[] } {
   const map: number[] = [];
-  let normalized = '';
+  let normalized = "";
   let i = 0;
   while (i < input.length) {
     const ch = input[i];
     const next = input[i + 1];
-    if (ch === '\\' && (next === '\n' || (next === '\r' && input[i + 2] === '\n'))) {
+    if (ch === "\\" && (next === "\n" || (next === "\r" && input[i + 2] === "\n"))) {
       // Replace with a single space, mapped to the backslash position.
-      normalized += ' ';
+      normalized += " ";
       map.push(i);
-      i += next === '\r' ? 3 : 2;
+      i += next === "\r" ? 3 : 2;
       continue;
     }
-    if (ch === '^' && next === '\r' && input[i + 2] === '\n') {
-      normalized += ' ';
+    if (ch === "^" && next === "\r" && input[i + 2] === "\n") {
+      normalized += " ";
       map.push(i);
       i += 3;
       continue;
     }
-    if (ch === '^' && next === '\n') {
-      normalized += ' ';
+    if (ch === "^" && next === "\n") {
+      normalized += " ";
       map.push(i);
       i += 2;
       continue;

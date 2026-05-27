@@ -1,0 +1,22 @@
+pre-commit:
+  parallel: true
+  commands:
+    checkstyle:
+      glob: "*.java"
+      run: ./gradlew checkstyleMain checkstyleTest --quiet
+      # Note: runs full checkstyle (not just changed files) because Gradle
+      # incremental build is fast enough on a small project. If this becomes
+      # slow, switch to a per-file invocation.
+
+    eslint:
+      root: "src/main/webapp/"
+      glob: "*.{ts,vue,js}"
+      run: pnpm exec eslint {staged_files}
+      # `root` changes the command's CWD to src/main/webapp/ AND restricts
+      # {staged_files} to that subtree with paths made relative to the root.
+      # See: https://lefthook.dev/configuration/root.html
+
+    prettier:
+      root: "src/main/webapp/"
+      glob: "*.{ts,vue,js,css,scss,md,json}"
+      run: pnpm exec prettier --check {staged_files}

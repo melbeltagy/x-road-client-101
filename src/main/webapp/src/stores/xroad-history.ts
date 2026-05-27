@@ -1,14 +1,8 @@
-import { defineStore } from 'pinia';
-import { ref, computed } from 'vue';
-import type { XRoadRequest, XRoadResponse } from '@/types';
-import { useConfigStore } from './config';
-import {
-  safeLocalStorage,
-  drainStorageError,
-  peekStorageError,
-  type StorageErrorOp,
-  type StorageError,
-} from '@/utils/safe-local-storage';
+import { defineStore } from "pinia";
+import { ref, computed } from "vue";
+import type { XRoadRequest, XRoadResponse } from "@/types";
+import { useConfigStore } from "./config";
+import { safeLocalStorage, drainStorageError, peekStorageError, type StorageErrorOp, type StorageError } from "@/utils/safe-local-storage";
 
 export interface RequestHistoryEntry {
   id: string;
@@ -21,7 +15,7 @@ export type HistoryErrorOp = StorageErrorOp;
 export type HistoryError = StorageError;
 
 export const useXRoadHistoryStore = defineStore(
-  'xroad-history',
+  "xroad-history",
   () => {
     const entries = ref<RequestHistoryEntry[]>([]);
     const selectedEntryId = ref<string | null>(null);
@@ -29,12 +23,10 @@ export const useXRoadHistoryStore = defineStore(
     const lastError = ref<HistoryError | null>(null);
 
     const selectedEntry = computed(() =>
-      Array.isArray(entries.value) ? entries.value.find((e) => e.id === selectedEntryId.value) : undefined
+      Array.isArray(entries.value) ? entries.value.find((e) => e.id === selectedEntryId.value) : undefined,
     );
 
-    const mostRecentEntry = computed(() =>
-      Array.isArray(entries.value) && entries.value.length > 0 ? entries.value[0] : null
-    );
+    const mostRecentEntry = computed(() => (Array.isArray(entries.value) && entries.value.length > 0 ? entries.value[0] : null));
 
     function generateId(): string {
       return `${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
@@ -82,7 +74,7 @@ export const useXRoadHistoryStore = defineStore(
     }
 
     function addRequestToHistory(request: XRoadRequest, response: XRoadResponse): boolean {
-      return withStorageGuard('save', () => {
+      return withStorageGuard("save", () => {
         const entry: RequestHistoryEntry = {
           id: generateId(),
           timestamp: new Date().toISOString(),
@@ -101,7 +93,7 @@ export const useXRoadHistoryStore = defineStore(
     }
 
     function deleteHistoryEntry(entryId: string): boolean {
-      return withStorageGuard('delete', () => {
+      return withStorageGuard("delete", () => {
         const current = Array.isArray(entries.value) ? entries.value : [];
         entries.value = current.filter((e) => e.id !== entryId);
         if (selectedEntryId.value === entryId) {
@@ -111,7 +103,7 @@ export const useXRoadHistoryStore = defineStore(
     }
 
     function clearHistory(): boolean {
-      return withStorageGuard('clear', () => {
+      return withStorageGuard("clear", () => {
         entries.value = [];
         selectedEntryId.value = null;
       });
@@ -148,9 +140,9 @@ export const useXRoadHistoryStore = defineStore(
   },
   {
     persist: {
-      key: 'xroad-request-history',
+      key: "xroad-request-history",
       storage: safeLocalStorage,
-      pick: ['entries'],
+      pick: ["entries"],
       afterHydrate: (ctx) => {
         if (!Array.isArray(ctx.store.entries)) {
           ctx.store.entries = [];
@@ -161,5 +153,5 @@ export const useXRoadHistoryStore = defineStore(
         }
       },
     },
-  }
+  },
 );

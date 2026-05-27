@@ -1,25 +1,19 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
-import { useI18n } from 'vue-i18n';
-import { useXRoadHistoryStore, type RequestHistoryEntry } from '@/stores/xroad-history';
-import type { XRoadRequest, MTlsCertificates } from '@/types';
-import { emptySubsystem } from '@/utils/subsystem';
-import { XRoadRequestForm } from '@/components/form';
-import { CurlImportDialog } from '@/components/curl-import';
-import AppNotifications from '@/components/common/AppNotifications.vue';
-import ConfirmDialog from '@/components/common/ConfirmDialog.vue';
-import RequestProgressIndicator from '@/components/RequestProgressIndicator.vue';
-import { XRoadResponseViewer } from '@/components/response';
-import { HistoryList } from '@/components/history';
-import RequestActionBar from '@/components/action-bar/RequestActionBar.vue';
-import NextStepBreadcrumb from '@/components/NextStepBreadcrumb.vue';
-import {
-  useNotifications,
-  useRequestExecutor,
-  useCurlImport,
-  useFormFlow,
-  type StepKey,
-} from '@/composables';
+import { ref, computed, onMounted } from "vue";
+import { useI18n } from "vue-i18n";
+import { useXRoadHistoryStore, type RequestHistoryEntry } from "@/stores/xroad-history";
+import type { XRoadRequest, MTlsCertificates } from "@/types";
+import { emptySubsystem } from "@/utils/subsystem";
+import { XRoadRequestForm } from "@/components/form";
+import { CurlImportDialog } from "@/components/curl-import";
+import AppNotifications from "@/components/common/AppNotifications.vue";
+import ConfirmDialog from "@/components/common/ConfirmDialog.vue";
+import RequestProgressIndicator from "@/components/RequestProgressIndicator.vue";
+import { XRoadResponseViewer } from "@/components/response";
+import { HistoryList } from "@/components/history";
+import RequestActionBar from "@/components/action-bar/RequestActionBar.vue";
+import NextStepBreadcrumb from "@/components/NextStepBreadcrumb.vue";
+import { useNotifications, useRequestExecutor, useCurlImport, useFormFlow, type StepKey } from "@/composables";
 
 const { t } = useI18n();
 const historyStore = useXRoadHistoryStore();
@@ -35,8 +29,7 @@ const formValid = ref(false);
 const certificates = ref<MTlsCertificates>({});
 
 // Notifications: primary + history-warning toasts.
-const { alert, historyAlert, showAlert, hidePrimaryAlert, showHistoryWarning, flushHistoryError } =
-  useNotifications();
+const { alert, historyAlert, showAlert, hidePrimaryAlert, showHistoryWarning, flushHistoryError } = useNotifications();
 
 // Request submission: loading state, response, lastRequestSuccess, submit().
 const { loading, response, lastRequestSuccess, submit } = useRequestExecutor({
@@ -57,7 +50,7 @@ const {
   currentRequest,
   response,
   isFromHistory,
-  onSuccess: (msg) => showAlert('success', msg),
+  onSuccess: (msg) => showAlert("success", msg),
   onWarning: (msg) => showHistoryWarning(msg),
 });
 
@@ -76,7 +69,7 @@ onMounted(() => {
       flushHistoryError();
     }
   } catch (err) {
-    console.warn('Failed to auto-load most recent history entry:', err);
+    console.warn("Failed to auto-load most recent history entry:", err);
     showHistoryWarning();
   }
 });
@@ -130,7 +123,6 @@ const currentRequestForPanel = computed<XRoadRequest | null>(() => {
   if (Object.keys(certificates.value).length === 0) return base;
   return { ...base, client: { ...base.client, mtlsCertificates: certificates.value } };
 });
-
 </script>
 
 <template>
@@ -143,31 +135,16 @@ const currentRequestForPanel = computed<XRoadRequest | null>(() => {
     />
 
     <!-- History indicator -->
-    <v-alert
-      v-if="isFromHistory"
-      type="info"
-      variant="tonal"
-      closable
-      class="mb-4"
-      @click:close="isFromHistory = false"
-    >
+    <v-alert v-if="isFromHistory" type="info" variant="tonal" closable class="mb-4" @click:close="isFromHistory = false">
       <v-icon start>history</v-icon>
-      {{ t('xroad.history.indicator') }}
+      {{ t("xroad.history.indicator") }}
     </v-alert>
 
     <!-- Main content -->
     <v-row>
       <v-col cols="12" lg="6">
-        <RequestProgressIndicator
-          :form-data="formData"
-          :certificates="certificates"
-          class="mb-3"
-          @navigate="handleNavigate"
-        />
-        <NextStepBreadcrumb
-          :next-step-key="nextStep"
-          @navigate="handleNavigate"
-        />
+        <RequestProgressIndicator :form-data="formData" :certificates="certificates" class="mb-3" @navigate="handleNavigate" />
+        <NextStepBreadcrumb :next-step-key="nextStep" @navigate="handleNavigate" />
         <XRoadRequestForm
           ref="formRef"
           :initial-request="currentRequest"
@@ -183,11 +160,7 @@ const currentRequestForPanel = computed<XRoadRequest | null>(() => {
       </v-col>
     </v-row>
 
-    <HistoryList
-      @view="handleHistoryView"
-      @show-alert="showAlert"
-      @history-warning="showHistoryWarning"
-    />
+    <HistoryList @view="handleHistoryView" @show-alert="showAlert" @history-warning="showHistoryWarning" />
 
     <RequestActionBar
       :client="formData.client ?? { subsystem: emptySubsystem() }"
@@ -204,10 +177,7 @@ const currentRequestForPanel = computed<XRoadRequest | null>(() => {
     />
 
     <!-- cURL import dialog + replace-confirmation. -->
-    <CurlImportDialog
-      v-model="curlImportOpen"
-      @import="handleCurlImport"
-    />
+    <CurlImportDialog v-model="curlImportOpen" @import="handleCurlImport" />
     <ConfirmDialog
       v-model="curlReplaceConfirmOpen"
       :message="t('xroad.curlImport.confirmReplace')"

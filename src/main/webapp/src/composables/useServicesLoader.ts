@@ -1,10 +1,10 @@
-import { ref, watch } from 'vue';
-import { useI18n } from 'vue-i18n';
-import { fetchServices } from '@/services/security-server.service';
-import type { SubsystemId, ServiceInfo } from '@/types';
-import { isValidHttpUrl } from '@/utils/xroad-url';
-import { isSubsystemFilled } from '@/utils/subsystem';
-import { useDebounce } from './useDebounce';
+import { ref, watch } from "vue";
+import { useI18n } from "vue-i18n";
+import { fetchServices } from "@/services/security-server.service";
+import type { SubsystemId, ServiceInfo } from "@/types";
+import { isValidHttpUrl } from "@/utils/xroad-url";
+import { isSubsystemFilled } from "@/utils/subsystem";
+import { useDebounce } from "./useDebounce";
 
 export interface UseServicesLoaderOptions {
   debounceMs?: number;
@@ -24,7 +24,7 @@ export function useServicesLoader(
   getSecurityServerUrl: () => string | undefined,
   getClientSubsystem: () => Partial<SubsystemId> | undefined,
   getServiceSubsystem: () => Partial<SubsystemId> | undefined,
-  options: UseServicesLoaderOptions = {}
+  options: UseServicesLoaderOptions = {},
 ) {
   const { debounceMs = 500 } = options;
   const { t } = useI18n();
@@ -49,15 +49,17 @@ export function useServicesLoader(
     try {
       availableServices.value = await fetchServices(url!, client as SubsystemId, service as SubsystemId);
     } catch (e) {
-      console.error('Failed to fetch services:', e);
-      error.value = t('xroad.service.fetchError');
+      console.error("Failed to fetch services:", e);
+      error.value = t("xroad.service.fetchError");
       availableServices.value = [];
     } finally {
       isLoading.value = false;
     }
   }
 
-  const { debounced: debouncedLoad } = useDebounce(() => { void load(); }, debounceMs);
+  const { debounced: debouncedLoad } = useDebounce(() => {
+    void load();
+  }, debounceMs);
 
   watch(
     [getSecurityServerUrl, getClientSubsystem, getServiceSubsystem],
@@ -67,7 +69,7 @@ export function useServicesLoader(
       error.value = null;
       debouncedLoad();
     },
-    { deep: true }
+    { deep: true },
   );
 
   return { availableServices, isLoading, error };

@@ -10,7 +10,7 @@
  * `drainStorageError()` after a mutation to surface any failure.
  */
 
-export type StorageErrorOp = 'save' | 'load' | 'delete' | 'clear';
+export type StorageErrorOp = "save" | "load" | "delete" | "clear";
 
 export interface StorageError {
   op: StorageErrorOp;
@@ -28,7 +28,7 @@ export const safeLocalStorage: Storage = {
     try {
       return localStorage.getItem(key);
     } catch (err) {
-      recordSinkError('load', err);
+      recordSinkError("load", err);
       return null;
     }
   },
@@ -36,21 +36,21 @@ export const safeLocalStorage: Storage = {
     try {
       localStorage.setItem(key, value);
     } catch (err) {
-      recordSinkError('save', err);
+      recordSinkError("save", err);
     }
   },
   removeItem(key: string): void {
     try {
       localStorage.removeItem(key);
     } catch (err) {
-      recordSinkError('delete', err);
+      recordSinkError("delete", err);
     }
   },
   clear(): void {
     try {
       localStorage.clear();
     } catch (err) {
-      recordSinkError('clear', err);
+      recordSinkError("clear", err);
     }
   },
   key(index: number): string | null {

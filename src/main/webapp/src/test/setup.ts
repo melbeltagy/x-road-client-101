@@ -1,9 +1,9 @@
-import { config } from '@vue/test-utils';
-import { createVuetify } from 'vuetify';
-import * as components from 'vuetify/components';
-import * as directives from 'vuetify/directives';
-import { createPinia, setActivePinia } from 'pinia';
-import { vi } from 'vitest';
+import { config } from "@vue/test-utils";
+import { createVuetify } from "vuetify";
+import * as components from "vuetify/components";
+import * as directives from "vuetify/directives";
+import { createPinia, setActivePinia } from "pinia";
+import { vi } from "vitest";
 
 // Mock localStorage
 const localStorageMock = {
@@ -12,7 +12,7 @@ const localStorageMock = {
   removeItem: vi.fn(),
   clear: vi.fn(),
 };
-Object.defineProperty(window, 'localStorage', { value: localStorageMock });
+Object.defineProperty(window, "localStorage", { value: localStorageMock });
 
 // Mock ResizeObserver
 class ResizeObserverMock {
@@ -23,7 +23,7 @@ class ResizeObserverMock {
 global.ResizeObserver = ResizeObserverMock;
 
 // Mock matchMedia
-Object.defineProperty(window, 'matchMedia', {
+Object.defineProperty(window, "matchMedia", {
   writable: true,
   value: vi.fn().mockImplementation((query) => ({
     matches: false,

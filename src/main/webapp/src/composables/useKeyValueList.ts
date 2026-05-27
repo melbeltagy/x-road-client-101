@@ -1,4 +1,4 @@
-import { ref } from 'vue';
+import { ref } from "vue";
 
 export interface KeyValuePair {
   id: string;
@@ -22,14 +22,14 @@ export function useKeyValueList(idPrefix: string) {
   }
 
   function add(): void {
-    items.value.push({ id: generateId(items.value.length), key: '', value: '' });
+    items.value.push({ id: generateId(items.value.length), key: "", value: "" });
   }
 
   function remove(index: number): void {
     items.value.splice(index, 1);
   }
 
-  function update(index: number, field: 'key' | 'value', value: string): void {
+  function update(index: number, field: "key" | "value", value: string): void {
     items.value[index][field] = value;
   }
 

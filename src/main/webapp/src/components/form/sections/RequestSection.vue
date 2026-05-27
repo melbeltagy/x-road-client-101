@@ -83,7 +83,6 @@ const selectedEndpoint = computed(() => {
     <v-autocomplete
       v-if="hasEndpoints"
       :model-value="selectedEndpoint"
-      @update:model-value="handleEndpointSelect"
       :items="endpointOptions"
       item-title="title"
       item-value="title"
@@ -95,6 +94,7 @@ const selectedEndpoint = computed(() => {
       class="mb-4"
       prepend-inner-icon="api"
       :menu-props="{ maxHeight: 300 }"
+      @update:model-value="handleEndpointSelect"
     >
       <template #item="{ props: itemProps, item }">
         <v-list-item v-bind="itemProps">
@@ -118,24 +118,24 @@ const selectedEndpoint = computed(() => {
         <v-select
           id="method"
           :model-value="method"
-          @update:model-value="emit('update:method', $event)"
           :items="HTTP_METHODS as readonly string[]"
           :label="`${t('xroad.request.method')} *`"
           :error-messages="errors['request.method']"
           variant="outlined"
           density="comfortable"
+          @update:model-value="emit('update:method', $event)"
         />
       </v-col>
       <v-col cols="12" md="6">
         <v-text-field
           id="path"
           :model-value="path"
-          @update:model-value="emit('update:path', $event)"
           :label="`${t('xroad.request.path')} *`"
           :placeholder="t('xroad.placeholders.path')"
           :error-messages="errors['request.path']"
           variant="outlined"
           density="comfortable"
+          @update:model-value="emit('update:path', $event)"
         />
       </v-col>
     </v-row>
@@ -143,23 +143,23 @@ const selectedEndpoint = computed(() => {
     <v-textarea
       id="body"
       :model-value="body"
-      @update:model-value="emit('update:body', $event)"
       :label="t('xroad.request.body')"
       :placeholder="t('xroad.request.bodyPlaceholder')"
       rows="4"
       variant="outlined"
       density="comfortable"
+      @update:model-value="emit('update:body', $event)"
     />
 
     <v-select
       v-if="showContentType"
       id="contentType"
       :model-value="contentType"
-      @update:model-value="emit('update:contentType', $event)"
       :items="contentTypes"
       :label="t('xroad.request.contentType')"
       variant="outlined"
       density="comfortable"
+      @update:model-value="emit('update:contentType', $event)"
     />
   </div>
 </template>

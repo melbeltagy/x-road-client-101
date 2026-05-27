@@ -36,15 +36,15 @@ export function coerceAxiosError(err: unknown): CoercedAxiosError {
  * returns the fallback for non-objects or unrecognized shapes.
  */
 export function pickErrorMessage(responseData: unknown, fallback: string): string {
-  if (!responseData || typeof responseData !== 'object') return fallback;
+  if (!responseData || typeof responseData !== "object") return fallback;
   const data = responseData as Record<string, unknown>;
-  if ('body' in data) {
+  if ("body" in data) {
     return String(data.body || data.statusText || fallback);
   }
-  if ('detail' in data) {
+  if ("detail" in data) {
     return String(data.detail || data.message || fallback);
   }
-  if ('message' in data) {
+  if ("message" in data) {
     return String(data.message);
   }
   return fallback;

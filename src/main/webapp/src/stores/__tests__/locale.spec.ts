@@ -1,27 +1,22 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { setActivePinia, createPinia } from 'pinia';
+import { describe, it, expect, beforeEach, vi } from "vitest";
+import { setActivePinia, createPinia } from "pinia";
 
 // Mock the i18n plugin
-vi.mock('@/plugins/i18n', () => ({
+vi.mock("@/plugins/i18n", () => ({
   loadLocaleMessages: vi.fn().mockResolvedValue(undefined),
   setI18nLanguage: vi.fn(),
 }));
 
 // Mock dayjs
-vi.mock('dayjs', () => ({
+vi.mock("dayjs", () => ({
   default: {
     locale: vi.fn(),
   },
 }));
 
-import {
-  useLocaleStore,
-  SUPPORTED_LOCALES,
-  detectInitialLocale,
-  LOCALE_STORAGE_KEY,
-} from '../locale';
+import { useLocaleStore, SUPPORTED_LOCALES, detectInitialLocale, LOCALE_STORAGE_KEY } from "../locale";
 
-describe('Locale Store', () => {
+describe("Locale Store", () => {
   // Track localStorage values for mocking
   let localStorageValues: Record<string, string> = {};
 
@@ -47,100 +42,100 @@ describe('Locale Store', () => {
     });
 
     // Reset navigator.languages to default English
-    Object.defineProperty(navigator, 'languages', {
-      value: ['en-US'],
+    Object.defineProperty(navigator, "languages", {
+      value: ["en-US"],
       writable: true,
       configurable: true,
     });
-    Object.defineProperty(navigator, 'language', {
-      value: 'en-US',
+    Object.defineProperty(navigator, "language", {
+      value: "en-US",
       writable: true,
       configurable: true,
     });
   });
 
-  describe('SUPPORTED_LOCALES', () => {
-    it('should have 5 supported locales', () => {
+  describe("SUPPORTED_LOCALES", () => {
+    it("should have 5 supported locales", () => {
       expect(SUPPORTED_LOCALES).toHaveLength(5);
     });
 
-    it('should include en, et, fi, de, fr', () => {
+    it("should include en, et, fi, de, fr", () => {
       const codes = SUPPORTED_LOCALES.map((l) => l.code);
-      expect(codes).toContain('en');
-      expect(codes).toContain('et');
-      expect(codes).toContain('fi');
-      expect(codes).toContain('de');
-      expect(codes).toContain('fr');
+      expect(codes).toContain("en");
+      expect(codes).toContain("et");
+      expect(codes).toContain("fi");
+      expect(codes).toContain("de");
+      expect(codes).toContain("fr");
     });
   });
 
-  describe('detectInitialLocale', () => {
-    it('should default to en when no stored locale and browser is English', () => {
-      expect(detectInitialLocale()).toBe('en');
+  describe("detectInitialLocale", () => {
+    it("should default to en when no stored locale and browser is English", () => {
+      expect(detectInitialLocale()).toBe("en");
     });
 
-    it('should use stored locale from localStorage', () => {
-      localStorage.setItem(LOCALE_STORAGE_KEY, 'de');
-      expect(detectInitialLocale()).toBe('de');
+    it("should use stored locale from localStorage", () => {
+      localStorage.setItem(LOCALE_STORAGE_KEY, "de");
+      expect(detectInitialLocale()).toBe("de");
     });
 
-    it('should detect browser locale when no stored preference', () => {
-      Object.defineProperty(navigator, 'languages', {
-        value: ['fi-FI', 'en-US'],
+    it("should detect browser locale when no stored preference", () => {
+      Object.defineProperty(navigator, "languages", {
+        value: ["fi-FI", "en-US"],
         configurable: true,
       });
-      expect(detectInitialLocale()).toBe('fi');
+      expect(detectInitialLocale()).toBe("fi");
     });
 
-    it('should fallback to en for unsupported browser locale', () => {
-      Object.defineProperty(navigator, 'languages', {
-        value: ['ja-JP', 'zh-CN'],
+    it("should fallback to en for unsupported browser locale", () => {
+      Object.defineProperty(navigator, "languages", {
+        value: ["ja-JP", "zh-CN"],
         configurable: true,
       });
-      expect(detectInitialLocale()).toBe('en');
+      expect(detectInitialLocale()).toBe("en");
     });
 
-    it('should ignore invalid stored locale', () => {
-      localStorage.setItem(LOCALE_STORAGE_KEY, 'invalid');
-      expect(detectInitialLocale()).toBe('en');
-    });
-  });
-
-  describe('initial state', () => {
-    it('should have en as default locale when browser is English', () => {
-      const store = useLocaleStore();
-      expect(store.currentLocale).toBe('en');
-    });
-
-    it('should have en in loaded locales', () => {
-      const store = useLocaleStore();
-      expect(store.loadedLocales).toContain('en');
+    it("should ignore invalid stored locale", () => {
+      localStorage.setItem(LOCALE_STORAGE_KEY, "invalid");
+      expect(detectInitialLocale()).toBe("en");
     });
   });
 
-  describe('setLocale', () => {
-    it('should set locale to a supported value', async () => {
+  describe("initial state", () => {
+    it("should have en as default locale when browser is English", () => {
       const store = useLocaleStore();
-      await store.setLocale('et');
-      expect(store.currentLocale).toBe('et');
+      expect(store.currentLocale).toBe("en");
     });
 
-    it('should persist locale to localStorage', async () => {
+    it("should have en in loaded locales", () => {
       const store = useLocaleStore();
-      await store.setLocale('fr');
-      expect(localStorage.getItem(LOCALE_STORAGE_KEY)).toBe('fr');
+      expect(store.loadedLocales).toContain("en");
+    });
+  });
+
+  describe("setLocale", () => {
+    it("should set locale to a supported value", async () => {
+      const store = useLocaleStore();
+      await store.setLocale("et");
+      expect(store.currentLocale).toBe("et");
     });
 
-    it('should set locale to fi', async () => {
+    it("should persist locale to localStorage", async () => {
       const store = useLocaleStore();
-      await store.setLocale('fi');
-      expect(store.currentLocale).toBe('fi');
+      await store.setLocale("fr");
+      expect(localStorage.getItem(LOCALE_STORAGE_KEY)).toBe("fr");
     });
 
-    it('should add locale to loadedLocales', async () => {
+    it("should set locale to fi", async () => {
       const store = useLocaleStore();
-      await store.setLocale('de');
-      expect(store.loadedLocales).toContain('de');
+      await store.setLocale("fi");
+      expect(store.currentLocale).toBe("fi");
+    });
+
+    it("should add locale to loadedLocales", async () => {
+      const store = useLocaleStore();
+      await store.setLocale("de");
+      expect(store.loadedLocales).toContain("de");
     });
   });
 });

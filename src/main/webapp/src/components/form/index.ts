@@ -1,1 +1,1 @@
-export { default as XRoadRequestForm } from './XRoadRequestForm.vue';
+export { default as XRoadRequestForm } from "./XRoadRequestForm.vue";

@@ -5,20 +5,23 @@ A learning tool for developers new to X-Road. See how client and service identif
 ## Quick Start
 
 **Docker:**
+
 ```bash
 docker run -p 8080:8080 ghcr.io/melbeltagy/x-road-client-101:latest
 ```
 
 **From source:**
+
 ```bash
 ./gradlew
 ```
 
-Open http://localhost:8080
+Open <http://localhost:8080>
 
 ## Docker
 
 See [docker/README.md](docker/README.md) for full Docker documentation including:
+
 - Docker Compose setup
 - Connecting to a local Security Server
 - Configuration options
@@ -42,7 +45,7 @@ See [docker/README.md](docker/README.md) for full Docker documentation including
 cd src/main/webapp && pnpm dev
 ```
 
-Open http://localhost:9000 (note: frontend runs on port 9000 in hot reload mode)
+Open <http://localhost:9000> (note: frontend runs on port 9000 in hot reload mode)
 
 ### Production build
 
@@ -98,7 +101,7 @@ pnpm test
 # Run tests once
 pnpm test:run
 
-# Run tests with coverage report
+# Run tests with coverage
 pnpm test:coverage
 ```
 
@@ -107,26 +110,36 @@ pnpm test:coverage
 ### Code Quality
 
 ```bash
-# Backend: Checkstyle
-./gradlew checkstyleMain -x webapp
+# Backend: Checkstyle + SpotBugs (part of `./gradlew check`)
+./gradlew check
 
-# Frontend: ESLint
-cd src/main/webapp && pnpm lint
+# Frontend (in src/main/webapp):
+pnpm lint            # ESLint check
+pnpm lint:fix        # ESLint auto-fix
+pnpm format:check    # Prettier check
+pnpm format          # Prettier auto-format
+pnpm type-check      # TypeScript
+```
 
-# Frontend: TypeScript check
-cd src/main/webapp && pnpm type-check
+### Pre-commit hooks
+
+A [lefthook](https://lefthook.dev) config runs lint/format checks on changed files before each commit. To enable:
+
+```bash
+brew install lefthook   # or your preferred installer
+lefthook install
 ```
 
 ## Screenshots
 
-**Client and service identifiers**
+### Client and service identifiers
 
 ![Identifiers Tab](images/IDs.png)
 
-**Request configuration and response viewer**
+### Request configuration and response viewer
 
 ![Request Tab](images/Request.png)
 
-**Dark theme and request history**
+### Dark theme and request history
 
 ![Dark Theme](images/dark-theme.png)

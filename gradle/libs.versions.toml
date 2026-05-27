@@ -5,6 +5,10 @@ checkstyle = "13.4.2"
 mapstruct = "1.6.3"
 archunit = "1.4.2"
 bouncycastle = "1.84"
+node-gradle = "7.1.0"
+spotbugs = "6.5.5"
+owasp-dependencycheck = "12.2.2"
+cyclonedx-bom = "3.2.4"
 
 [libraries]
 spring-boot-starter-actuator = { module = "org.springframework.boot:spring-boot-starter-actuator" }
@@ -33,3 +37,7 @@ archunit-junit5-engine = { module = "com.tngtech.archunit:archunit-junit5-engine
 
 [plugins]
 spring-boot = { id = "org.springframework.boot", version.ref = "spring-boot" }
+node-gradle = { id = "com.github.node-gradle.node", version.ref = "node-gradle" }
+spotbugs = { id = "com.github.spotbugs", version.ref = "spotbugs" }
+owasp-dependencycheck = { id = "org.owasp.dependencycheck", version.ref = "owasp-dependencycheck" }
+cyclonedx-bom = { id = "org.cyclonedx.bom", version.ref = "cyclonedx-bom" }

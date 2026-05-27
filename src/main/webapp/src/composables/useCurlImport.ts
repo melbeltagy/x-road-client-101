@@ -1,8 +1,8 @@
-import { ref, nextTick } from 'vue';
-import { useI18n } from 'vue-i18n';
-import type { Ref } from 'vue';
-import type { XRoadRequest } from '@/types';
-import { hasAnySubsystemField } from '@/utils/subsystem';
+import { ref, nextTick } from "vue";
+import { useI18n } from "vue-i18n";
+import type { Ref } from "vue";
+import type { XRoadRequest } from "@/types";
+import { hasAnySubsystemField } from "@/utils/subsystem";
 
 interface UseCurlImportOptions {
   /**
@@ -54,7 +54,7 @@ export function useCurlImport(opts: UseCurlImportOptions) {
       d.service?.serviceCode ||
       d.service?.serviceVersion ||
       d.request?.body ||
-      (d.request?.path && d.request.path !== '/') ||
+      (d.request?.path && d.request.path !== "/") ||
       (d.request?.headers && Object.keys(d.request.headers).length > 0) ||
       (d.request?.queryParams && Object.keys(d.request.queryParams).length > 0)
     );
@@ -66,9 +66,9 @@ export function useCurlImport(opts: UseCurlImportOptions) {
     opts.isFromHistory.value = false;
     await nextTick();
     opts.currentRequest.value = imported;
-    opts.onSuccess(t('xroad.curlImport.success'));
+    opts.onSuccess(t("xroad.curlImport.success"));
     if (warnings.length > 0) {
-      opts.onWarning(warnings.join(' • '));
+      opts.onWarning(warnings.join(" • "));
     }
   }
 

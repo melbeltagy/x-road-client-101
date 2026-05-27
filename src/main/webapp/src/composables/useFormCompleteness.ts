@@ -1,6 +1,6 @@
-import { computed } from 'vue';
-import type { SubsystemId, MTlsCertificates } from '@/types';
-import { isSubsystemFilled } from '@/utils/subsystem';
+import { computed } from "vue";
+import type { SubsystemId, MTlsCertificates } from "@/types";
+import { isSubsystemFilled } from "@/utils/subsystem";
 
 /**
  * Shape consumed by useFormCompleteness. Each field is optional so the

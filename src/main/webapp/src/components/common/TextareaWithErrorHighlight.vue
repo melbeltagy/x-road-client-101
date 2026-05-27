@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed } from "vue";
 
 interface ErrorSpan {
   start: number;
@@ -16,14 +16,14 @@ const props = withDefaults(
   }>(),
   {
     errorSpan: null,
-    placeholder: '',
+    placeholder: "",
     rows: 12,
     autofocus: false,
-  }
+  },
 );
 
 defineEmits<{
-  'update:modelValue': [value: string];
+  "update:modelValue": [value: string];
 }>();
 
 // Three-segment split (before / bad / after) used by the highlight
@@ -50,19 +50,19 @@ const highlightSegments = computed(() => {
   <div class="highlight-wrapper">
     <v-textarea
       :model-value="modelValue"
-      @update:model-value="$emit('update:modelValue', $event)"
       :rows="rows"
       variant="outlined"
       :placeholder="placeholder"
       class="font-monospace highlight-textarea"
       hide-details
       :autofocus="autofocus"
+      @update:model-value="$emit('update:modelValue', $event)"
     />
-    <div
-      v-if="highlightSegments"
-      class="font-monospace highlight-overlay"
-      aria-hidden="true"
-    ><span class="overlay-invisible">{{ highlightSegments.before }}</span><span class="overlay-bad">{{ highlightSegments.bad }}</span><span class="overlay-invisible">{{ highlightSegments.after }}</span></div>
+    <div v-if="highlightSegments" class="font-monospace highlight-overlay" aria-hidden="true">
+      <span class="overlay-invisible">{{ highlightSegments.before }}</span
+      ><span class="overlay-bad">{{ highlightSegments.bad }}</span
+      ><span class="overlay-invisible">{{ highlightSegments.after }}</span>
+    </div>
   </div>
 </template>
 

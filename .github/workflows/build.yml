@@ -6,10 +6,13 @@ env:
 
 on:
   workflow_dispatch:
+  # push only runs on main: triggers the docker job on merge.
+  # Feature branches go through pull_request (which includes synchronize, so every
+  # push to a PR branch still runs CI). Avoids duplicate runs and ensures
+  # dependency-review fires on every PR update.
   push:
-    branches: ['*']
+    branches: [main]
     paths-ignore:
-      - '**/*.md'
       - 'images/**'
       - '.github/dependabot.yml'
       - '.gitignore'
@@ -17,70 +20,171 @@ on:
   pull_request:
     branches: ['*']
     paths-ignore:
-      - '**/*.md'
       - 'images/**'
       - '.github/dependabot.yml'
       - '.gitignore'
       - 'LICENSE'
 
 jobs:
-  test-backend:
-    name: Backend Tests
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      backend: ${{ steps.filter.outputs.backend }}
+      frontend: ${{ steps.filter.outputs.frontend }}
+      markdown: ${{ steps.filter.outputs.markdown }}
+    steps:
+      - uses: actions/checkout@v6
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            backend:
+              - 'src/main/java/**'
+              - 'src/main/resources/**'
+              - 'src/test/java/**'
+              - 'config/checkstyle/**'
+              - 'build.gradle.kts'
+              - 'settings.gradle.kts'
+              - 'gradle/**'
+              - 'gradlew'
+              - 'gradlew.bat'
+              - 'gradle.properties'
+              - 'docker/Dockerfile'
+              - '.github/workflows/**'
+              - '.github/actions/**'
+            frontend:
+              - 'src/main/webapp/**'
+              - 'build.gradle.kts'
+              - 'gradle/libs.versions.toml'
+              - '.github/workflows/**'
+              - '.github/actions/**'
+            markdown:
+              - '**/*.md'
+
+  verify-backend:
+    name: Verify Backend
+    needs: changes
+    if: needs.changes.outputs.backend == 'true' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
-      - uses: actions/setup-java@v5
-        with:
-          java-version: '25'
-          distribution: 'temurin'
-      - uses: gradle/actions/setup-gradle@v4
-      - name: Run unit tests
-        run: ./gradlew test -x webapp -x webapp_test -x pnpmInstall
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/setup-backend
+      - name: Run backend static checks
+        run: ./gradlew check -x test -x integrationTest -x jacocoTestCoverageVerification -x jacocoTestReport
+
+  test-backend:
+    name: Test Backend
+    needs: changes
+    if: needs.changes.outputs.backend == 'true' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/setup-backend
+      - name: Run backend tests with coverage
+        run: ./gradlew test integrationTest jacocoTestCoverageVerification
+
+  verify-frontend:
+    name: Verify Frontend
+    needs: changes
+    if: needs.changes.outputs.frontend == 'true' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/setup-frontend
+      - name: Lint, format check, and type check
+        run: pnpm lint && pnpm format:check && pnpm type-check
+        working-directory: src/main/webapp
 
   test-frontend:
-    name: Frontend Tests
+    name: Test Frontend
+    needs: changes
+    if: needs.changes.outputs.frontend == 'true' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
-      - uses: pnpm/action-setup@v6
-        with:
-          version: 10
-      - uses: actions/setup-node@v6
-        with:
-          node-version: '24'
-          cache: 'pnpm'
-          cache-dependency-path: src/main/webapp/pnpm-lock.yaml
-      - name: Install dependencies
-        run: pnpm install
-        working-directory: src/main/webapp
-      - name: Run tests
-        run: pnpm test:run
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/setup-frontend
+      - name: Run frontend tests with coverage
+        run: pnpm test:coverage
         working-directory: src/main/webapp
 
-  build:
-    name: Build
+  build-frontend:
+    name: Build Frontend
+    needs: changes
+    if: needs.changes.outputs.frontend == 'true' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
-    needs: [test-backend, test-frontend]
     steps:
-      - uses: actions/checkout@v5
-      - uses: actions/setup-java@v5
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/setup-frontend
+      - name: Build frontend
+        run: pnpm build
+        working-directory: src/main/webapp
+
+  audit-frontend:
+    name: Audit Frontend
+    needs: changes
+    if: needs.changes.outputs.frontend == 'true' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/setup-frontend
+      - name: Run pnpm audit
+        run: pnpm audit --prod --audit-level=high
+        working-directory: src/main/webapp
+
+  dependency-review:
+    name: Dependency Review
+    # Per-PR fast gate against newly added/upgraded vulnerable dependencies (Java + npm).
+    # Uses GitHub's dependency graph; no NVD download required. Only runs on PRs.
+    # Full periodic NVD scan happens weekly in security-scan.yml.
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/dependency-review-action@v4
         with:
-          java-version: '25'
-          distribution: 'temurin'
-      - uses: gradle/actions/setup-gradle@v4
-      - name: Build with Gradle
-        run: ./gradlew assemble
-      - uses: actions/upload-artifact@v5
-        with:
-          name: jar
-          path: build/libs/*.jar
-          retention-days: 7
+          fail-on-severity: high
+
+  verify-markdown:
+    name: Verify Markdown
+    needs: changes
+    if: needs.changes.outputs.markdown == 'true' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Lint markdown files
+        run: npx --yes markdownlint-cli2 '**/*.md' '!**/node_modules/**' '!**/build/**' '!**/.gradle/**' '!**/.planning/**' '!**/.claude/**' '!**/dist/**' '!**/coverage/**'
 
   docker:
     name: Docker
-    needs: build
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    needs: [changes, verify-backend, test-backend, verify-frontend, test-frontend, build-frontend, audit-frontend]
+    if: |
+      always() &&
+      github.ref == 'refs/heads/main' &&
+      (
+        github.event_name == 'workflow_dispatch' ||
+        (
+          github.event_name == 'push' &&
+          (needs.changes.outputs.backend == 'true' || needs.changes.outputs.frontend == 'true')
+        )
+      ) &&
+      !contains(needs.*.result, 'failure') &&
+      !contains(needs.*.result, 'cancelled')
     uses: ./.github/workflows/docker.yml
     permissions:
       contents: read
       packages: write
+
+  ci-success:
+    needs: [verify-backend, test-backend, verify-frontend, test-frontend, build-frontend, audit-frontend, verify-markdown, dependency-review]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify no upstream failures
+        run: |
+          if [[ "${{ contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled') }}" == "true" ]]; then
+            echo "One or more jobs failed or were cancelled."
+            exit 1
+          fi
+          echo "All jobs succeeded or were skipped."

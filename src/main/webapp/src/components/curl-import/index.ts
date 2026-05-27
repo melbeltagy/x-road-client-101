@@ -1,1 +1,1 @@
-export { default as CurlImportDialog } from './CurlImportDialog.vue';
+export { default as CurlImportDialog } from "./CurlImportDialog.vue";

@@ -1,8 +1,8 @@
-import { reactive, ref, watch, onMounted, getCurrentInstance } from 'vue';
-import type { XRoadRequest, MTlsCertificates, SubsystemId } from '@/types';
-import type { HttpMethod } from '@/utils/http-methods';
-import { emptySubsystem } from '@/utils/subsystem';
-import { useKeyValueList, type KeyValuePair } from './useKeyValueList';
+import { reactive, ref, watch, onMounted, getCurrentInstance } from "vue";
+import type { XRoadRequest, MTlsCertificates, SubsystemId } from "@/types";
+import type { HttpMethod } from "@/utils/http-methods";
+import { emptySubsystem } from "@/utils/subsystem";
+import { useKeyValueList, type KeyValuePair } from "./useKeyValueList";
 
 export type { SubsystemId };
 
@@ -44,18 +44,18 @@ export function useXRoadForm(options: UseXRoadFormOptions = {}) {
   const formData = reactive<XRoadFormState>({
     client: {
       subsystem: emptySubsystem(),
-      securityServerUrl: '',
+      securityServerUrl: "",
     },
     service: {
       subsystem: emptySubsystem(),
-      serviceCode: '',
-      serviceVersion: '',
+      serviceCode: "",
+      serviceVersion: "",
     },
     request: {
-      method: 'GET',
-      path: '',
-      body: '',
-      contentType: '',
+      method: "GET",
+      path: "",
+      body: "",
+      contentType: "",
     },
   });
 
@@ -63,8 +63,8 @@ export function useXRoadForm(options: UseXRoadFormOptions = {}) {
   const certificates = ref<MTlsCertificates>({});
 
   // Key-value lists (queryParams, customHeaders)
-  const queryParamsList = useKeyValueList('qp');
-  const customHeadersList = useKeyValueList('ch');
+  const queryParamsList = useKeyValueList("qp");
+  const customHeadersList = useKeyValueList("ch");
   const queryParams = queryParamsList.items;
   const customHeaders = customHeadersList.items;
 
@@ -99,9 +99,7 @@ export function useXRoadForm(options: UseXRoadFormOptions = {}) {
     };
 
     const hasAnyCertificate =
-      certificates.value.securityServerCert?.trim() ||
-      certificates.value.clientCert?.trim() ||
-      certificates.value.clientPrivateKey?.trim();
+      certificates.value.securityServerCert?.trim() || certificates.value.clientCert?.trim() || certificates.value.clientPrivateKey?.trim();
 
     if (hasAnyCertificate) {
       request.client.mtlsCertificates = {
@@ -128,12 +126,12 @@ export function useXRoadForm(options: UseXRoadFormOptions = {}) {
 
     formData.service.subsystem = { ...request.service.subsystem };
     formData.service.serviceCode = request.service.serviceCode;
-    formData.service.serviceVersion = request.service.serviceVersion ?? '';
+    formData.service.serviceVersion = request.service.serviceVersion ?? "";
 
     formData.request.method = request.request.method as HttpMethod;
     formData.request.path = request.request.path;
-    formData.request.body = request.request.body ?? '';
-    formData.request.contentType = request.request.contentType ?? '';
+    formData.request.body = request.request.body ?? "";
+    formData.request.contentType = request.request.contentType ?? "";
 
     queryParamsList.setFromRecord(request.request.queryParams);
     customHeadersList.setFromRecord(request.request.headers);
@@ -156,15 +154,15 @@ export function useXRoadForm(options: UseXRoadFormOptions = {}) {
 
   function clearService(): void {
     formData.service.subsystem = emptySubsystem();
-    formData.service.serviceCode = '';
-    formData.service.serviceVersion = '';
+    formData.service.serviceCode = "";
+    formData.service.serviceVersion = "";
   }
 
   function clearRequest(): void {
-    formData.request.method = 'GET';
-    formData.request.path = '';
-    formData.request.body = '';
-    formData.request.contentType = '';
+    formData.request.method = "GET";
+    formData.request.path = "";
+    formData.request.body = "";
+    formData.request.contentType = "";
     queryParamsList.clear();
     customHeadersList.clear();
   }
@@ -190,7 +188,7 @@ export function useXRoadForm(options: UseXRoadFormOptions = {}) {
           options.onRequestModified?.();
         }
       },
-      { deep: true }
+      { deep: true },
     );
   }
 
@@ -205,7 +203,7 @@ export function useXRoadForm(options: UseXRoadFormOptions = {}) {
           populateFromRequest(newRequest);
         }
       },
-      { immediate: true }
+      { immediate: true },
     );
   }
 

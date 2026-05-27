@@ -1,24 +1,20 @@
-import { defineStore } from 'pinia';
-import { ref, computed, watch } from 'vue';
-import { useTheme } from 'vuetify';
-import { safeLocalStorage } from '@/utils/safe-local-storage';
+import { defineStore } from "pinia";
+import { ref, computed, watch } from "vue";
+import { useTheme } from "vuetify";
+import { safeLocalStorage } from "@/utils/safe-local-storage";
 
-export type ThemeMode = 'light' | 'dark' | 'system';
+export type ThemeMode = "light" | "dark" | "system";
 
 export const useThemeStore = defineStore(
-  'theme',
+  "theme",
   () => {
-    const themeMode = ref<ThemeMode>('system');
-    const systemPrefersDark = ref(
-      typeof window !== 'undefined'
-        ? window.matchMedia('(prefers-color-scheme: dark)').matches
-        : false
-    );
+    const themeMode = ref<ThemeMode>("system");
+    const systemPrefersDark = ref(typeof window !== "undefined" ? window.matchMedia("(prefers-color-scheme: dark)").matches : false);
     const vuetifyTheme = useTheme();
 
-    const effectiveTheme = computed<'light' | 'dark'>(() => {
-      if (themeMode.value === 'system') {
-        return systemPrefersDark.value ? 'dark' : 'light';
+    const effectiveTheme = computed<"light" | "dark">(() => {
+      if (themeMode.value === "system") {
+        return systemPrefersDark.value ? "dark" : "light";
       }
       return themeMode.value;
     });
@@ -36,9 +32,9 @@ export const useThemeStore = defineStore(
       applyTheme();
 
       // Listen for system theme changes
-      if (typeof window !== 'undefined') {
-        const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-        mediaQuery.addEventListener('change', (e) => {
+      if (typeof window !== "undefined") {
+        const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+        mediaQuery.addEventListener("change", (e) => {
           systemPrefersDark.value = e.matches;
         });
       }
@@ -58,9 +54,9 @@ export const useThemeStore = defineStore(
   },
   {
     persist: {
-      key: 'xroad-theme-preference',
+      key: "xroad-theme-preference",
       storage: safeLocalStorage,
-      pick: ['themeMode'],
+      pick: ["themeMode"],
     },
-  }
+  },
 );

@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-import { useI18n } from 'vue-i18n';
-import type { RequestHistoryEntry } from '@/stores/xroad-history';
-import { formatXRoadClient, buildServiceUrl } from '@/utils/xroad-url';
-import { statusColorFor } from '@/utils/http-status';
+import { computed } from "vue";
+import { useI18n } from "vue-i18n";
+import type { RequestHistoryEntry } from "@/stores/xroad-history";
+import { formatXRoadClient, buildServiceUrl } from "@/utils/xroad-url";
+import { statusColorFor } from "@/utils/http-status";
 
 const props = defineProps<{
   entry: RequestHistoryEntry;
@@ -31,61 +31,44 @@ const serviceUrl = computed(() => {
 });
 
 function handleView(): void {
-  emit('view', props.entry);
+  emit("view", props.entry);
 }
 
 function handleDelete(event: Event): void {
   event.stopPropagation();
-  emit('delete', props.entry.id);
+  emit("delete", props.entry.id);
 }
 </script>
 
 <template>
-  <v-list-item
-    :active="isSelected"
-    :value="entry.id"
-    @click="handleView"
-    class="history-entry"
-  >
+  <v-list-item :active="isSelected" :value="entry.id" class="history-entry" @click="handleView">
     <template #prepend>
-      <v-chip
-        v-if="entry.response"
-        :color="statusColorFor(entry.response.statusCode)"
-        size="small"
-        class="mr-2"
-      >
+      <v-chip v-if="entry.response" :color="statusColorFor(entry.response.statusCode)" size="small" class="mr-2">
         {{ entry.response.statusCode }}
       </v-chip>
     </template>
 
     <v-list-item-title class="font-weight-bold">
-      <span class="text-caption text-medium-emphasis">{{ t('xroad.history.entry.client') }}:</span>
+      <span class="text-caption text-medium-emphasis">{{ t("xroad.history.entry.client") }}:</span>
       {{ clientIdentifier }}
     </v-list-item-title>
 
     <v-list-item-subtitle>
       <div class="mb-1">
-        <span class="text-caption text-medium-emphasis">{{ t('xroad.history.entry.method') }}:</span>
+        <span class="text-caption text-medium-emphasis">{{ t("xroad.history.entry.method") }}:</span>
         <strong class="ml-1">{{ entry.request.request.method }}</strong>
       </div>
       <div class="text-caption d-flex align-center mb-1">
         <v-icon size="small" class="mr-1">schedule</v-icon>
         {{ formattedTimestamp }}
       </div>
-      <div class="text-caption font-monospace text-truncate" style="max-width: 300px;">
+      <div class="text-caption font-monospace text-truncate" style="max-width: 300px">
         {{ serviceUrl }}
       </div>
     </v-list-item-subtitle>
 
     <template #append>
-      <v-btn
-        icon
-        size="small"
-        variant="text"
-        color="error"
-        @click="handleDelete"
-        :title="t('xroad.history.delete')"
-      >
+      <v-btn icon size="small" variant="text" color="error" :title="t('xroad.history.delete')" @click="handleDelete">
         <v-icon>delete</v-icon>
       </v-btn>
     </template>

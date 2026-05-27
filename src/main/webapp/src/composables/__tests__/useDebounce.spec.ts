@@ -1,7 +1,7 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { useDebounce } from '../useDebounce';
+import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
+import { useDebounce } from "../useDebounce";
 
-describe('useDebounce', () => {
+describe("useDebounce", () => {
   beforeEach(() => {
     vi.useFakeTimers();
   });
@@ -10,7 +10,7 @@ describe('useDebounce', () => {
     vi.useRealTimers();
   });
 
-  it('delays a single call by ms', () => {
+  it("delays a single call by ms", () => {
     const fn = vi.fn();
     const { debounced } = useDebounce(fn, 300);
 
@@ -23,7 +23,7 @@ describe('useDebounce', () => {
     expect(fn).toHaveBeenCalledTimes(1);
   });
 
-  it('coalesces rapid calls into a single trailing-edge invocation', () => {
+  it("coalesces rapid calls into a single trailing-edge invocation", () => {
     const fn = vi.fn();
     const { debounced } = useDebounce(fn, 100);
 
@@ -35,35 +35,35 @@ describe('useDebounce', () => {
     expect(fn).toHaveBeenCalledTimes(1);
   });
 
-  it('passes the latest args through to the underlying function', () => {
+  it("passes the latest args through to the underlying function", () => {
     const fn = vi.fn();
     const { debounced } = useDebounce(fn, 100);
 
-    debounced('a', 1);
-    debounced('b', 2);
-    debounced('c', 3);
+    debounced("a", 1);
+    debounced("b", 2);
+    debounced("c", 3);
 
     vi.advanceTimersByTime(100);
-    expect(fn).toHaveBeenCalledWith('c', 3);
+    expect(fn).toHaveBeenCalledWith("c", 3);
   });
 
-  it('allows separate invocations after the window expires', () => {
+  it("allows separate invocations after the window expires", () => {
     const fn = vi.fn();
     const { debounced } = useDebounce(fn, 100);
 
-    debounced('first');
+    debounced("first");
     vi.advanceTimersByTime(100);
 
-    debounced('second');
+    debounced("second");
     vi.advanceTimersByTime(100);
 
     expect(fn).toHaveBeenCalledTimes(2);
-    expect(fn).toHaveBeenNthCalledWith(1, 'first');
-    expect(fn).toHaveBeenNthCalledWith(2, 'second');
+    expect(fn).toHaveBeenNthCalledWith(1, "first");
+    expect(fn).toHaveBeenNthCalledWith(2, "second");
   });
 
-  describe('cancel', () => {
-    it('cancels a pending invocation', () => {
+  describe("cancel", () => {
+    it("cancels a pending invocation", () => {
       const fn = vi.fn();
       const { debounced, cancel } = useDebounce(fn, 100);
 
@@ -74,26 +74,26 @@ describe('useDebounce', () => {
       expect(fn).not.toHaveBeenCalled();
     });
 
-    it('is a no-op when nothing is pending', () => {
+    it("is a no-op when nothing is pending", () => {
       const { cancel } = useDebounce(vi.fn(), 100);
       expect(() => cancel()).not.toThrow();
     });
 
-    it('allows new calls after a cancel', () => {
+    it("allows new calls after a cancel", () => {
       const fn = vi.fn();
       const { debounced, cancel } = useDebounce(fn, 100);
 
       debounced();
       cancel();
-      debounced('after-cancel');
+      debounced("after-cancel");
       vi.advanceTimersByTime(100);
 
       expect(fn).toHaveBeenCalledTimes(1);
-      expect(fn).toHaveBeenCalledWith('after-cancel');
+      expect(fn).toHaveBeenCalledWith("after-cancel");
     });
   });
 
-  it('does not register onUnmounted when called outside a component', () => {
+  it("does not register onUnmounted when called outside a component", () => {
     // Calling outside setup() must not throw — only registers cleanup
     // when getCurrentInstance() returns an instance.
     expect(() => useDebounce(() => undefined, 100)).not.toThrow();

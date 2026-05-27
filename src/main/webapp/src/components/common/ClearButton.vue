@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useI18n } from 'vue-i18n';
+import { useI18n } from "vue-i18n";
 
 defineProps<{
   /** Hover tooltip text. */
@@ -15,15 +15,9 @@ const { t } = useI18n();
 
 <template>
   <div class="d-flex justify-end mb-2">
-    <v-btn
-      size="small"
-      variant="tonal"
-      color="error"
-      :title="title"
-      @click="emit('click')"
-    >
+    <v-btn size="small" variant="tonal" color="error" :title="title" @click="emit('click')">
       <v-icon start>delete</v-icon>
-      {{ t('entity.action.clear') }}
+      {{ t("entity.action.clear") }}
     </v-btn>
   </div>
 </template>

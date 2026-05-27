@@ -1,4 +1,4 @@
-import type { SubsystemId, ServiceId } from '@/types';
+import type { SubsystemId, ServiceId } from "@/types";
 
 /**
  * Is `url` a fetchable HTTP(S) URL? Returns false for empty, malformed,
@@ -10,7 +10,7 @@ export function isValidHttpUrl(url: string | undefined | null): boolean {
   if (!url) return false;
   try {
     const parsed = new URL(url);
-    return parsed.protocol === 'http:' || parsed.protocol === 'https:';
+    return parsed.protocol === "http:" || parsed.protocol === "https:";
   } catch {
     return false;
   }
@@ -38,7 +38,7 @@ export function buildServicePath(service: ServiceId, path: string): string {
   }
 
   // Ensure path starts with /
-  const normalizedPath = path.startsWith('/') ? path : `/${path}`;
+  const normalizedPath = path.startsWith("/") ? path : `/${path}`;
   servicePath += normalizedPath;
 
   return servicePath;
@@ -50,8 +50,7 @@ export function buildServicePath(service: ServiceId, path: string): string {
  */
 export function buildServiceUrl(securityServerUrl: string, service: ServiceId, path: string): string {
   // Remove trailing slashes from base URL
-  const baseUrl = securityServerUrl.replace(/\/+$/, '');
+  const baseUrl = securityServerUrl.replace(/\/+$/, "");
   const servicePath = buildServicePath(service, path);
   return `${baseUrl}${servicePath}`;
 }
-
