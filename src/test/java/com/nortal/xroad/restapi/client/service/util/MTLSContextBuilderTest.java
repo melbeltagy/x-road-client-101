@@ -110,11 +110,28 @@ class MTLSContextBuilderTest {
     }
 
     @Test
-    void trustManagerAcceptsAnyCertificate() throws Exception {
+    void trustManagerPinsUploadedServerCertificate() throws Exception {
         SSLContext sslContext = MTLSContextBuilder.createSslContext(serverCertPem, clientCertPem, clientKeyPem);
-        // The permissive X509TrustManager is exercised when SSL handshakes occur; the fact that
-        // the context initializes and is usable confirms the trust manager and key manager are wired.
+        // Context built successfully with the uploaded SS cert as the trust anchor — handshakes
+        // against a server presenting a different cert will fail at runtime.
         assertThat(sslContext.getSocketFactory().getSupportedCipherSuites()).isNotEmpty();
+    }
+
+    @Test
+    void createSslContextThrowsWhenServerCertHasNoCertificate() {
+        // PEM that parses but yields no X509CertificateHolder — using a private key PEM
+        // exercises the explicit "missing SS cert" check rather than the generic catch.
+        assertThatThrownBy(() -> MTLSContextBuilder.createSslContext(clientKeyPem, clientCertPem, clientKeyPem))
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessageContaining("Security server certificate");
+    }
+
+    @Test
+    void createSslContextThrowsOnMalformedServerCertPem() {
+        String garbage = "-----BEGIN CERTIFICATE-----\nbm90LWEtY2VydA==\n-----END CERTIFICATE-----\n";
+
+        assertThatThrownBy(() -> MTLSContextBuilder.createSslContext(garbage, clientCertPem, clientKeyPem))
+            .isInstanceOf(IllegalArgumentException.class);
     }
 
     private static KeyPair generateKeyPair() throws Exception {

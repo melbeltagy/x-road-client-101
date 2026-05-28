@@ -14,8 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
+import javax.net.ssl.TrustManagerFactory;
 import org.apache.commons.lang3.StringUtils;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.cert.X509CertificateHolder;
@@ -51,24 +50,25 @@ public final class MTLSContextBuilder {
             KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
             kmf.init(keyStore, new char[0]);
 
-            // Permissive trust manager for self-signed certificates (development/testing)
-            TrustManager[] trustManagers = new TrustManager[] {
-                new X509TrustManager() {
-                    @Override
-                    public void checkClientTrusted(X509Certificate[] chain, String authType) {}
+            // Per-request trust anchor: the SSLContext is single-use, so this pins to the SS cert(s)
+            // the developer just uploaded without persisting anything. A handshake against a server
+            // presenting a different cert will fail — which is exactly the lesson the tool exists to teach.
+            List<X509Certificate> serverCertificates = parseCertificates(securityServerCertPem);
+            if (serverCertificates.isEmpty()) {
+                throw new IllegalArgumentException("Security server certificate is required but not found in provided PEM");
+            }
 
-                    @Override
-                    public void checkServerTrusted(X509Certificate[] chain, String authType) {}
+            KeyStore trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
+            trustStore.load(null, null);
+            for (int i = 0; i < serverCertificates.size(); i++) {
+                trustStore.setCertificateEntry("xroad-ss-" + i, serverCertificates.get(i));
+            }
 
-                    @Override
-                    public X509Certificate[] getAcceptedIssuers() {
-                        return new X509Certificate[0];
-                    }
-                },
-            };
+            TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+            tmf.init(trustStore);
 
             SSLContext sslContext = SSLContext.getInstance("TLS");
-            sslContext.init(kmf.getKeyManagers(), trustManagers, null);
+            sslContext.init(kmf.getKeyManagers(), tmf.getTrustManagers(), null);
             return sslContext;
         } catch (
             CertificateException
