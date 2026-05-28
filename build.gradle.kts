@@ -118,6 +118,10 @@ tasks.withType<com.github.spotbugs.snom.SpotBugsTask>().configureEach {
     reports.create("xml") {
         required.set(false)
     }
+    // SARIF for GitHub Code Scanning (Security tab) — inline annotations on PRs.
+    reports.create("sarif") {
+        required.set(true)
+    }
 }
 
 // OWASP Dependency-Check: fail the build when a dependency has a CVSS score >= 7 (HIGH or CRITICAL).
@@ -131,6 +135,8 @@ tasks.withType<com.github.spotbugs.snom.SpotBugsTask>().configureEach {
 // completes (slower, ~10-15 min on first run).
 dependencyCheck {
     failBuildOnCVSS = 7.0f
+    // HTML for humans, SARIF for GitHub Code Scanning (Security tab).
+    formats = listOf("HTML", "SARIF")
     val nvdApiKey = System.getenv("NVD_API_KEY")
     nvd {
         if (!nvdApiKey.isNullOrBlank()) {
@@ -141,13 +147,14 @@ dependencyCheck {
             delay = 8000
         }
     }
-    // Backend-only scan. Frontend deps are audited separately via `pnpm audit` in build.yml.
-    // The Node Package / Node Audit analyzers require node_modules + a pnpm executable on the
-    // runner; rather than installing the FE toolchain in this job, disable them here. (Disabling
-    // nodeAudit also disables its pnpm and yarn sub-analyzers.)
+    // Backend-only scan. Frontend deps are audited separately via `pnpm audit` in security-scan.yml.
+    // The Node/Pnpm/Yarn analyzers each have an independent enable flag and would otherwise require
+    // node_modules + the respective executable on the runner; turn them all off here.
     analyzers {
         nodePackage.enabled.set(false)
         nodeAudit.enabled.set(false)
+        nodeAudit.pnpmEnabled.set(false)
+        nodeAudit.yarnEnabled.set(false)
     }
 }
 

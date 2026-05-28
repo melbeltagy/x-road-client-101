@@ -14,6 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+      security-events: write  # required to upload SARIF to Code Scanning
     steps:
       - uses: actions/checkout@v6
       - uses: ./.github/actions/setup-backend
@@ -28,14 +29,27 @@ jobs:
           # https://nvd.nist.gov/developers/request-an-api-key and add it as a repo secret
           # named NVD_API_KEY. Without it the scan still runs but takes much longer.
           NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
-        run: ./gradlew dependencyCheckAnalyze
-      - name: Upload report on failure
-        if: failure()
+        # Continue past the gradle-level fail-on-CVSS so we still upload SARIF + HTML for triage.
+        # The dedicated check step below re-fails the job after artifacts are published.
+        run: ./gradlew dependencyCheckAnalyze || echo "DEPCHECK_FAILED=1" >> "$GITHUB_ENV"
+      - name: Upload SARIF to Code Scanning
+        if: always() && hashFiles('build/reports/dependency-check-report.sarif') != ''
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: build/reports/dependency-check-report.sarif
+          category: owasp-dependency-check
+      - name: Upload dependency-check report
+        if: always() && hashFiles('build/reports/dependency-check-report.*') != ''
         uses: actions/upload-artifact@v5
         with:
           name: dependency-check-report
           path: build/reports/dependency-check-report.*
           retention-days: 30
+      - name: Fail job if CVEs above threshold were found
+        if: env.DEPCHECK_FAILED == '1'
+        run: |
+          echo "OWASP dependency-check failed (CVSS >= 7 finding or analyzer error). See uploaded report."
+          exit 1
 
   audit-frontend:
     name: pnpm audit (Frontend)
