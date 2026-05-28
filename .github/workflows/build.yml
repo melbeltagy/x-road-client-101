@@ -66,22 +66,85 @@ jobs:
     needs: changes
     if: needs.changes.outputs.backend == 'true' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write  # SpotBugs SARIF upload
     steps:
       - uses: actions/checkout@v6
       - uses: ./.github/actions/setup-backend
       - name: Run backend static checks
         run: ./gradlew check -x test -x integrationTest -x jacocoTestCoverageVerification -x jacocoTestReport
+      - name: Upload SpotBugs SARIF to Code Scanning
+        if: always() && hashFiles('build/reports/spotbugs/*.sarif') != ''
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: build/reports/spotbugs/
+          category: spotbugs
+      - name: Upload SpotBugs HTML reports
+        if: always() && hashFiles('build/reports/spotbugs/*.html') != ''
+        uses: actions/upload-artifact@v5
+        with:
+          name: spotbugs-reports
+          path: build/reports/spotbugs/
+          retention-days: 14
 
   test-backend:
     name: Test Backend
     needs: changes
     if: needs.changes.outputs.backend == 'true' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      checks: write  # dorny/test-reporter posts a check run
     steps:
       - uses: actions/checkout@v6
       - uses: ./.github/actions/setup-backend
       - name: Run backend tests with coverage
-        run: ./gradlew test integrationTest jacocoTestCoverageVerification
+        run: ./gradlew test integrationTest jacocoTestCoverageVerification cyclonedxBom
+      - name: Publish test results
+        if: always() && hashFiles('build/test-results/**/*.xml') != ''
+        uses: dorny/test-reporter@v2
+        with:
+          name: Backend Tests
+          path: build/test-results/test/*.xml,build/test-results/integrationTest/*.xml
+          reporter: java-junit
+          fail-on-error: false
+      - name: Write JaCoCo coverage summary
+        if: always() && hashFiles('build/reports/jacoco/test/jacocoTestReport.xml') != ''
+        run: |
+          python3 - <<'PY' >> "$GITHUB_STEP_SUMMARY"
+          import xml.etree.ElementTree as ET
+          root = ET.parse('build/reports/jacoco/test/jacocoTestReport.xml').getroot()
+          print('## Backend Coverage (JaCoCo)\n')
+          print('| Metric | Covered | Missed | % |')
+          print('|---|---:|---:|---:|')
+          for c in root.findall('counter'):
+              cov = int(c.get('covered', 0)); mis = int(c.get('missed', 0))
+              total = cov + mis
+              pct = f'{cov/total*100:.1f}%' if total else 'n/a'
+              print(f"| {c.get('type').title()} | {cov} | {mis} | {pct} |")
+          PY
+      - name: Upload JaCoCo report
+        if: always() && hashFiles('build/reports/jacoco/test/**') != ''
+        uses: actions/upload-artifact@v5
+        with:
+          name: jacoco-report
+          path: build/reports/jacoco/test/
+          retention-days: 14
+      - name: Upload test results
+        if: always() && hashFiles('build/test-results/**/*.xml') != ''
+        uses: actions/upload-artifact@v5
+        with:
+          name: backend-test-results
+          path: build/test-results/
+          retention-days: 14
+      - name: Upload CycloneDX SBOM
+        if: always() && hashFiles('build/reports/bom.*') != ''
+        uses: actions/upload-artifact@v5
+        with:
+          name: cyclonedx-sbom
+          path: build/reports/bom.*
+          retention-days: 30
 
   verify-frontend:
     name: Verify Frontend
@@ -100,12 +163,49 @@ jobs:
     needs: changes
     if: needs.changes.outputs.frontend == 'true' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      checks: write  # dorny/test-reporter posts a check run
     steps:
       - uses: actions/checkout@v6
       - uses: ./.github/actions/setup-frontend
       - name: Run frontend tests with coverage
-        run: pnpm test:coverage
+        run: pnpm test:coverage --run
         working-directory: src/main/webapp
+      - name: Publish test results
+        if: always() && hashFiles('src/main/webapp/test-results/junit.xml') != ''
+        uses: dorny/test-reporter@v2
+        with:
+          name: Frontend Tests
+          path: src/main/webapp/test-results/junit.xml
+          reporter: java-junit
+          fail-on-error: false
+      - name: Write Vitest coverage summary
+        if: always() && hashFiles('src/main/webapp/coverage/coverage-summary.json') != ''
+        run: |
+          jq -r '
+            "## Frontend Coverage (Vitest)\n",
+            "| Metric | Covered | Total | % |",
+            "|---|---:|---:|---:|",
+            "| Lines | \(.total.lines.covered) | \(.total.lines.total) | \(.total.lines.pct)% |",
+            "| Statements | \(.total.statements.covered) | \(.total.statements.total) | \(.total.statements.pct)% |",
+            "| Functions | \(.total.functions.covered) | \(.total.functions.total) | \(.total.functions.pct)% |",
+            "| Branches | \(.total.branches.covered) | \(.total.branches.total) | \(.total.branches.pct)% |"
+          ' src/main/webapp/coverage/coverage-summary.json >> "$GITHUB_STEP_SUMMARY"
+      - name: Upload Vitest coverage report
+        if: always() && hashFiles('src/main/webapp/coverage/**') != ''
+        uses: actions/upload-artifact@v5
+        with:
+          name: vitest-coverage-report
+          path: src/main/webapp/coverage/
+          retention-days: 14
+      - name: Upload frontend test results
+        if: always() && hashFiles('src/main/webapp/test-results/**') != ''
+        uses: actions/upload-artifact@v5
+        with:
+          name: frontend-test-results
+          path: src/main/webapp/test-results/
+          retention-days: 14
 
   build-frontend:
     name: Build Frontend
