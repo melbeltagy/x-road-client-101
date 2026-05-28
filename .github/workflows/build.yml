@@ -123,14 +123,46 @@ jobs:
           python3 - <<'PY' >> "$GITHUB_STEP_SUMMARY"
           import xml.etree.ElementTree as ET
           root = ET.parse('build/reports/jacoco/test/jacocoTestReport.xml').getroot()
+
+          def counters(node):
+              return {c.get('type'): (int(c.get('covered', 0)), int(c.get('missed', 0)))
+                      for c in node.findall('counter')}
+
+          def pct(cov, mis):
+              total = cov + mis
+              return cov / total * 100 if total else 0.0
+
+          totals = counters(root)
           print('## Backend Coverage (JaCoCo)\n')
+          print('> Line + Branch are the two most actionable metrics. CI gate runs on Instruction (≥80%).\n')
+          print('### Totals\n')
           print('| Metric | Covered | Missed | % |')
           print('|---|---:|---:|---:|')
-          for c in root.findall('counter'):
-              cov = int(c.get('covered', 0)); mis = int(c.get('missed', 0))
-              total = cov + mis
-              pct = f'{cov/total*100:.1f}%' if total else 'n/a'
-              print(f"| {c.get('type').title()} | {cov} | {mis} | {pct} |")
+          for name in ['LINE', 'BRANCH', 'METHOD', 'CLASS', 'INSTRUCTION', 'COMPLEXITY']:
+              if name not in totals: continue
+              cov, mis = totals[name]
+              print(f"| {name.title()} | {cov} | {mis} | {pct(cov, mis):.1f}% |")
+          print()
+
+          rows = []
+          for pkg in root.findall('package'):
+              pkg_name = pkg.get('name').replace('/', '.')
+              for cls in pkg.findall('class'):
+                  cls_name = cls.get('name').split('/')[-1]
+                  cc = counters(cls)
+                  lc, lm = cc.get('LINE', (0, 0))
+                  bc, bm = cc.get('BRANCH', (0, 0))
+                  mc, mm = cc.get('METHOD', (0, 0))
+                  rows.append((pkg_name, cls_name, pct(lc, lm), lc + lm,
+                               pct(bc, bm), bc + bm, pct(mc, mm)))
+
+          rows.sort(key=lambda r: (r[2], r[4]))  # worst line%, then branch%, first
+          print('<details><summary>Per-class breakdown (worst line% first)</summary>\n')
+          print('| Package | Class | Line % | Lines | Branch % | Branches | Method % |')
+          print('|---|---|---:|---:|---:|---:|---:|')
+          for pkg, cls, lp, lt, bp, bt, mp in rows:
+              print(f"| {pkg} | {cls} | {lp:.1f}% | {lt} | {bp:.1f}% | {bt} | {mp:.1f}% |")
+          print('\n</details>')
           PY
       - name: Upload JaCoCo report
         if: always() && hashFiles('build/reports/jacoco/test/**') != ''
@@ -147,11 +179,11 @@ jobs:
           path: build/test-results/
           retention-days: 14
       - name: Upload CycloneDX SBOM
-        if: always() && hashFiles('build/reports/bom.*') != ''
+        if: always() && hashFiles('build/reports/cyclonedx-direct/bom.*') != ''
         uses: actions/upload-artifact@v5
         with:
           name: cyclonedx-sbom
-          path: build/reports/bom.*
+          path: build/reports/cyclonedx-direct/bom.*
           retention-days: 30
 
   verify-frontend:
