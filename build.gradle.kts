@@ -141,6 +141,14 @@ dependencyCheck {
             delay = 8000
         }
     }
+    // Backend-only scan. Frontend deps are audited separately via `pnpm audit` in build.yml.
+    // The Node Package / Node Audit analyzers require node_modules + a pnpm executable on the
+    // runner; rather than installing the FE toolchain in this job, disable them here. (Disabling
+    // nodeAudit also disables its pnpm and yarn sub-analyzers.)
+    analyzers {
+        nodePackage.enabled.set(false)
+        nodeAudit.enabled.set(false)
+    }
 }
 
 // CycloneDX SBOM: use plugin defaults (binds to build/assemble, outputs to build/reports/bom.json).
