@@ -111,7 +111,7 @@ jobs:
         run: ./gradlew test integrationTest jacocoTestCoverageVerification cyclonedxBom
       - name: Publish test results
         if: always() && hashFiles('build/test-results/**/*.xml') != ''
-        uses: dorny/test-reporter@v2
+        uses: dorny/test-reporter@v3
         with:
           name: Backend Tests
           path: build/test-results/test/*.xml,build/test-results/integrationTest/*.xml
@@ -214,7 +214,7 @@ jobs:
         working-directory: src/main/webapp
       - name: Publish test results
         if: always() && hashFiles('src/main/webapp/test-results/junit.xml') != ''
-        uses: dorny/test-reporter@v2
+        uses: dorny/test-reporter@v3
         with:
           name: Frontend Tests
           path: src/main/webapp/test-results/junit.xml
