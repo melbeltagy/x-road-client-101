@@ -55,10 +55,12 @@ export default defineConfig({
     sourcemap: true,
     rollupOptions: {
       output: {
-        manualChunks: {
-          vendor: ['vue', 'vue-router', 'pinia'],
-          vuetify: ['vuetify'],
-          i18n: ['vue-i18n'],
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            if (/[\\/]node_modules[\\/](vue|vue-router|pinia)[\\/]/.test(id)) return 'vendor';
+            if (/[\\/]node_modules[\\/]vuetify[\\/]/.test(id)) return 'vuetify';
+            if (/[\\/]node_modules[\\/]vue-i18n[\\/]/.test(id)) return 'i18n';
+          }
         },
       },
     },

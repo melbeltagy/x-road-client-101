@@ -32,6 +32,8 @@ repositories {
 
 apply(plugin = "io.spring.dependency-management")
 
+extra["tomcat.version"] = libs.versions.tomcat.get()
+
 val isProd = project.hasProperty("prod")
 
 checkstyle {
@@ -135,6 +137,8 @@ tasks.withType<com.github.spotbugs.snom.SpotBugsTask>().configureEach {
 // completes (slower, ~10-15 min on first run).
 dependencyCheck {
     failBuildOnCVSS = 7.0f
+    // Only scan what we ship. Keeps build-time plugin transitives out of the report.
+    scanConfigurations = listOf("runtimeClasspath")
     // HTML for humans, SARIF for GitHub Code Scanning (Security tab).
     formats = listOf("HTML", "SARIF")
     val nvdApiKey = System.getenv("NVD_API_KEY")

@@ -1,5 +1,5 @@
 import "vuetify/styles";
-import "@fontsource-variable/open-sans";
+import "@fontsource-variable/open-sans/index.css";
 import "@fontsource-variable/material-symbols-rounded/fill.css";
 import "@/assets/styles/material-symbols.css";
 
