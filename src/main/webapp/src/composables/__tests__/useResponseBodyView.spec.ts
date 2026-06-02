@@ -120,14 +120,14 @@ describe("useResponseBodyView", () => {
   });
 
   describe("downloadResponse", () => {
-    let createObjectURL: ReturnType<typeof vi.fn>;
-    let revokeObjectURL: ReturnType<typeof vi.fn>;
+    let createObjectURL: ReturnType<typeof vi.fn<(obj: Blob | MediaSource) => string>>;
+    let revokeObjectURL: ReturnType<typeof vi.fn<(url: string) => void>>;
     let originalCreate: typeof URL.createObjectURL;
     let originalRevoke: typeof URL.revokeObjectURL;
 
     beforeEach(() => {
-      createObjectURL = vi.fn().mockReturnValue("blob:fake-url");
-      revokeObjectURL = vi.fn();
+      createObjectURL = vi.fn<(obj: Blob | MediaSource) => string>().mockReturnValue("blob:fake-url");
+      revokeObjectURL = vi.fn<(url: string) => void>();
       originalCreate = URL.createObjectURL;
       originalRevoke = URL.revokeObjectURL;
       URL.createObjectURL = createObjectURL;

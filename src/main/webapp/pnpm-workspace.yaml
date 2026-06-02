@@ -3,3 +3,4 @@ allowBuilds:
   esbuild: true
 minimumReleaseAgeExclude:
   - sass@1.100.0
+  - vuetify@4.1.0
