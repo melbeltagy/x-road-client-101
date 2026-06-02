@@ -33,14 +33,14 @@ describe("useFileDrop", () => {
   let originalFileReader: typeof FileReader;
 
   beforeEach(() => {
-    originalFileReader = global.FileReader;
+    originalFileReader = globalThis.FileReader;
     // Use a stub that reads a synthetic .content property — we attach it
     // to File objects in the tests below.
-    (global as unknown as { FileReader: unknown }).FileReader = StubFileReader;
+    (globalThis as unknown as { FileReader: unknown }).FileReader = StubFileReader;
   });
 
   afterEach(() => {
-    (global as unknown as { FileReader: typeof FileReader }).FileReader = originalFileReader;
+    (globalThis as unknown as { FileReader: typeof FileReader }).FileReader = originalFileReader;
   });
 
   it("starts not dragging", () => {
