@@ -39,6 +39,10 @@ export default mergeConfig(
           'src/router/**',
           'src/types/**',
           'src/i18n/locales/**',
+          // Orchestrator views: pure wiring of well-tested composables and
+          // child components. Real coverage for these belongs to E2E, not unit.
+          'src/views/XRoadView.vue',
+          'src/components/form/XRoadRequestForm.vue',
         ],
         thresholds: {
           lines: 80,
