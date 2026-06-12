@@ -32,8 +32,6 @@ repositories {
 
 apply(plugin = "io.spring.dependency-management")
 
-extra["tomcat.version"] = libs.versions.tomcat.get()
-
 val isProd = project.hasProperty("prod")
 
 checkstyle {
