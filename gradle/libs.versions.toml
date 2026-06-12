@@ -1,5 +1,5 @@
 [versions]
-spring-boot = "4.0.6"
+spring-boot = "4.1.0"
 # Override Spring Boot 4.0.6's bundled Tomcat (11.0.21) to patch CVE-2026-43515,
 # CVE-2026-43512, CVE-2026-41293, CVE-2026-42498, CVE-2026-43513, CVE-2026-41284,
 # CVE-2026-43514. Drop this entry once Spring Boot's BOM ships a patched Tomcat.
