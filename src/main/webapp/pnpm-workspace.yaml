@@ -4,3 +4,5 @@ allowBuilds:
 minimumReleaseAgeExclude:
   - sass@1.100.0
   - vuetify@4.1.0
+overrides:
+  "@vue/test-utils>js-beautify": "^2.0.3"
