@@ -1,7 +1,7 @@
 [versions]
 spring-boot = "4.1.0"
 jacoco = "0.8.15"
-checkstyle = "13.6.0"
+checkstyle = "13.9.0"
 mapstruct = "1.6.3"
 archunit = "1.4.2"
 bouncycastle = "1.85"
