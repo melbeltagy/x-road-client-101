@@ -7,7 +7,7 @@ archunit = "1.4.2"
 bouncycastle = "1.85"
 node-gradle = "7.1.0"
 spotbugs = "6.5.9"
-owasp-dependencycheck = "12.2.2"
+owasp-dependencycheck = "13.0.0"
 cyclonedx-bom = "3.3.0"
 
 [libraries]
