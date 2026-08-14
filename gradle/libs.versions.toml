@@ -6,9 +6,9 @@ mapstruct = "1.6.3"
 archunit = "1.5.0"
 bouncycastle = "1.85"
 node-gradle = "7.1.0"
-spotbugs = "6.5.9"
+spotbugs = "6.5.10"
 owasp-dependencycheck = "13.0.0"
-cyclonedx-bom = "3.3.0"
+cyclonedx-bom = "3.4.0"
 
 [libraries]
 spring-boot-starter-actuator = { module = "org.springframework.boot:spring-boot-starter-actuator" }
