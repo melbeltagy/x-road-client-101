@@ -78,13 +78,13 @@ jobs:
       # so main/test sources upload separately.
       - name: Upload SpotBugs SARIF (main) to Code Scanning
         if: always() && hashFiles('build/reports/spotbugs/main.sarif') != ''
-        uses: github/codeql-action/upload-sarif@v4.37.6
+        uses: github/codeql-action/upload-sarif@v4.37.7
         with:
           sarif_file: build/reports/spotbugs/main.sarif
           category: spotbugs-main
       - name: Upload SpotBugs SARIF (test) to Code Scanning
         if: always() && hashFiles('build/reports/spotbugs/test.sarif') != ''
-        uses: github/codeql-action/upload-sarif@v4.37.6
+        uses: github/codeql-action/upload-sarif@v4.37.7
         with:
           sarif_file: build/reports/spotbugs/test.sarif
           category: spotbugs-test
