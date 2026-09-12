@@ -33,7 +33,7 @@ See [docker/README.md](docker/README.md) for full Docker documentation including
 ### Requirements
 
 - Java 25
-- Node.js 22+ and pnpm 10+
+- Node.js 24+ and pnpm 12+
 
 ### Running locally (with hot reload)
 

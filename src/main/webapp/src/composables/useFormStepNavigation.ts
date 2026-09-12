@@ -1,13 +1,7 @@
 import type { Ref } from "vue";
 
 export type StepKey =
-  | "securityServer"
-  | "clientIdentifier"
-  | "serviceIdentifier"
-  | "endpoint"
-  | "queryParameters"
-  | "customHeaders"
-  | "certificates";
+  "securityServer" | "clientIdentifier" | "serviceIdentifier" | "endpoint" | "queryParameters" | "customHeaders" | "certificates";
 
 // Focus an input by id and select its content so the user can type
 // immediately after clicking a step chip. preventScroll: true keeps
