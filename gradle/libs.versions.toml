@@ -1,14 +1,14 @@
 [versions]
-spring-boot = "4.1.0"
+spring-boot = "4.1.1"
 jacoco = "0.8.15"
-checkstyle = "13.9.0"
+checkstyle = "14.1.0"
 mapstruct = "1.6.3"
 archunit = "1.5.0"
-bouncycastle = "1.85"
+bouncycastle = "1.86"
 node-gradle = "7.1.0"
-spotbugs = "6.5.9"
+spotbugs = "6.5.11"
 owasp-dependencycheck = "13.0.0"
-cyclonedx-bom = "3.3.0"
+cyclonedx-bom = "3.4.1"
 
 [libraries]
 spring-boot-starter-actuator = { module = "org.springframework.boot:spring-boot-starter-actuator" }

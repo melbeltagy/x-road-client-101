@@ -165,7 +165,7 @@ dependencyCheck {
 node {
     nodeProjectDir.set(file("${project.projectDir}/src/main/webapp"))
     version.set("24.16.0")  // LTS version
-    pnpmVersion.set("11.2.2")
+    pnpmVersion.set("12.4.1")
     download.set(true)
 }
 
