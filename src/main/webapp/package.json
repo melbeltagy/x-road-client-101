@@ -46,7 +46,7 @@
     "eslint": "^10.10.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-vue": "^10.11.0",
-    "happy-dom": "^20.14.5",
+    "happy-dom": "^21.0.1",
     "jsdom": "^30.0.1",
     "prettier": "^3.9.6",
     "sass": "^1.104.0",
