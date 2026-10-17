@@ -6,24 +6,13 @@ env:
 
 on:
   workflow_dispatch:
-  # push only runs on main: triggers the docker job on merge.
-  # Feature branches go through pull_request (which includes synchronize, so every
-  # push to a PR branch still runs CI). Avoids duplicate runs and ensures
-  # dependency-review fires on every PR update.
+  # Triggers stay unfiltered so `ci-success` can always report; jobs self-gate
+  # via `needs.changes.outputs.*`. push=main runs docker on merge; feature
+  # branches use pull_request to avoid duplicate runs.
   push:
     branches: [main]
-    paths-ignore:
-      - 'images/**'
-      - '.github/dependabot.yml'
-      - '.gitignore'
-      - 'LICENSE'
   pull_request:
     branches: ['*']
-    paths-ignore:
-      - 'images/**'
-      - '.github/dependabot.yml'
-      - '.gitignore'
-      - 'LICENSE'
 
 jobs:
   changes:
