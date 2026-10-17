@@ -28,32 +28,6 @@ See [docker/README.md](docker/README.md) for full Docker documentation including
 - Building locally
 - Available tags
 
-## Development
-
-### Requirements
-
-- Java 25
-- Node.js 24+ and pnpm 12+
-
-### Running locally (with hot reload)
-
-```bash
-# Backend
-./gradlew -x webapp
-
-# Frontend (separate terminal)
-cd src/main/webapp && pnpm dev
-```
-
-Open <http://localhost:9000> (note: frontend runs on port 9000 in hot reload mode)
-
-### Production build
-
-```bash
-./gradlew -Pprod clean bootJar
-java -jar build/libs/*.jar
-```
-
 ## Configuration
 
 Edit `src/main/resources/application.yml`:
@@ -70,66 +44,6 @@ application:
 
 For Docker configuration, see [docker/README.md](docker/README.md#configuration).
 
-## Testing
-
-### Backend Tests
-
-```bash
-# Run unit tests
-./gradlew test
-
-# Run integration tests
-./gradlew integrationTest
-
-# Run all tests with coverage report
-./gradlew test jacocoTestReport
-
-# Run tests with coverage verification (fails if coverage < 80%)
-./gradlew check
-```
-
-**Coverage reports:** `build/reports/jacoco/test/html/index.html`
-
-### Frontend Tests
-
-```bash
-cd src/main/webapp
-
-# Run tests in watch mode
-pnpm test
-
-# Run tests once
-pnpm test:run
-
-# Run tests with coverage
-pnpm test:coverage
-```
-
-**Coverage reports:** `src/main/webapp/coverage/index.html`
-
-### Code Quality
-
-```bash
-# Backend: Checkstyle + SpotBugs (part of `./gradlew check`)
-./gradlew check
-
-# Frontend (in src/main/webapp):
-pnpm lint            # ESLint check
-pnpm lint:fix        # ESLint auto-fix
-pnpm format:check    # Prettier check
-pnpm format          # Prettier auto-format
-pnpm type-check      # TypeScript
-```
-
-### Pre-commit hooks
-
-A [lefthook](https://lefthook.dev) config runs lint/format checks on changed files before each commit. To enable:
-
-```bash
-brew install lefthook   # or your preferred installer
-lefthook install
-```
-
 ## Screenshots
 
 ### Client and service identifiers
@@ -143,3 +57,11 @@ lefthook install
 ### Dark theme and request history
 
 ![Dark Theme](images/dark-theme.png)
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for dev setup, build and test commands, commit conventions, pre-commit hooks, and PR process.
+
+## License
+
+Licensed under the MIT License. See [LICENSE](LICENSE).
