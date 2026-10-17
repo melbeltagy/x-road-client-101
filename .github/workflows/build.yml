@@ -6,24 +6,17 @@ env:
 
 on:
   workflow_dispatch:
-  # push only runs on main: triggers the docker job on merge.
-  # Feature branches go through pull_request (which includes synchronize, so every
-  # push to a PR branch still runs CI). Avoids duplicate runs and ensures
-  # dependency-review fires on every PR update.
+  # Triggers stay unfiltered so `ci-success` can always report; jobs self-gate
+  # via `needs.changes.outputs.*`. push=main runs docker on merge; feature
+  # branches use pull_request to avoid duplicate runs.
   push:
     branches: [main]
-    paths-ignore:
-      - 'images/**'
-      - '.github/dependabot.yml'
-      - '.gitignore'
-      - 'LICENSE'
   pull_request:
     branches: ['*']
-    paths-ignore:
-      - 'images/**'
-      - '.github/dependabot.yml'
-      - '.gitignore'
-      - 'LICENSE'
+
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 jobs:
   changes:
@@ -293,8 +286,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-      - name: Lint markdown files
-        run: npx --yes markdownlint-cli2 '**/*.md' '!**/node_modules/**' '!**/build/**' '!**/.gradle/**' '!**/.planning/**' '!**/.claude/**' '!**/dist/**' '!**/coverage/**'
+      - uses: DavidAnson/markdownlint-cli2-action@v24.2.0
+        with:
+          globs: |
+            **/*.md
+            !**/node_modules/**
+            !**/build/**
+            !**/.gradle/**
+            !**/.planning/**
+            !**/.claude/**
+            !**/dist/**
+            !**/coverage/**
 
   docker:
     name: Docker
@@ -317,12 +319,16 @@ jobs:
       packages: write
 
   ci-success:
-    needs: [verify-backend, test-backend, verify-frontend, test-frontend, build-frontend, audit-frontend, verify-markdown, dependency-review]
+    needs: [changes, verify-backend, test-backend, verify-frontend, test-frontend, build-frontend, audit-frontend, verify-markdown, dependency-review]
     if: always()
     runs-on: ubuntu-latest
     steps:
       - name: Verify no upstream failures
         run: |
+          if [[ "${{ needs.changes.result }}" != "success" ]]; then
+            echo "changes job did not succeed; cannot trust downstream gating."
+            exit 1
+          fi
           if [[ "${{ contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled') }}" == "true" ]]; then
             echo "One or more jobs failed or were cancelled."
             exit 1
