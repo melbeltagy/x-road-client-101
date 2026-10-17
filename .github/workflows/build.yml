@@ -286,8 +286,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-      - name: Lint markdown files
-        run: npx --yes markdownlint-cli2 '**/*.md' '!**/node_modules/**' '!**/build/**' '!**/.gradle/**' '!**/.planning/**' '!**/.claude/**' '!**/dist/**' '!**/coverage/**'
+      - uses: DavidAnson/markdownlint-cli2-action@v24.2.0
+        with:
+          globs: |
+            **/*.md
+            !**/node_modules/**
+            !**/build/**
+            !**/.gradle/**
+            !**/.planning/**
+            !**/.claude/**
+            !**/dist/**
+            !**/coverage/**
 
   docker:
     name: Docker
