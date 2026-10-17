@@ -9,6 +9,9 @@
 - [ ] Breaking change
 - [ ] Documentation update
 - [ ] Refactoring
+- [ ] Dependency update
+- [ ] Security fix
+- [ ] Build / CI change
 
 ## Testing
 
