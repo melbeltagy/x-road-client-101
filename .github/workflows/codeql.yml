@@ -9,8 +9,27 @@ on:
     - cron: '0 6 * * 1'
 
 jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      code: ${{ steps.filter.outputs.code }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: dorny/paths-filter@v4
+        id: filter
+        with:
+          filters: |
+            code:
+              - 'src/**'
+              - 'build.gradle.kts'
+              - 'settings.gradle.kts'
+              - 'gradle/libs.versions.toml'
+              - '.github/workflows/codeql.yml'
+
   analyze:
     name: Analyze (${{ matrix.language }})
+    needs: changes
+    if: needs.changes.outputs.code == 'true' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     permissions:
       actions: read
@@ -47,3 +66,20 @@ jobs:
         uses: github/codeql-action/analyze@v4.38.3
         with:
           category: "/language:${{ matrix.language }}"
+
+  codeql-success:
+    needs: [changes, analyze]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify no upstream failures
+        run: |
+          if [[ "${{ needs.changes.result }}" != "success" ]]; then
+            echo "changes job did not succeed."
+            exit 1
+          fi
+          if [[ "${{ contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled') }}" == "true" ]]; then
+            echo "Analyze failed or was cancelled."
+            exit 1
+          fi
+          echo "CodeQL passed or was correctly skipped."
