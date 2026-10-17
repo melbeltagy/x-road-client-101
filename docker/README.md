@@ -27,7 +27,8 @@ Open <http://localhost:8080>
 The client and the Security Server need to share a Docker network so they can reach each other by container name.
 Both the `docker run` command above and the compose file place the client on a network named `xrd-client-101`.
 
-To be able to communicate to the Security Server, attach its container to the same network (this will not affect your existing setup):
+To be able to communicate to the Security Server, attach its container to the same network (this will not affect your
+existing setup):
 
 ```bash
 docker network connect xrd-client-101 <ss-container-name>
@@ -74,11 +75,11 @@ docker run -p 8080:8080 xroad-rest-client
 
 ## Tags
 
-| Tag          | Description                       |
-|--------------|-----------------------------------|
-| `latest`     | Latest release from main branch   |
-| `vX.Y.Z`     | Specific version release          |
-| `sha-XXXXXX` | Specific commit build             |
+| Tag          | Description                     |
+|--------------|---------------------------------|
+| `latest`     | Latest release from main branch |
+| `vX.Y.Z`     | Specific version release        |
+| `sha-XXXXXX` | Specific commit build           |
 
 ## Health Check
 
