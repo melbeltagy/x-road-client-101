@@ -23,9 +23,9 @@ see [README.md](README.md).
 
 ## Prerequisites
 
-- Java 25 (Temurin recommended)
-- Node.js 24+ and pnpm 12+
-- Docker (optional, for container builds)
+* Java 25 (Temurin recommended)
+* Node.js 24+ and pnpm 12+
+* Docker (optional, for container builds)
 
 ## Workflow
 
@@ -111,13 +111,13 @@ lefthook install
 
 Format:
 
-```
+```text
 <type>(<optional scope>): <short description>
 ```
 
 Examples:
 
-```
+```text
 fix(gradle): mark gradlew scripts as -text to prevent CRLF regressions
 chore(deps): bump javascript-minor-patch group
 ci: add concurrency group
@@ -129,8 +129,8 @@ PR titles are validated by `.github/workflows/pr-title.yml`.
 
 Two required status checks:
 
-- `ci-success` aggregates backend/frontend lint, build, test, audit.
-- `codeql-success` aggregates CodeQL static analysis.
+* `ci-success` aggregates backend/frontend lint, build, test, audit.
+* `codeql-success` aggregates CodeQL static analysis.
 
 Both skip gracefully for doc/meta-only PRs via internal path filtering.
 
@@ -140,9 +140,9 @@ A weekly schedule runs OWASP Dependency-Check (Mondays 09:00 UTC) and pnpm audit
 
 Dependabot opens weekly PRs for:
 
-- Gradle plugins and libraries (grouped by minor/patch; Spring is its own group).
-- npm packages in `src/main/webapp` (grouped by minor/patch).
-- GitHub Actions, both workflow files and composite actions under `.github/actions/` (grouped by minor/patch).
+* Gradle plugins and libraries (grouped by minor/patch; Spring is its own group).
+* npm packages in `src/main/webapp` (grouped by minor/patch).
+* GitHub Actions, both workflow files and composite actions under `.github/actions/` (grouped by minor/patch).
 
 Major-version bumps come as separate PRs; review before merging.
 
@@ -150,10 +150,10 @@ Major-version bumps come as separate PRs; review before merging.
 
 Open a GitHub issue with:
 
-- Steps to reproduce
-- Expected vs actual behavior
-- Environment (OS, Java version, Node version, how you ran the app)
-- Relevant logs
+* Steps to reproduce
+* Expected vs actual behavior
+* Environment (OS, Java version, Node version, how you ran the app)
+* Relevant logs
 
 ## License
 
