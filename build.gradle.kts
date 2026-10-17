@@ -14,7 +14,7 @@ plugins {
     alias(libs.plugins.cyclonedx.bom)
 }
 
-group = "com.nortal.xroad.restapi.client"
+group = "io.github.melbeltagy.xroad.restapi.client"
 version = "0.0.1-SNAPSHOT"
 
 java {
@@ -188,7 +188,7 @@ eclipse {
 defaultTasks("bootRun")
 
 springBoot {
-    mainClass.set("com.nortal.xroad.restapi.client.XRoadExampleRestapiClientApp")
+    mainClass.set("io.github.melbeltagy.xroad.restapi.client.XRoadExampleRestapiClientApp")
 }
 
 tasks.test {
