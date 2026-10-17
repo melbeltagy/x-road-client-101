@@ -306,12 +306,16 @@ jobs:
       packages: write
 
   ci-success:
-    needs: [verify-backend, test-backend, verify-frontend, test-frontend, build-frontend, audit-frontend, verify-markdown, dependency-review]
+    needs: [changes, verify-backend, test-backend, verify-frontend, test-frontend, build-frontend, audit-frontend, verify-markdown, dependency-review]
     if: always()
     runs-on: ubuntu-latest
     steps:
       - name: Verify no upstream failures
         run: |
+          if [[ "${{ needs.changes.result }}" != "success" ]]; then
+            echo "changes job did not succeed; cannot trust downstream gating."
+            exit 1
+          fi
           if [[ "${{ contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled') }}" == "true" ]]; then
             echo "One or more jobs failed or were cancelled."
             exit 1
