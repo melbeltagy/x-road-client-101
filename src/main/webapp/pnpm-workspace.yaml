@@ -1,6 +1,2 @@
 allowBuilds:
   "@parcel/watcher": true
-minimumReleaseAgeExclude:
-  - happy-dom@20.14.5
-overrides:
-  "@vue/test-utils>js-beautify": "^2.0.3"
