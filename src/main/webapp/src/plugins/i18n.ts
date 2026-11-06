@@ -13,12 +13,25 @@ const i18n = createI18n({
   },
 });
 
-export async function loadLocaleMessages(locale: string): Promise<void> {
+// Explicit loaders keyed on non-"en" locales. en is bundled statically for the
+// MessageSchema type and default preload; excluding it here keeps Rolldown from
+// emitting INEFFECTIVE_DYNAMIC_IMPORT when the glob would otherwise also match en.json.
+const loaders: Record<Exclude<SupportedLocale, "en">, () => Promise<{ default: MessageSchema }>> = {
+  et: () => import("@/i18n/locales/et.json"),
+  fi: () => import("@/i18n/locales/fi.json"),
+  de: () => import("@/i18n/locales/de.json"),
+  fr: () => import("@/i18n/locales/fr.json"),
+};
+
+export async function loadLocaleMessages(locale: SupportedLocale): Promise<void> {
   if ((i18n.global.availableLocales as string[]).includes(locale)) {
     return;
   }
+  if (locale === "en") {
+    return;
+  }
 
-  const messages = await import(`@/i18n/locales/${locale}.json`);
+  const messages = await loaders[locale]();
   i18n.global.setLocaleMessage(locale, messages.default);
 }
 
