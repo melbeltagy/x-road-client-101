@@ -330,6 +330,18 @@ tasks.register<Delete>("cleanResources") {
     delete("build/resources")
 }
 
+// Mockito needs to run as a Java agent on JDK 21+. Otherwise it self-attaches at
+// runtime, which emits a dynamic-agent warning today and will be rejected by a
+// future JDK. Version comes from the Spring Boot BOM.
+val mockitoAgent = configurations.create("mockitoAgent") {
+    isCanBeConsumed = false
+    isCanBeResolved = true
+}
+
+tasks.withType<Test>().configureEach {
+    jvmArgs("-javaagent:${mockitoAgent.asPath}")
+}
+
 dependencies {
     implementation(libs.spring.boot.starter.actuator)
     implementation(libs.spring.boot.starter.logging)
@@ -358,4 +370,5 @@ dependencies {
     testRuntimeOnly(libs.archunit.junit5.engine) {
         exclude(group = "org.slf4j", module = "slf4j-api")
     }
+    mockitoAgent("org.mockito:mockito-core") { isTransitive = false }
 }
