@@ -1,5 +1,5 @@
 [versions]
-spring-boot = "4.1.1"
+spring-boot = "4.1.2"
 jacoco = "0.8.15"
 checkstyle = "14.1.0"
 mapstruct = "1.6.3"
