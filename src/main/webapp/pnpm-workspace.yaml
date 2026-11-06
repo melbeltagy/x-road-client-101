@@ -1,2 +1,9 @@
 allowBuilds:
   "@parcel/watcher": true
+
+# Overrides for transitive-only CVEs. Both vulnerable packages are dev-only
+# (reached via @vue/test-utils, eslint, @typescript-eslint); production bundle
+# is unaffected. Drop entries once upstream deps catch up.
+overrides:
+  "glob@>=9.0.0 <14.0.2": ">=14.0.2"  # GHSA-3g3m-2fjr-6pw4
+  "minimatch@>=7.0.0 <11.0.1": ">=11.0.1"  # GHSA-g3hv-75wg-m249
