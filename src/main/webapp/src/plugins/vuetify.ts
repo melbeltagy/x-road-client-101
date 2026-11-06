@@ -112,6 +112,7 @@ const msrAliases: IconAliases = {
   treeviewCollapse: "arrow_drop_down",
   treeviewExpand: "chevron_right",
   calendar: "event",
+  clock: "schedule",
   eyeDropper: "colorize",
   upload: "upload",
   color: "palette",

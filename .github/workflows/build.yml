@@ -71,13 +71,13 @@ jobs:
       # so main/test sources upload separately.
       - name: Upload SpotBugs SARIF (main) to Code Scanning
         if: always() && hashFiles('build/reports/spotbugs/main.sarif') != ''
-        uses: github/codeql-action/upload-sarif@v4.38.3
+        uses: github/codeql-action/upload-sarif@v4.39.3
         with:
           sarif_file: build/reports/spotbugs/main.sarif
           category: spotbugs-main
       - name: Upload SpotBugs SARIF (test) to Code Scanning
         if: always() && hashFiles('build/reports/spotbugs/test.sarif') != ''
-        uses: github/codeql-action/upload-sarif@v4.38.3
+        uses: github/codeql-action/upload-sarif@v4.39.3
         with:
           sarif_file: build/reports/spotbugs/test.sarif
           category: spotbugs-test
@@ -286,7 +286,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-      - uses: DavidAnson/markdownlint-cli2-action@v24.2.0
+      - uses: DavidAnson/markdownlint-cli2-action@v25.0.0
         with:
           globs: |
             **/*.md
