@@ -132,6 +132,11 @@ Desktop.ini
 .merge_file*
 
 ######################
+# Renovate (local sweep)
+######################
+/renovate-report.json
+
+######################
 # Gradle Wrapper
 ######################
 !gradle/wrapper/gradle-wrapper.jar
