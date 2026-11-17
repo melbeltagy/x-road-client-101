@@ -1,5 +1,7 @@
 import com.github.gradle.node.pnpm.task.PnpmTask
 import com.github.gradle.node.npm.task.NpxTask
+import javax.inject.Inject
+import org.gradle.process.ExecOperations
 
 plugins {
     java
@@ -328,6 +330,60 @@ tasks.named("bootJar") {
 
 tasks.register<Delete>("cleanResources") {
     delete("build/resources")
+}
+
+abstract class RenovateLocalTask : DefaultTask() {
+    @get:Inject abstract val execOps: ExecOperations
+
+    @get:Internal abstract val repoDir: DirectoryProperty
+
+    @TaskAction
+    fun run() {
+        val containerName = "x-road-client-101-renovate-local"
+        val reportInContainer = "/tmp/renovate-report.json"
+        val rootDirPath = repoDir.get().asFile.absolutePath
+        val reportOnHost = repoDir.get().file("renovate-report.json").asFile.absolutePath
+        execOps.exec {
+            commandLine("docker", "rm", "-f", containerName)
+            isIgnoreExitValue = true
+        }
+        try {
+            execOps.exec {
+                commandLine(
+                    "docker",
+                    "run",
+                    "--name",
+                    containerName,
+                    "-v",
+                    "$rootDirPath:/usr/src/app",
+                    "-w",
+                    "/usr/src/app",
+                    "-e",
+                    "LOG_LEVEL=info",
+                    "-e",
+                    "RENOVATE_REPORT_TYPE=file",
+                    "-e",
+                    "RENOVATE_REPORT_PATH=$reportInContainer",
+                    "renovate/renovate:latest",
+                    "--platform=local",
+                )
+            }
+            execOps.exec {
+                commandLine("docker", "cp", "$containerName:$reportInContainer", reportOnHost)
+            }
+        } finally {
+            execOps.exec {
+                commandLine("docker", "rm", "-f", containerName)
+                isIgnoreExitValue = true
+            }
+        }
+    }
+}
+
+tasks.register<RenovateLocalTask>("renovateLocal") {
+    group = "renovate"
+    description = "Runs Renovate in local-platform mode in a container and copies renovate-report.json to the repo root. Read-only second opinion alongside Dependabot. Needs Docker."
+    repoDir.set(rootProject.layout.projectDirectory)
 }
 
 // Mockito needs to run as a Java agent on JDK 21+. Otherwise it self-attaches at

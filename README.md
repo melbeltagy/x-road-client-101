@@ -18,6 +18,18 @@ docker run -p 8080:8080 ghcr.io/melbeltagy/x-road-client-101:latest
 
 Open <http://localhost:8080>
 
+## Try against X-Road playground
+
+Import this curl via the app's "Import from curl" to call the public [X-Road playground](https://x-road.global/xroad-playground):
+
+```bash
+curl \
+  -v \
+  'http://testcomss01.playground.x-road.systems/r1/PLAYGROUND/GOV/8765432-1/TestService/YTJ/companies' \
+  -H 'X-Road-Client: PLAYGROUND/COM/1234567-8/TestClient' \
+  -H 'accept: application/json'
+```
+
 ## Docker
 
 See [docker/README.md](docker/README.md) for full Docker documentation including:
